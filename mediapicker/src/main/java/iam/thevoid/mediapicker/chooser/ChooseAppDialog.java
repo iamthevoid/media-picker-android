@@ -26,8 +26,6 @@ public class ChooseAppDialog extends BottomSheetDialogFragment implements Adapte
     public static final String EXTRA_TITLE = "EXTRA_TITLE";
     public static final String EXTRA_RESOLVE = "EXTRA_RESOLVE";
 
-    private View view;
-
     TextView title;
     RecyclerView recyclerView;
 
@@ -40,7 +38,7 @@ public class ChooseAppDialog extends BottomSheetDialogFragment implements Adapte
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.about_dialog, container, false);
+        View view = inflater.inflate(R.layout.about_dialog, container, false);
         recyclerView = (RecyclerView) view.findViewById(R.id.recycler);
         this.title = (TextView) view.findViewById(R.id.title);
 
@@ -52,11 +50,14 @@ public class ChooseAppDialog extends BottomSheetDialogFragment implements Adapte
         }
 
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+
         recyclerView.setVerticalScrollBarEnabled(true);
+
         parcelableArrayList = getArguments().getParcelableArrayList(EXTRA_RESOLVE);
 
 
         ChooseAppAdapter adapter = new ChooseAppAdapter(getActivity(), parcelableArrayList);
+
         adapter.setOnItemClickListener(this);
 
         recyclerView.setAdapter(adapter);
@@ -78,18 +79,6 @@ public class ChooseAppDialog extends BottomSheetDialogFragment implements Adapte
 
     public static void showForResult(Activity context, android.support.v4.app.FragmentManager fragmentManager, int title, IntentData... intents) {
         show(fragmentManager, ResAdapter.getString(context, title), makeList(intents));
-    }
-
-    public static void showForResult(android.support.v4.app.FragmentManager fragmentManager, String title, IntentData... intents) {
-        show(fragmentManager, title, makeList(intents));
-    }
-
-    public static void showSimple(Activity context, android.support.v4.app.FragmentManager fragmentManager, int title, Intent... intents) {
-        show(fragmentManager, ResAdapter.getString(context, title), makeShowIntents(intents));
-    }
-
-    public static void showSimple(android.support.v4.app.FragmentManager fragmentManager, String title, Intent... intents) {
-        show(fragmentManager, title, makeShowIntents(intents));
     }
 
     private static <T extends IntentData> void show(android.support.v4.app.FragmentManager fm,

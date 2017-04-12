@@ -2,8 +2,12 @@ package iam.thevoid.mediapicker;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
@@ -12,7 +16,6 @@ import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.widget.Toast;
 
 import java.io.File;
@@ -33,40 +36,56 @@ import iam.thevoid.mediapicker.util.SizeUnit;
  * Created by iam on 03.04.17.
  */
 
-public class MediaPicker {
+public final class MediaPicker {
 
-    private static final String TAG = MediaPicker.class.getSimpleName();
+    private MediaPicker() {}
 
     private static final String PHOTO_PATH_PATTERN = "photo_%s.png";
     private static final String PHOTO_DATE_PATTERN = "yyyy_MM_dd_HH_mm_ss";
 
-    public static final int REQUEST_TAKE_PHOTO = 0x1111;
-    public static final int REQUEST_TAKE_VIDEO = 0x2222;
-    public static final int REQUEST_PICK_IMAGE = 0x3333;
-    public static final int REQUEST_PICK_VIDEO = 0x4444;
-    public static final int REQUEST_RECOGNIZE_ = 0x5555;
+    private static final int REQUEST_TAKE_PHOTO = 0x1111;
+    private static final int REQUEST_TAKE_VIDEO = 0x2222;
+    private static final int REQUEST_PICK_IMAGE = 0x3333;
+    private static final int REQUEST_PICK_VIDEO = 0x4444;
 
-    public static final void pickImage(Activity activity, With... with) {
+    public static void pickImage(Activity activity, With... with) {
         if (with == null || with.length == 0) {
             return;
-        }
-
-        if (with.length == 2) {
-            List<With> withs = Arrays.asList(with);
-            if (withs.contains(With.IMAGE_PICKER) && withs.contains(With.VIDEO_AND_IMAGE_PICKER)) {
-                Intent intent = new ImageIntentBuilder()
-                        .setLocalOnly(true)
-                        .setMimetype(ImageIntentBuilder.Mimetype.BOTH_IMAGE_AND_VIDEO)
-                        .build();
-                activity.startActivityForResult(intent, REQUEST_PICK_IMAGE);
-                return;
-            }
         }
 
         if (with.length > 1) {
             IntentData[] intentDatas = new IntentData[with.length];
             for (int i = 0; i < with.length; i++) {
-                intentDatas[i] = new IntentData(getIntent(activity, with[i]), getRequestCode(with[i]), getTitle(with[i]));
+                Intent intent = getIntent(activity, with[i]);
+
+                PackageManager pm = activity.getPackageManager();
+
+                List<ResolveInfo> resolveInfos = pm.queryIntentActivities(intent, 0);
+
+                if (resolveInfos == null) {
+                    continue;
+                }
+
+                for (ResolveInfo resolveInfo : resolveInfos) {
+
+                    ActivityInfo activityInfo = resolveInfo.activityInfo;
+
+                    ComponentName name = new ComponentName(activityInfo.applicationInfo.packageName,
+                            activityInfo.name);
+
+                    Intent generated = new Intent(intent.getAction());
+
+                    if (intent.getCategories() != null) {
+                        for (String category : intent.getCategories()) {
+                            generated.addCategory(category);
+                        }
+                    }
+
+                    generated.setFlags(intent.getFlags());
+                    generated.setComponent(name);
+
+                    intentDatas[i] = new IntentData(generated, getRequestCode(with[i]), getTitle(with[i]));
+                }
             }
             ChooseAppDialog.showForResult(activity, ((AppCompatActivity) activity).getSupportFragmentManager(), -1, intentDatas);
             return;
@@ -75,30 +94,17 @@ public class MediaPicker {
         activity.startActivityForResult(getIntent(activity, with[0]), getRequestCode(with[0]));
     }
 
-    public static final void pickImageForRecognize(Activity activity) {
-        activity.startActivityForResult(getIntent(activity, With.PHOTO_CAMERA), REQUEST_RECOGNIZE_);
-    }
 
-    public static final String onActivityResult(Context context, int requestCode, int resultCode, Intent data) {
-        return onActivityResult(context, requestCode, resultCode, data, null);
-    }
+    public static String onActivityResult(Context context, int requestCode, int resultCode,
+                                                Intent data) {
 
-    public static final String onActivityResult(Context context, int requestCode, int resultCode, Intent data,
-                                                OnRecognizeListener orl) {
+        if (resultCode != Activity.RESULT_OK) {
+            return null;
+        }
 
         if (requestCode == REQUEST_TAKE_PHOTO) {
 
             return generatePathForPhotoIntent(context);
-        } else if (requestCode == REQUEST_RECOGNIZE_) {
-
-            if (orl != null) {
-                if (resultCode != Activity.RESULT_OK) {
-                    orl.onRecognizeDismiss();
-                } else {
-                    orl.onRecognizeSuccess(generatePathForPhotoIntent(context));
-                }
-            }
-            return null;
         }
 
         if (data == null) {
@@ -136,10 +142,6 @@ public class MediaPicker {
 
     private static String generatePathForPhotoIntent(Context context) {
         File file = new File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES), getPhotoPath());
-
-        if (BuildConfig.DEBUG) {
-            Log.d(TAG, "generatePathForPhotoIntent: " + file.exists());
-        }
 
         clearPhotoPath();
 
@@ -282,13 +284,14 @@ public class MediaPicker {
                         .setLocalOnly(true)
                         .setMimetype(ImageIntentBuilder.Mimetype.IMAGE)
                         .build();
+
             case VIDEO_AND_IMAGE_PICKER:
                 return new ImageIntentBuilder()
                         .setLocalOnly(true)
                         .setMimetype(ImageIntentBuilder.Mimetype.VIDEO)
                         .build();
-            case PHOTO_CAMERA:
 
+            case PHOTO_CAMERA:
                 storePhotoPath(String.format(PHOTO_PATH_PATTERN,
                         DateManager.formatDateToString(PHOTO_DATE_PATTERN, new Date(DateManager.getTime()))));
 
@@ -317,13 +320,6 @@ public class MediaPicker {
 
     private static void clearPhotoPath() {
         SecurityStore.deleteMediaPickerPhotoPath();
-    }
-
-
-    public interface OnRecognizeListener {
-        void onRecognizeDismiss();
-
-        void onRecognizeSuccess(String filepath);
     }
 
     private static final List<String> videoExtensions = Arrays.asList(
