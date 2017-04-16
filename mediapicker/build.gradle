@@ -6,7 +6,7 @@ android {
     buildToolsVersion "25.0.2"
 
     defaultConfig {
-        minSdkVersion 16
+        minSdkVersion 9
         targetSdkVersion 25
         versionCode 1
         versionName "1.0"
@@ -28,7 +28,7 @@ android {
 publish {
     groupId = 'iam.void.mediapicker'
     artifactId = 'mediapicker'
-    publishVersion = '0.1'
+    publishVersion = '0.1.1'
     desc = 'Library that helps a few lines of code to get pictures and video from the android file system, or ures cloud, as well as the camera device.'
     licences = ['Apache-2.0']
     uploadName='MediaPicker'
@@ -45,6 +45,5 @@ dependencies {
 
     compile 'com.android.support:design:25.3.1'
     compile "com.android.support:support-v4:25.3.1"
-    compile 'com.orhanobut:hawk:2.0.1'
     compile 'com.android.support:recyclerview-v7:25.3.1'
 }

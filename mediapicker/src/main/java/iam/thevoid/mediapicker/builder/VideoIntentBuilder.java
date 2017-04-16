@@ -23,29 +23,10 @@ public class VideoIntentBuilder {
     private int videoDuration = -1;
     private int videoQuality = -1;
     private long videoFileSize = -1;
-    private Uri videoOutput;
     private int flags = 0;
 
     public VideoIntentBuilder setVideoDuration(int videoDuration) {
         this.videoDuration = videoDuration;
-        return this;
-    }
-
-    public VideoIntentBuilder setVideoOutput(Context context, String filename) {
-
-        File file = new File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES), filename);
-
-        if (file.exists()) {
-            file.delete();
-        }
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            String packageName = context.getPackageName();
-            videoOutput = FileProvider.getUriForFile(context, packageName + ".fileprovider", file);
-        } else {
-            videoOutput = Uri.fromFile(file);
-        }
-
         return this;
     }
 
@@ -56,11 +37,6 @@ public class VideoIntentBuilder {
 
     public VideoIntentBuilder setVideoQuality(VideoQuality videoQuality) {
         this.videoQuality = videoQuality.getQuality();
-        return this;
-    }
-
-    public VideoIntentBuilder setFlags(int flags) {
-        this.flags = flags;
         return this;
     }
 
@@ -78,9 +54,7 @@ public class VideoIntentBuilder {
         if (flags != 0) {
             intent.setFlags(flags);
         }
-//        if (videoOutput != null) {
-//            intent.putExtra(MediaStore.EXTRA_OUTPUT, videoOutput);
-//        }
+
         return intent;
     }
 
