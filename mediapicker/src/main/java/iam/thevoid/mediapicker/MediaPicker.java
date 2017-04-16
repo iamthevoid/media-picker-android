@@ -1,6 +1,5 @@
 package iam.thevoid.mediapicker;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
@@ -8,19 +7,9 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
-import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.net.Uri;
-import android.os.Build;
-import android.provider.DocumentsContract;
-import android.provider.MediaStore;
-import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
-import android.widget.Toast;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 
 import iam.thevoid.mediapicker.builder.ImageIntentBuilder;
@@ -51,7 +40,7 @@ public final class MediaPicker {
         }
 
         if (with.length > 1) {
-            IntentData[] intentDatas = new IntentData[with.length];
+            ArrayList<IntentData> intentDatas = new ArrayList<>();
             for (int i = 0; i < with.length; i++) {
                 Intent intent = getIntent(with[i]);
 
@@ -81,7 +70,7 @@ public final class MediaPicker {
                     generated.setFlags(intent.getFlags());
                     generated.setComponent(name);
 
-                    intentDatas[i] = new IntentData(generated, getRequestCode(with[i]), getTitle(with[i]));
+                    intentDatas.add(new IntentData(generated, getRequestCode(with[i]), getTitle(with[i])));
                 }
             }
             ChooseAppDialog.showForResult(activity, ((AppCompatActivity) activity).getSupportFragmentManager(), -1, intentDatas);
@@ -144,11 +133,6 @@ public final class MediaPicker {
 
     private static int getTitle(With with) {
         switch (with) {
-
-            case IMAGE_PICKER:
-                return R.string.image_pick;
-            case VIDEO_AND_IMAGE_PICKER:
-                return R.string.video_pick;
             case PHOTO_CAMERA:
                 return R.string.take_photo;
             case VIDEO_CAMERA:

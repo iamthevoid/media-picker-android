@@ -2,7 +2,7 @@
     <string name="app_name">Media Picker</string>
     <string name="image_pick">Pick image</string>
     <string name="video_pick">Pick video</string>
-    <string name="take_photo">Take photo</string>
-    <string name="take_video">Take video</string>
+    <string name="take_photo">Capture photo</string>
+    <string name="take_video">Capture video</string>
     <string name="video_size_limit_exceed">Video size limit exceed</string>
 </resources>

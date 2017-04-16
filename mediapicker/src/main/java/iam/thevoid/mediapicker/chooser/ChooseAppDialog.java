@@ -13,6 +13,7 @@ import android.widget.AdapterView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import iam.thevoid.mediapicker.util.ResAdapter;
 import iam.thevoid.mediapicker.R;
@@ -76,6 +77,10 @@ public class ChooseAppDialog extends BottomSheetDialogFragment implements Adapte
         }
     }
 
+
+    public static void showForResult(Activity context, android.support.v4.app.FragmentManager fragmentManager, int title, ArrayList<IntentData> intentDatas) {
+        show(fragmentManager, ResAdapter.getString(context, title), intentDatas);
+    }
 
     public static void showForResult(Activity context, android.support.v4.app.FragmentManager fragmentManager, int title, IntentData... intents) {
         show(fragmentManager, ResAdapter.getString(context, title), makeList(intents));

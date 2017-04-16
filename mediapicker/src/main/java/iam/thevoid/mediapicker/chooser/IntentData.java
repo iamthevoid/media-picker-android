@@ -14,11 +14,6 @@ public class IntentData implements Parcelable {
     private int title;
     private Intent intent;
 
-
-    public IntentData(Intent intent) {
-        this(intent, -1, -1);
-    }
-
     public IntentData(Intent intent, int requestCode) {
         this(intent, requestCode, -1);
     }

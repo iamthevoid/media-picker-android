@@ -45,7 +45,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @NeedsPermission({CAMERA, READ_EXTERNAL_STORAGE, WRITE_EXTERNAL_STORAGE})
     protected void performPickImage() {
-        MediaPicker.pickImage(this, MediaPicker.With.VIDEO_AND_IMAGE_PICKER, MediaPicker.With.PHOTO_CAMERA, MediaPicker.With.VIDEO_CAMERA);
+        MediaPicker.pickImage(this, MediaPicker.With.IMAGE_PICKER, MediaPicker.With.PHOTO_CAMERA, MediaPicker.With.VIDEO_CAMERA);
     }
 
     @Override
