@@ -3,6 +3,7 @@ package iam.thevoid.mediapicker.rxmediapicker;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -24,6 +25,11 @@ public class HiddenCropFragment extends Fragment {
         if (savedInstanceState == null) {
             handleIntent(getArguments());
         }
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
     }
 
     public static Fragment getFragment(CropArea cropArea, Uri uri) {

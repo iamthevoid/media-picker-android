@@ -46,5 +46,5 @@ allprojects {
 }
 ```
 ```groovy
-compile 'iam.void.mediapicker:mediapicker:0.2.0'
+compile 'iam.void.mediapicker:mediapicker:the.last.version'
 ```

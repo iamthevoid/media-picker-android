@@ -130,7 +130,8 @@ public class RxMediaPicker implements MediaPickSelectAppDialog.OnSelectaAppCallb
     }
 
     private void startCrop(Uri uri) {
-        IntentUtils.getActivity(mContext).getFragmentManager()
+        IntentUtils.getActivity(mContext)
+                .getFragmentManager()
                 .beginTransaction()
                 .add(HiddenCropFragment.getFragment(cropArea, uri), HiddenCropFragment.class.getCanonicalName())
                 .commitAllowingStateLoss();
