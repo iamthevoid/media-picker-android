@@ -35,7 +35,7 @@ android {
 publish {
     groupId = 'iam.void.mediapicker'
     artifactId = 'mediapicker'
-    publishVersion = '0.1.3'
+    publishVersion = '0.2.0'
     desc = 'Library that helps a few lines of code to get pictures and video from the android file system, or ures cloud, as well as the camera device.'
     licences = ['Apache-2.0']
     uploadName='RxMediaPicker'
