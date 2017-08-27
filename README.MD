@@ -36,3 +36,15 @@ For cropping you must add crop activity to your 'AndroidManifest.xml'
         <activity
             android:name="iam.thevoid.mediapicker.cropper.CropImageActivity"/>
 ```
+
+Adding to project
+```groovy
+allprojects {
+    repositories {
+        maven { url "https://dl.bintray.com/iamthevoid/maven/" }
+    }
+}
+```
+```groovy
+compile 'iam.void.mediapicker:mediapicker:0.2.0'
+```
