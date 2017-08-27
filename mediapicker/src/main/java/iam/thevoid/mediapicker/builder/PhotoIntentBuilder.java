@@ -13,6 +13,7 @@ public class PhotoIntentBuilder {
 
     private int flags = 0;
 
+
     public PhotoIntentBuilder setFlags(int flags) {
         this.flags = flags;
         return this;

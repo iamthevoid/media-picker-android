@@ -12,11 +12,6 @@ public class ImageIntentBuilder {
     private Mimetype mimetype = Mimetype.BOTH_IMAGE_AND_VIDEO;
     private boolean localOnly = false;
 
-    public ImageIntentBuilder setFlags(int flags) {
-        this.flags = flags;
-        return this;
-    }
-
     public ImageIntentBuilder setLocalOnly(boolean localOnly) {
         this.localOnly = localOnly;
         return this;
@@ -45,9 +40,9 @@ public class ImageIntentBuilder {
     public enum Mimetype {
         IMAGE("image/*"),
         VIDEO("video/*"),
-        BOTH_IMAGE_AND_VIDEO("*/*");
+        BOTH_IMAGE_AND_VIDEO("image/*, video/*");
 
-        private Mimetype(String type) {
+        Mimetype(String type) {
             this.type = type;
         }
 

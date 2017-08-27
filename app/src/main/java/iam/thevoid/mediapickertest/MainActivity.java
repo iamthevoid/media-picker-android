@@ -1,63 +1,100 @@
 package iam.thevoid.mediapickertest;
 
-import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.TextView;
+import android.widget.ImageView;
+import android.widget.Toast;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import iam.thevoid.mediapicker.MediaPicker;
-import permissions.dispatcher.NeedsPermission;
-import permissions.dispatcher.RuntimePermissions;
+import com.bumptech.glide.Glide;
 
-import static android.Manifest.permission.CAMERA;
-import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
-import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
+import java.io.File;
 
-@RuntimePermissions
+import iam.thevoid.mediapicker.cropper.CropArea;
+import iam.thevoid.mediapicker.rxmediapicker.Purpose;
+import iam.thevoid.mediapicker.rxmediapicker.RxMediaPicker;
+import iam.thevoid.mediapicker.rxmediapicker.UriTransformer;
+import iam.thevoid.mediapicker.rxmediapicker.metrics.MemorySize;
+import iam.thevoid.mediapicker.rxmediapicker.metrics.SizeUnit;
+
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
-    @BindView(R.id.text)
-    TextView textView;
-    @BindView(R.id.button)
-    Button button;
+    ImageView mImageView;
+    Button mIndeterminatBtn;
+    Button mJustBtn;
+    Button mCircleCropBtn;
+    Button mToastFileSizeBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        ButterKnife.bind(this);
-        button.setOnClickListener(this);
+        mImageView = (ImageView) findViewById(R.id.image);
+        mIndeterminatBtn = (Button) findViewById(R.id.btn_indeterminate);
+        mIndeterminatBtn.setOnClickListener(this);
+        mToastFileSizeBtn = (Button) findViewById(R.id.btn_toast_filesize);
+        mToastFileSizeBtn.setOnClickListener(this);
+        mJustBtn = (Button) findViewById(R.id.btn_just);
+        mJustBtn.setOnClickListener(this);
+        mCircleCropBtn = (Button) findViewById(R.id.btn_round_crop);
+        mCircleCropBtn.setOnClickListener(this);
     }
 
     @Override
     public void onClick(View v) {
-        Log.i(TAG, "onClick: ");
-        MainActivityPermissionsDispatcher.performPickImageWithCheck(this);
-    }
+        switch (v.getId()) {
+            case R.id.btn_indeterminate:
+                RxMediaPicker.builder(this)
+                        .crop(CropArea.indeterminate())
+                        .pick(Purpose.Pick.IMAGE)
+                        .take(Purpose.Take.PHOTO)
+                        .build()
+                        .subscribe(this::loadIage);
+                break;
+            case R.id.btn_just:
+                RxMediaPicker.builder(this)
+                        .pick(Purpose.Pick.IMAGE)
+                        .take(Purpose.Take.PHOTO)
+                        .build()
+                        .subscribe(this::loadIage);
+                break;
+            case R.id.btn_round_crop:
+                RxMediaPicker.builder(this)
+                        .crop(CropArea.circle())
+                        .pick(Purpose.Pick.IMAGE)
+                        .take(Purpose.Take.PHOTO)
+                        .build()
+                        .subscribe(this::loadIage);
 
-    @NeedsPermission({CAMERA, READ_EXTERNAL_STORAGE, WRITE_EXTERNAL_STORAGE})
-    protected void performPickImage() {
-        MediaPicker.pickImage(this, MediaPicker.With.IMAGE_PICKER, MediaPicker.With.PHOTO_CAMERA, MediaPicker.With.VIDEO_CAMERA);
-    }
+                break;
+            case R.id.btn_toast_filesize:
+                RxMediaPicker.builder(this)
+                        .pick(Purpose.Pick.IMAGE)
+                        .take(Purpose.Take.PHOTO)
+                        .build()
+                        .compose(UriTransformer.file(this))
+                        .subscribe(file -> {
+                            Toast.makeText(this, "File size is " + filesizeInMb(file), Toast.LENGTH_LONG).show();
+                        });
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        MainActivityPermissionsDispatcher.onRequestPermissionsResult(this, requestCode, grantResults);
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        String path = MediaPicker.onActivityResult(this, requestCode, resultCode, data);
-        if (path != null) {
-            textView.setText(path);
+                break;
         }
+    }
+
+    private String filesizeInMb(File file) {
+        double size = file.length();
+        return "" + size / 1024 / 1024;
+    }
+
+    private void loadIage(Uri filepath) {
+        Glide
+                .with(this)
+                .load(filepath)
+                .asBitmap()
+                .into(mImageView);
     }
 }

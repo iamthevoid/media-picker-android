@@ -1,6 +1,9 @@
 package iam.thevoid.mediapicker.chooser;
 
+import android.content.ComponentName;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
+import android.content.pm.ResolveInfo;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -65,4 +68,12 @@ public class IntentData implements Parcelable {
             return new IntentData[size];
         }
     };
+
+    public void setApp(ResolveInfo app) {
+        ActivityInfo activity = app.activityInfo;
+        ComponentName name = new ComponentName(activity.applicationInfo.packageName,
+                activity.name);
+        this.intent.setComponent(name);
+    }
 }
+

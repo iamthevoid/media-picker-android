@@ -1,32 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <TextView
-        android:id="@+id/text"
-        android:text="image path"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="47dp"
-        android:layout_marginLeft="8dp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        android:layout_marginRight="8dp"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintHorizontal_bias="0.501" />
+    <ImageView
+        android:id="@+id/image"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
     <Button
-        android:id="@+id/button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Pick image"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-</android.support.constraint.ConstraintLayout>
+        android:id="@+id/btn_indeterminate"
+        style="@style/button"
+        android:text="INDETERMINATE CROP"
+        />
+    <Button
+        style="@style/button"
+        android:id="@+id/btn_just"
+        android:layout_marginTop="48dp"
+        android:text="JUST PHOTO / IMAGE"
+        />
+    <Button
+        android:id="@+id/btn_round_crop"
+        style="@style/button"
+        android:layout_marginTop="96dp"
+        android:text="ROUND (SQUARE) CROP"
+        />
+    <Button
+        android:id="@+id/btn_toast_filesize"
+        style="@style/button"
+        android:layout_marginTop="144dp"
+        android:text="TOAST FILESIZE"
+        />
+</FrameLayout>

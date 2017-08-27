@@ -1,4 +1,4 @@
-package iam.thevoid.mediapicker.util;
+package iam.thevoid.mediapicker.rxmediapicker.metrics;
 
 /**
  * Created by iam on 03.04.17.

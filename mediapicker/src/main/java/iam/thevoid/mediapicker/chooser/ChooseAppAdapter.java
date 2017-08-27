@@ -19,17 +19,15 @@ import iam.thevoid.mediapicker.R;
  * Created by iam on 03.04.17.
  */
 
-public class ChooseAppAdapter extends IntentAdapter {
+public class ChooseAppAdapter extends IntentDataAdapter {
 
-    private final ArrayList<IntentData> intentDatas;
     private WeakReference<Context> contextWeakReference;
 
     private AdapterView.OnItemClickListener onItemClickListener;
 
     public ChooseAppAdapter(Context context, ArrayList<IntentData> intentDatas) {
-        super(context.getPackageManager(), getResolveInfo(context.getPackageManager(), intentDatas));
+        super(context.getPackageManager(), intentDatas);
         this.contextWeakReference = new WeakReference<>(context);
-        this.intentDatas = intentDatas;
     }
 
     public void setOnItemClickListener(AdapterView.OnItemClickListener onItemClickListener) {
@@ -51,24 +49,23 @@ public class ChooseAppAdapter extends IntentAdapter {
         public CustomAppChooserVH(View itemView) {
             super(itemView);
             this.view = itemView;
-            imageView = (ImageView) itemView.findViewById(R.id.app_icon);
-            textView = (TextView) itemView.findViewById(R.id.app_text);
+            this.imageView = (ImageView) view.findViewById(R.id.app_icon);
+            this.textView = (TextView) view.findViewById(R.id.app_text);
         }
 
         @Override
-        public void onBind(PackageManager pm, ResolveInfo resolveInfo, final int position) {
+        public void onBind(PackageManager pm, ResolveInfo resolveInfo, int position) {
             imageView.setImageDrawable(resolveInfo.loadIcon(pm));
 
-            int title = intentDatas.get(position).getTitle();
+            IntentData intentData = getIntentData(resolveInfo);
+
+            int title = intentData != null ? intentData.getTitle() : -1;
 
             textView.setText(title == -1 ? resolveInfo.loadLabel(pm) : contextWeakReference.get().getString(title));
 
-            view.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (onItemClickListener != null) {
-                        onItemClickListener.onItemClick(null, view, position, position + 1);
-                    }
+            view.setOnClickListener(v -> {
+                if (onItemClickListener != null) {
+                    onItemClickListener.onItemClick(null, view, position, position + 1);
                 }
             });
         }

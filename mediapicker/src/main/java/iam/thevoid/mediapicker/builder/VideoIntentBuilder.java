@@ -1,18 +1,11 @@
 package iam.thevoid.mediapicker.builder;
 
-import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Build;
-import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
-import android.support.v4.content.FileProvider;
 
-import java.io.File;
-
-import iam.thevoid.mediapicker.util.SizeUnit;
-
+import iam.thevoid.mediapicker.rxmediapicker.metrics.SizeUnit;
 
 /**
  * Created by iam on 03.04.17.
@@ -20,23 +13,29 @@ import iam.thevoid.mediapicker.util.SizeUnit;
 
 public class VideoIntentBuilder {
 
-    private int videoDuration = -1;
-    private int videoQuality = -1;
+    private long videoDuration = -1;
+    private long videoQuality = -1;
     private long videoFileSize = -1;
+    private Uri videoOutput;
     private int flags = 0;
 
-    public VideoIntentBuilder setVideoDuration(int videoDuration) {
+    public VideoIntentBuilder setVideoDuration(long videoDuration) {
         this.videoDuration = videoDuration;
         return this;
     }
 
-    public VideoIntentBuilder setVideoFileSize(int videoFileSize, @NonNull SizeUnit unit) {
-        this.videoFileSize = (long) videoFileSize * unit.getBytes();
+    public VideoIntentBuilder setVideoFileSize(long videoFileSize, @NonNull SizeUnit unit) {
+        this.videoFileSize = videoFileSize * unit.getBytes();
         return this;
     }
 
     public VideoIntentBuilder setVideoQuality(VideoQuality videoQuality) {
         this.videoQuality = videoQuality.getQuality();
+        return this;
+    }
+
+    public VideoIntentBuilder setFlags(int flags) {
+        this.flags = flags;
         return this;
     }
 
@@ -54,7 +53,9 @@ public class VideoIntentBuilder {
         if (flags != 0) {
             intent.setFlags(flags);
         }
-
+//        if (videoOutput != null) {
+//            intent.putExtra(MediaStore.EXTRA_OUTPUT, videoOutput);
+//        }
         return intent;
     }
 
