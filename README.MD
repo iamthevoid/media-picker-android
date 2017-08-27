@@ -2,7 +2,6 @@ Simple RxJava 1 library for pick image or video. For image cropping used
 [ArthurHub/Android-Image-Cropper](https://github.com/ArthurHub/Android-Image-Cropper).
 
 Using:
-
 ```java
     RxMediaPicker.builder(this)
         .crop(CropArea.circle())
@@ -31,4 +30,9 @@ OR
         .build()
         .compose(UriTransformer.file(context))
         .subscribe(file -> { });
+```
+For cropping you must add crop activity to your 'AndroidManifest.xml'
+```xml
+        <activity
+            android:name="iam.thevoid.mediapicker.cropper.CropImageActivity"/>
 ```
