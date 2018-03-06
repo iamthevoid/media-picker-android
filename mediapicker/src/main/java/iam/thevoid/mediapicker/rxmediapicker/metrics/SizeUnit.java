@@ -1,9 +1,5 @@
 package iam.thevoid.mediapicker.rxmediapicker.metrics;
 
-/**
- * Created by iam on 03.04.17.
- */
-
 public enum SizeUnit {
     BYTE(1),
     KILOBYTE(1024 * BYTE.getBytes()),

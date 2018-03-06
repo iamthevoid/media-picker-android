@@ -1,5 +1,6 @@
 package iam.thevoid.mediapicker.cropper;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -7,14 +8,12 @@ import android.os.AsyncTask;
 
 import java.lang.ref.WeakReference;
 
-/**
- * Created by iam on 12/07/2017.
- */
-
 final class BitmapCroppingWorkerTask extends AsyncTask<Void, Void, BitmapCroppingWorkerTask.Result> {
     private final WeakReference<CropImageView> mCropImageViewReference;
     private final Bitmap mBitmap;
     private final Uri mUri;
+
+    @SuppressLint("StaticFieldLeak")
     private final Context mContext;
     private final float[] mCropPoints;
     private final int mDegreesRotated;
@@ -33,8 +32,8 @@ final class BitmapCroppingWorkerTask extends AsyncTask<Void, Void, BitmapCroppin
     private final int mSaveCompressQuality;
 
     BitmapCroppingWorkerTask(CropImageView cropImageView, Bitmap bitmap, float[] cropPoints, int degreesRotated, boolean fixAspectRatio, int aspectRatioX, int aspectRatioY, int reqWidth, int reqHeight, boolean flipHorizontally, boolean flipVertically, CropImageView.RequestSizeOptions options, Uri saveUri, Bitmap.CompressFormat saveCompressFormat, int saveCompressQuality) {
-        this.mCropImageViewReference = new WeakReference(cropImageView);
-        this.mContext = cropImageView.getContext();
+        this.mCropImageViewReference = new WeakReference<>(cropImageView);
+        this.mContext = cropImageView.getContext().getApplicationContext();
         this.mBitmap = bitmap;
         this.mCropPoints = cropPoints;
         this.mUri = null;
@@ -55,7 +54,7 @@ final class BitmapCroppingWorkerTask extends AsyncTask<Void, Void, BitmapCroppin
     }
 
     BitmapCroppingWorkerTask(CropImageView cropImageView, Uri uri, float[] cropPoints, int degreesRotated, int orgWidth, int orgHeight, boolean fixAspectRatio, int aspectRatioX, int aspectRatioY, int reqWidth, int reqHeight, boolean flipHorizontally, boolean flipVertically, CropImageView.RequestSizeOptions options, Uri saveUri, Bitmap.CompressFormat saveCompressFormat, int saveCompressQuality) {
-        this.mCropImageViewReference = new WeakReference(cropImageView);
+        this.mCropImageViewReference = new WeakReference<>(cropImageView);
         this.mContext = cropImageView.getContext();
         this.mUri = uri;
         this.mCropPoints = cropPoints;
@@ -117,7 +116,7 @@ final class BitmapCroppingWorkerTask extends AsyncTask<Void, Void, BitmapCroppin
         if (result != null) {
             boolean completeCalled = false;
             if (!this.isCancelled()) {
-                CropImageView cropImageView = (CropImageView) this.mCropImageViewReference.get();
+                CropImageView cropImageView = this.mCropImageViewReference.get();
                 if (cropImageView != null) {
                     completeCalled = true;
                     cropImageView.onImageCroppingAsyncComplete(result);

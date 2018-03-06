@@ -1,15 +1,21 @@
 package iam.thevoid.mediapicker.builder;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
+import android.os.Build;
+import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.v4.content.FileProvider;
 
-/**
- * Created by iam on 03.04.17.
- */
+import java.io.File;
+
+import iam.thevoid.mediapicker.util.Editor;
+import iam.thevoid.mediapicker.util.FileUtil;
 
 public class PhotoIntentBuilder {
 
-    private static final String TAG = PhotoIntentBuilder.class.getSimpleName();
+    private static final String PHOTO_IMAGE_PATH = "PHOTO_IMAGE_PATH";
 
     private int flags = 0;
 
@@ -19,13 +25,35 @@ public class PhotoIntentBuilder {
         return this;
     }
 
-    public Intent build() {
+    public Intent build(Context context) {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 
         if (flags != 0) {
             intent.setFlags(flags);
         }
 
-        return intent;
+        String filename = Editor.currentDateFilename("", ".jpg");
+
+        File file =
+                new File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES), filename);
+
+        if (file.exists()) {
+            file.delete();
+        }
+
+        Uri photoOutput;
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            String packageName = context.getPackageName();
+            photoOutput = FileProvider.getUriForFile(context, packageName + ".fileprovider", file);
+        } else {
+            photoOutput = Uri.fromFile(file);
+        }
+
+        FileUtil.storePhotoPath(context, file.getAbsolutePath());
+
+        return new Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+                .putExtra(PHOTO_IMAGE_PATH, file.getAbsolutePath())
+                .putExtra(MediaStore.EXTRA_OUTPUT, photoOutput);
     }
 }

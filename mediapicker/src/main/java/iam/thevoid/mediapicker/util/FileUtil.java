@@ -1,15 +1,20 @@
 package iam.thevoid.mediapicker.util;
 
+import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
+import android.os.FileObserver;
+import android.preference.PreferenceManager;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.util.Log;
 import android.webkit.MimeTypeMap;
 import android.widget.Toast;
 
@@ -18,6 +23,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import iam.thevoid.mediapicker.R;
+import iam.thevoid.mediapicker.builder.PhotoIntentBuilder;
 import iam.thevoid.mediapicker.rxmediapicker.metrics.SizeUnit;
 
 /**
@@ -25,6 +31,8 @@ import iam.thevoid.mediapicker.rxmediapicker.metrics.SizeUnit;
  */
 
 public class FileUtil {
+
+    private static final String FILEPATH_KEY = FileUtil.class.getCanonicalName() + ".FILEPATH_KEY";
 
     public static String temp(Context context) {
         return context.getFilesDir().getPath() + "/temp";
@@ -38,6 +46,34 @@ public class FileUtil {
             ".mkv",
             ".mov"
     );
+
+    public static void storePhotoPath(Context context, String path) {
+        Activity activity = IntentUtils.getActivity(context);
+        SharedPreferences preferences = activity.getPreferences(Activity.MODE_PRIVATE);
+        preferences.edit().putString(FILEPATH_KEY, path).apply();
+    }
+
+    public static String getPhotoPath(Context context) {
+        Activity activity = IntentUtils.getActivity(context);
+        SharedPreferences preferences = activity.getPreferences(Activity.MODE_PRIVATE);
+        return preferences.getString(FILEPATH_KEY, "");
+    }
+
+    private static void clearPhotoPath(Context context) {
+        Activity activity = IntentUtils.getActivity(context);
+        SharedPreferences preferences = activity.getPreferences(Activity.MODE_PRIVATE);
+        preferences.edit().remove(FILEPATH_KEY).apply();
+    }
+
+    public static String generatePathForPhotoIntent(Context context) {
+        File file = new File(/*context.getExternalFilesDir(Environment.DIRECTORY_PICTURES),*/ getPhotoPath(context));
+
+        clearPhotoPath(context);
+
+        while (!file.canRead()) ;
+
+        return file.exists() ? file.getAbsolutePath() : null;
+    }
 
     @NonNull
     public static String getExtension(String path) {

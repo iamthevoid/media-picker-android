@@ -26,10 +26,6 @@ import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.egl.EGLContext;
 import javax.microedition.khronos.egl.EGLDisplay;
 
-/**
- * Created by iam on 12/07/2017.
- */
-
 final class BitmapUtils {
     static final Rect EMPTY_RECT = new Rect();
     static final RectF EMPTY_RECT_F = new RectF();
@@ -51,8 +47,8 @@ final class BitmapUtils {
                 ei = new ExifInterface(is);
                 is.close();
             }
-        } catch (Exception var5) {
-            ;
+        } catch (Exception ignored) {
+
         }
 
         return ei != null ? rotateBitmapByExif(bitmap, ei) : new RotateBitmapResult(bitmap, 0);
@@ -267,8 +263,8 @@ final class BitmapUtils {
             BitmapSampled bitmapSampled = decodeSampledBitmapRegion(context, loadedImageUri, rect, width, height, sampleMulti);
             result = bitmapSampled.bitmap;
             sampleSize = bitmapSampled.sampleSize;
-        } catch (Exception var20) {
-            ;
+        } catch (Exception ignored) {
+
         }
 
         if (result == null) {
@@ -353,8 +349,7 @@ final class BitmapUtils {
 
             try {
                 stream = resolver.openInputStream(uri);
-                Bitmap var4 = BitmapFactory.decodeStream(stream, EMPTY_RECT, options);
-                return var4;
+                return BitmapFactory.decodeStream(stream, EMPTY_RECT, options);
             } catch (OutOfMemoryError var8) {
                 options.inSampleSize *= 2;
             } finally {
@@ -377,12 +372,11 @@ final class BitmapUtils {
 
             while (true) {
                 try {
-                    BitmapSampled var9 = new BitmapSampled(decoder.decodeRegion(rect, options), options.inSampleSize);
-                    return var9;
+                    return new BitmapSampled(decoder.decodeRegion(rect, options), options.inSampleSize);
                 } catch (OutOfMemoryError var14) {
                     options.inSampleSize *= 2;
                     if (options.inSampleSize > 512) {
-                        return new BitmapSampled((Bitmap) null, 1);
+                        return new BitmapSampled(null, 1);
                     }
                 }
             }
@@ -474,7 +468,6 @@ final class BitmapUtils {
     }
 
     private static int getMaxTextureSize() {
-        boolean var0 = true;
 
         try {
             EGL10 egl = (EGL10) EGLContext.getEGL();
@@ -482,7 +475,7 @@ final class BitmapUtils {
             int[] version = new int[2];
             egl.eglInitialize(display, version);
             int[] totalConfigurations = new int[1];
-            egl.eglGetConfigs(display, (EGLConfig[]) null, 0, totalConfigurations);
+            egl.eglGetConfigs(display, null, 0, totalConfigurations);
             EGLConfig[] configurationsList = new EGLConfig[totalConfigurations[0]];
             egl.eglGetConfigs(display, configurationsList, totalConfigurations[0], totalConfigurations);
             int[] textureSize = new int[1];
@@ -506,8 +499,8 @@ final class BitmapUtils {
         if (closeable != null) {
             try {
                 closeable.close();
-            } catch (IOException var2) {
-                ;
+            } catch (IOException ignored) {
+
             }
         }
 

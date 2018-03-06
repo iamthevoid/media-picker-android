@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 
 import com.tbruyelle.rxpermissions.RxPermissions;
@@ -32,13 +33,8 @@ import static android.Manifest.permission.CAMERA;
 import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 
-/**
- * Created by iam on 04/08/2017.
- */
 
-public class RxMediaPicker implements MediaPickSelectAppDialog.OnSelectaAppCallback {
-
-    private static final String TAG = RxMediaPicker.class.getSimpleName();
+public class RxMediaPicker implements MediaPickSelectAppDialog.OnSelectAppCallback {
 
     static final String EXTRA_CROP_AREA = "EXTRA_CROP_AREA";
     static final String EXTRA_INTENT = "EXTRA_INTENT";
@@ -150,7 +146,9 @@ public class RxMediaPicker implements MediaPickSelectAppDialog.OnSelectaAppCallb
 
     private String[] needsPermissions() {
         List<String> permissions = new ArrayList<>();
-        permissions.add(READ_EXTERNAL_STORAGE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            permissions.add(READ_EXTERNAL_STORAGE);
+        }
         permissions.add(WRITE_EXTERNAL_STORAGE);
         if (purposes.contains(Purpose.Take.PHOTO) || purposes.contains(Purpose.Take.VIDEO)) {
             permissions.add(CAMERA);

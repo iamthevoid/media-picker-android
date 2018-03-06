@@ -24,7 +24,7 @@ final class CropImageAnimation extends Animation implements Animation.AnimationL
     private final float[] mAnimPoints = new float[8];
     private final float[] mAnimMatrix = new float[9];
 
-    public CropImageAnimation(ImageView cropImageView, CropOverlayView cropOverlayView) {
+    CropImageAnimation(ImageView cropImageView, CropOverlayView cropOverlayView) {
         this.mImageView = cropImageView;
         this.mCropOverlayView = cropOverlayView;
         this.setDuration(300L);
@@ -33,14 +33,14 @@ final class CropImageAnimation extends Animation implements Animation.AnimationL
         this.setAnimationListener(this);
     }
 
-    public void setStartState(float[] boundPoints, Matrix imageMatrix) {
+    void setStartState(float[] boundPoints, Matrix imageMatrix) {
         this.reset();
         System.arraycopy(boundPoints, 0, this.mStartBoundPoints, 0, 8);
         this.mStartCropWindowRect.set(this.mCropOverlayView.getCropWindowRect());
         imageMatrix.getValues(this.mStartImageMatrix);
     }
 
-    public void setEndState(float[] boundPoints, Matrix imageMatrix) {
+    void setEndState(float[] boundPoints, Matrix imageMatrix) {
         System.arraycopy(boundPoints, 0, this.mEndBoundPoints, 0, 8);
         this.mEndCropWindowRect.set(this.mCropOverlayView.getCropWindowRect());
         imageMatrix.getValues(this.mEndImageMatrix);

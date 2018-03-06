@@ -23,53 +23,53 @@ final class CropWindowHandler {
     CropWindowHandler() {
     }
 
-    public RectF getRect() {
+    RectF getRect() {
         this.mGetEdges.set(this.mEdges);
         return this.mGetEdges;
     }
 
-    public float getMinCropWidth() {
+    float getMinCropWidth() {
         return Math.max(this.mMinCropWindowWidth, this.mMinCropResultWidth / this.mScaleFactorWidth);
     }
 
-    public float getMinCropHeight() {
+    float getMinCropHeight() {
         return Math.max(this.mMinCropWindowHeight, this.mMinCropResultHeight / this.mScaleFactorHeight);
     }
 
-    public float getMaxCropWidth() {
+    float getMaxCropWidth() {
         return Math.min(this.mMaxCropWindowWidth, this.mMaxCropResultWidth / this.mScaleFactorWidth);
     }
 
-    public float getMaxCropHeight() {
+    float getMaxCropHeight() {
         return Math.min(this.mMaxCropWindowHeight, this.mMaxCropResultHeight / this.mScaleFactorHeight);
     }
 
-    public float getScaleFactorWidth() {
+    float getScaleFactorWidth() {
         return this.mScaleFactorWidth;
     }
 
-    public float getScaleFactorHeight() {
+    float getScaleFactorHeight() {
         return this.mScaleFactorHeight;
     }
 
-    public void setMinCropResultSize(int minCropResultWidth, int minCropResultHeight) {
+    void setMinCropResultSize(int minCropResultWidth, int minCropResultHeight) {
         this.mMinCropResultWidth = (float) minCropResultWidth;
         this.mMinCropResultHeight = (float) minCropResultHeight;
     }
 
-    public void setMaxCropResultSize(int maxCropResultWidth, int maxCropResultHeight) {
+    void setMaxCropResultSize(int maxCropResultWidth, int maxCropResultHeight) {
         this.mMaxCropResultWidth = (float) maxCropResultWidth;
         this.mMaxCropResultHeight = (float) maxCropResultHeight;
     }
 
-    public void setCropWindowLimits(float maxWidth, float maxHeight, float scaleFactorWidth, float scaleFactorHeight) {
+    void setCropWindowLimits(float maxWidth, float maxHeight, float scaleFactorWidth, float scaleFactorHeight) {
         this.mMaxCropWindowWidth = maxWidth;
         this.mMaxCropWindowHeight = maxHeight;
         this.mScaleFactorWidth = scaleFactorWidth;
         this.mScaleFactorHeight = scaleFactorHeight;
     }
 
-    public void setInitialAttributeValues(CropImageOptions options) {
+    void setInitialAttributeValues(CropImageOptions options) {
         this.mMinCropWindowWidth = (float) options.minCropWindowWidth;
         this.mMinCropWindowHeight = (float) options.minCropWindowHeight;
         this.mMinCropResultWidth = (float) options.minCropResultWidth;
@@ -78,15 +78,15 @@ final class CropWindowHandler {
         this.mMaxCropResultHeight = (float) options.maxCropResultHeight;
     }
 
-    public void setRect(RectF rect) {
+    void setRect(RectF rect) {
         this.mEdges.set(rect);
     }
 
-    public boolean showGuidelines() {
+    boolean showGuidelines() {
         return this.mEdges.width() >= 100.0F && this.mEdges.height() >= 100.0F;
     }
 
-    public CropWindowMoveHandler getMoveHandler(float x, float y, float targetRadius, CropImageView.CropShape cropShape) {
+    CropWindowMoveHandler getMoveHandler(float x, float y, float targetRadius, CropImageView.CropShape cropShape) {
         CropWindowMoveHandler.Type type = cropShape == CropImageView.CropShape.OVAL ? this.getOvalPressedMoveType(x, y) : this.getRectanglePressedMoveType(x, y, targetRadius);
         return type != null ? new CropWindowMoveHandler(type, this, x, y) : null;
     }

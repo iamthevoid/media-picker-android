@@ -2,10 +2,6 @@ package iam.thevoid.mediapicker.builder;
 
 import android.content.Intent;
 
-/**
- * Created by iam on 03.04.17.
- */
-
 public class ImageIntentBuilder {
 
     private int flags = 0;

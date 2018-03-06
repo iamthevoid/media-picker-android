@@ -2,10 +2,6 @@ package iam.thevoid.mediapicker.rxmediapicker.metrics;
 
 import java.util.concurrent.TimeUnit;
 
-/**
- * Created by iam on 14/08/2017.
- */
-
 public class Duration {
     private TimeUnit timeUnit;
     private long duration;

@@ -6,30 +6,21 @@ import android.app.FragmentManager;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
-import android.util.Log;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.Random;
 
 import iam.thevoid.mediapicker.cropper.CropArea;
 import iam.thevoid.mediapicker.util.FileUtil;
-import rx.Emitter;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
-
-/**
- * Created by iam on 04/08/2017.
- */
 
 public class HiddenPickerFragment extends Fragment {
 
@@ -81,27 +72,50 @@ public class HiddenPickerFragment extends Fragment {
             popBackStack();
         } else {
             if (resultCode == Activity.RESULT_OK) {
-                if (data.getData() != null) {
-                    uri = data.getData();
-                    onImagePicked();
-                    popBackStack();
-                } else if (requestCode == Purpose.REQUEST_TAKE_PHOTO) {
-                    if (data.getExtras() != null && data.getExtras().get("data") != null) {
-                        Observable.<Uri>create(emitter -> {
-                            emitter.onNext(bitmapToUriConverter(data.getExtras().get("data")));
-                            emitter.onCompleted();
-                        }, Emitter.BackpressureMode.NONE)
-                                .subscribeOn(Schedulers.io())
-                                .observeOn(AndroidSchedulers.mainThread())
-                                .subscribe(u -> {
-                                    uri = u;
-                                    onImagePicked();
-                                    popBackStack();
-                                });
+                if (data == null && requestCode == Purpose.REQUEST_TAKE_PHOTO && FileUtil.getPhotoPath(getActivity()).length() > 0) {
+                    fetchPhotoUriFromPath();
+                } else if (data != null) {
+                    if (data.getData() != null) {
+                        fetchImageUri(data);
+                    } else if (requestCode == Purpose.REQUEST_TAKE_PHOTO) {
+                        fetchPhotoUriFromIntent(data);
                     }
+                } else {
+                    popBackStack();
                 }
+            } else {
+                popBackStack();
             }
         }
+    }
+
+    private void fetchImageUri(Intent data) {
+        uri = data.getData();
+        onImagePicked();
+        popBackStack();
+    }
+
+    private void fetchPhotoUriFromIntent(Intent data) {
+        if (data.getExtras() != null && data.getExtras().get("data") != null) {
+            Observable.just(bitmapToUriConverter(data.getExtras().get("data")))
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(u -> {
+                        uri = u;
+                        onImagePicked();
+                        popBackStack();
+                    });
+        } else {
+            popBackStack();
+        }
+    }
+
+    private void fetchPhotoUriFromPath() {
+        String pathname = FileUtil.generatePathForPhotoIntent(getActivity());
+        uri = pathname == null ? Uri.parse("") : Uri.fromFile(new File(pathname));
+        onImagePicked();
+        popBackStack();
+
     }
 
     private void popBackStack() {
@@ -128,41 +142,6 @@ public class HiddenPickerFragment extends Fragment {
         startActivityForResult(bundle.getParcelable(RxMediaPicker.EXTRA_INTENT),
                 bundle.getInt(RxMediaPicker.EXTRA_REQUEST_CODE, 0));
     }
-
-//    private Uri bitmapToUriConverter(Object mBitmap) {
-//
-//        if (!(mBitmap instanceof Bitmap)) {
-//            return null;
-//        }
-//
-//        Uri uri = null;
-//        try {
-//            final BitmapFactory.Options options = new BitmapFactory.Options();
-//            // Calculate inSampleSize
-//            options.inSampleSize = calculateInSampleSize(options, 100, 100);
-//
-//            // Decode bitmap with inSampleSize set
-//            options.inJustDecodeBounds = false;
-//            Bitmap newBitmap = Bitmap.createScaledBitmap((Bitmap) mBitmap, 200, 200,
-//                    true);
-//            File file = new File(getActivity().getFilesDir(), "Image"
-//                    + new Random().nextInt() + ".jpeg");
-//            FileOutputStream out = getActivity().openFileOutput(file.getName(),
-//                    Context.MODE_WORLD_READABLE);
-//            newBitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
-//            out.flush();
-//            out.close();
-//            //get absolute path
-//            String realPath = file.getAbsolutePath();
-//            File f = new File(realPath);
-//            uri = Uri.fromFile(f);
-//
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            Log.e("Your Error Message", e.getMessage());
-//        }
-//        return uri;
-//    }
 
     private Uri bitmapToUriConverter(Object mBitmap) {
 

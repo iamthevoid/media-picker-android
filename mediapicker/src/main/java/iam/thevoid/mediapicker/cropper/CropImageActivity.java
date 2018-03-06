@@ -42,7 +42,7 @@ public class CropImageActivity extends AppCompatActivity implements CropImageVie
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.setContentView(R.layout.crop_image_activity);
-        this.mCropImageView = (CropImageView) this.findViewById(R.id.cropImageView);
+        this.mCropImageView = this.findViewById(R.id.cropImageView);
         Intent intent = this.getIntent();
         this.mCropImageUri = intent.getParcelableExtra(EXTRA_SOURCE);
         this.mOptions = intent.getParcelableExtra(EXTRA_OPTIONS);
@@ -199,7 +199,7 @@ public class CropImageActivity extends AppCompatActivity implements CropImageVie
             if (this.mCropImageUri != null && grantResults.length > 0 && grantResults[0] == 0) {
                 this.mCropImageView.setImageUriAsync(this.mCropImageUri);
             } else {
-                Toast.makeText(this, "Cancelling, required permissions are not granted", 1).show();
+                Toast.makeText(this, "Cancelling, required permissions are not granted", Toast.LENGTH_LONG).show();
                 this.setResultCancel();
             }
         }
@@ -220,7 +220,7 @@ public class CropImageActivity extends AppCompatActivity implements CropImageVie
                 this.mCropImageView.setRotatedDegrees(this.mOptions.initialRotation);
             }
         } else {
-            this.setResult((Uri) null, error, 1);
+            this.setResult(null, error, 1);
         }
 
     }
@@ -231,7 +231,7 @@ public class CropImageActivity extends AppCompatActivity implements CropImageVie
 
     protected void cropImage() {
         if (this.mOptions.noOutputImage) {
-            this.setResult((Uri) null, (Exception) null, 1);
+            this.setResult(null, null, 1);
         } else {
             Uri outputUri = this.getOutputUri();
             this.mCropImageView.saveCroppedImageAsync(outputUri, this.mOptions.outputCompressFormat, this.mOptions.outputCompressQuality, this.mOptions.outputRequestWidth, this.mOptions.outputRequestHeight, this.mOptions.outputRequestSizeOptions);
@@ -284,8 +284,8 @@ public class CropImageActivity extends AppCompatActivity implements CropImageVie
                     menuItemIcon.mutate();
                     menuItemIcon.setColorFilter(color, PorterDuff.Mode.SRC_ATOP);
                     menuItem.setIcon(menuItemIcon);
-                } catch (Exception var7) {
-                    ;
+                } catch (Exception ignored) {
+
                 }
             }
         }

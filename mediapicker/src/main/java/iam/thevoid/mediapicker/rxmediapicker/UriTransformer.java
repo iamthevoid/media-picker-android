@@ -32,7 +32,7 @@ public final class UriTransformer {
 
     public static Observable.Transformer<Uri, Bitmap> bitmap(Context context) {
         return uriObservable ->
-                uriObservable.flatMap(uri -> uriToBitmap(context, uri));
+                uriObservable.flatMap(uri -> uriToBitmap(context, uri)).subscribeOn(Schedulers.computation());
     }
 
     public static Observable.Transformer<Uri, String> filepath(Context context) {
@@ -51,7 +51,7 @@ public final class UriTransformer {
                             } catch (Exception e) {
                                 throw Exceptions.propagate(e);
                             }
-                        });
+                        }).subscribeOn(Schedulers.computation());
     }
 
     public static Observable.Transformer<Uri, File> file(Context context) {
@@ -70,13 +70,12 @@ public final class UriTransformer {
                             } catch (Exception e) {
                                 throw Exceptions.propagate(e);
                             }
-                        });
+                        }).subscribeOn(Schedulers.computation());
     }
 
     public static Observable.Transformer<Uri, File> file(Context context, String path) {
         return uriObservable ->
                 uriObservable
-                        .subscribeOn(Schedulers.io())
                         .flatMap(uri -> {
                             try {
                                 String localPath;
@@ -88,11 +87,11 @@ public final class UriTransformer {
                             } catch (Exception e) {
                                 throw Exceptions.propagate(e);
                             }
-                        });
+                        }).subscribeOn(Schedulers.computation());
     }
 
     public static Observable<File> uriToFile(final Context context, final Uri uri, final File file) {
-        return Observable.create(fileEmitter -> {
+        return Observable.<File>create(fileEmitter -> {
             try {
                 InputStream inputStream = context.getContentResolver().openInputStream(uri);
                 copyInputStreamToFile(inputStream, file);
@@ -102,11 +101,11 @@ public final class UriTransformer {
                 Log.e(TAG, "Error converting uri", e);
                 fileEmitter.onError(e);
             }
-        }, Emitter.BackpressureMode.NONE);
+        }, Emitter.BackpressureMode.NONE).subscribeOn(Schedulers.computation());
     }
 
     private static Observable<String> uriToFilepath(final Context context, final Uri uri, final File file) {
-        return Observable.create(fileEmitter -> {
+        return Observable.<String>create(fileEmitter -> {
             try {
                 InputStream inputStream = context.getContentResolver().openInputStream(uri);
                 copyInputStreamToFile(inputStream, file);
@@ -116,11 +115,11 @@ public final class UriTransformer {
                 Log.e(TAG, "Error converting uri", e);
                 fileEmitter.onError(e);
             }
-        }, Emitter.BackpressureMode.NONE);
+        }, Emitter.BackpressureMode.NONE).subscribeOn(Schedulers.computation());
     }
 
     private static Observable<Bitmap> uriToBitmap(final Context context, final Uri uri) {
-        return Observable.create(bitmapEmitter -> {
+        return Observable.<Bitmap>create(bitmapEmitter -> {
             try {
                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(context.getContentResolver(), uri);
                 bitmapEmitter.onNext(bitmap);
@@ -129,7 +128,7 @@ public final class UriTransformer {
                 Log.e(TAG, "Error converting uri", e);
                 bitmapEmitter.onError(e);
             }
-        }, Emitter.BackpressureMode.NONE);
+        }, Emitter.BackpressureMode.NONE).subscribeOn(Schedulers.computation());
     }
 
     private static void copyInputStreamToFile(InputStream in, File file) throws IOException {

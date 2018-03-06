@@ -6,10 +6,6 @@ import android.os.Parcelable;
 import static iam.thevoid.mediapicker.cropper.CropImageView.CropShape.OVAL;
 import static iam.thevoid.mediapicker.cropper.CropImageView.CropShape.RECTANGLE;
 
-/**
- * Created by iam on 21.04.17.
- */
-
 public class CropArea implements Parcelable {
 
     private CropImageView.CropShape cropShape = RECTANGLE;
@@ -53,7 +49,7 @@ public class CropArea implements Parcelable {
         this.heightRatio = tempHeight / greaterCommonDivisor;
     }
 
-    protected CropArea(Parcel in) {
+    private CropArea(Parcel in) {
         cropShape = CropImageView.CropShape.values()[in.readInt()];
         widthRatio = in.readInt();
         heightRatio = in.readInt();

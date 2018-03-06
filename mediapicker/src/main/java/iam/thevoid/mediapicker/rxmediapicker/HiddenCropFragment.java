@@ -10,9 +10,6 @@ import android.os.Bundle;
 
 import iam.thevoid.mediapicker.cropper.CropArea;
 import iam.thevoid.mediapicker.cropper.CropImage;
-/**
- * Created by iam on 04/08/2017.
- */
 
 public class HiddenCropFragment extends Fragment {
 

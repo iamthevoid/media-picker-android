@@ -35,7 +35,7 @@ public interface Purpose {
             @Override
             public Intent getIntent(Context context, Bundle data) {
                 return new PhotoIntentBuilder()
-                        .build();
+                        .build(context);
             }
 
             @Override

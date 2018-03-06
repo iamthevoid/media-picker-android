@@ -155,14 +155,14 @@ public class CropImageOptions implements Parcelable {
         this.maxCropResultHeight = in.readInt();
         this.activityTitle = in.readString();
         this.activityMenuIconColor = in.readInt();
-        this.outputUri = (Uri) in.readParcelable(Uri.class.getClassLoader());
+        this.outputUri = in.readParcelable(Uri.class.getClassLoader());
         this.outputCompressFormat = Bitmap.CompressFormat.valueOf(in.readString());
         this.outputCompressQuality = in.readInt();
         this.outputRequestWidth = in.readInt();
         this.outputRequestHeight = in.readInt();
         this.outputRequestSizeOptions = CropImageView.RequestSizeOptions.values()[in.readInt()];
         this.noOutputImage = in.readByte() != 0;
-        this.initialCropWindowRectangle = (Rect) in.readParcelable(Rect.class.getClassLoader());
+        this.initialCropWindowRectangle = in.readParcelable(Rect.class.getClassLoader());
         this.initialRotation = in.readInt();
         this.allowRotation = in.readByte() != 0;
         this.allowFlipping = in.readByte() != 0;
@@ -225,7 +225,7 @@ public class CropImageOptions implements Parcelable {
         return 0;
     }
 
-    public void validate() {
+    void validate() {
         if (this.maxZoom < 0) {
             throw new IllegalArgumentException("Cannot set max zoom to a number < 1");
         } else if (this.touchRadius < 0.0F) {

@@ -2,29 +2,26 @@ package iam.thevoid.mediapicker.chooser;
 
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-/**
- * Created by iam on 03.04.17.
- */
-
 public abstract class IntentDataAdapter extends RecyclerView.Adapter<ResolveInfoViewHolder> {
 
     private HashMap<ResolveInfo, IntentData> resolveMap = new HashMap<>();
-    PackageManager pm;
-    List<ResolveInfo> resolveInfos;
+    private PackageManager pm;
+    private List<ResolveInfo> resolveInfos;
 
-    public IntentDataAdapter(PackageManager packageManager, ArrayList<IntentData> intentDatas) {
+    IntentDataAdapter(PackageManager packageManager, List<IntentData> intentDatas) {
         this.pm = packageManager;
         this.resolveInfos = getResolveInfo(packageManager, intentDatas, resolveMap);
     }
 
     @Override
-    public void onBindViewHolder(ResolveInfoViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ResolveInfoViewHolder holder, int position) {
         holder.onBind(pm, resolveInfos.get(position), position);
     }
 
@@ -33,11 +30,11 @@ public abstract class IntentDataAdapter extends RecyclerView.Adapter<ResolveInfo
         return resolveInfos == null ? 0 : resolveInfos.size();
     }
 
-    public IntentData getIntentData(ResolveInfo info) {
+    IntentData getIntentData(ResolveInfo info) {
         return resolveMap.get(info);
     }
 
-    public IntentData getIntentData(int position) {
+    IntentData getIntentData(int position) {
         ResolveInfo info = resolveInfos.get(position);
         IntentData intentData = getIntentData(info);
         intentData.setApp(info);

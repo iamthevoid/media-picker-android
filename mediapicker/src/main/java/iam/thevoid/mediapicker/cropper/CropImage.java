@@ -77,7 +77,7 @@ public final class CropImage {
     }
 
     public static Intent getPickImageChooserIntent(@NonNull Context context, CharSequence title, boolean includeDocuments, boolean includeCamera) {
-        List<Intent> allIntents = new ArrayList();
+        List<Intent> allIntents = new ArrayList<>();
         PackageManager packageManager = context.getPackageManager();
         if (!isExplicitCameraPermissionRequired(context) && includeCamera) {
             allIntents.addAll(getCameraIntents(context, packageManager));

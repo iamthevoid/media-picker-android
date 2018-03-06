@@ -7,10 +7,6 @@ import android.content.pm.ResolveInfo;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-/**
- * Created by iam on 03.04.17.
- */
-
 public class IntentData implements Parcelable {
 
     private int requestCode;
@@ -39,7 +35,7 @@ public class IntentData implements Parcelable {
         return intent;
     }
 
-    protected IntentData(Parcel in) {
+    private IntentData(Parcel in) {
         requestCode = in.readInt();
         title = in.readInt();
         intent = in.readParcelable(Intent.class.getClassLoader());

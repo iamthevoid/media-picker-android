@@ -3,6 +3,7 @@ package iam.thevoid.mediapicker.chooser;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,13 +12,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.lang.ref.WeakReference;
-import java.util.ArrayList;
+import java.util.List;
 
 import iam.thevoid.mediapicker.R;
-
-/**
- * Created by iam on 03.04.17.
- */
 
 public class ChooseAppAdapter extends IntentDataAdapter {
 
@@ -25,17 +22,18 @@ public class ChooseAppAdapter extends IntentDataAdapter {
 
     private AdapterView.OnItemClickListener onItemClickListener;
 
-    public ChooseAppAdapter(Context context, ArrayList<IntentData> intentDatas) {
+    ChooseAppAdapter(Context context, List<IntentData> intentDatas) {
         super(context.getPackageManager(), intentDatas);
         this.contextWeakReference = new WeakReference<>(context);
     }
 
-    public void setOnItemClickListener(AdapterView.OnItemClickListener onItemClickListener) {
+    void setOnItemClickListener(AdapterView.OnItemClickListener onItemClickListener) {
         this.onItemClickListener = onItemClickListener;
     }
 
+    @NonNull
     @Override
-    public ResolveInfoViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ResolveInfoViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         return new CustomAppChooserVH(LayoutInflater.from(contextWeakReference.get()).inflate(R.layout.app_select_item, parent, false));
     }
 
@@ -46,11 +44,11 @@ public class ChooseAppAdapter extends IntentDataAdapter {
         ImageView imageView;
         TextView textView;
 
-        public CustomAppChooserVH(View itemView) {
+        CustomAppChooserVH(View itemView) {
             super(itemView);
             this.view = itemView;
-            this.imageView = (ImageView) view.findViewById(R.id.app_icon);
-            this.textView = (TextView) view.findViewById(R.id.app_text);
+            this.imageView = view.findViewById(R.id.app_icon);
+            this.textView = view.findViewById(R.id.app_text);
         }
 
         @Override

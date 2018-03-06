@@ -1,9 +1,5 @@
 package iam.thevoid.mediapicker.rxmediapicker.metrics;
 
-/**
- * Created by iam on 14/08/2017.
- */
-
 public class MemorySize {
     private long size;
     private SizeUnit unit;

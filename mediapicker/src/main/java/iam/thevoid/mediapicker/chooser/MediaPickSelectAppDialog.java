@@ -2,6 +2,7 @@ package iam.thevoid.mediapicker.chooser;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetDialogFragment;
 import android.support.v4.app.FragmentManager;
@@ -13,15 +14,9 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 
 import java.util.ArrayList;
-import java.util.Collections;
 
 import iam.thevoid.mediapicker.R;
 import iam.thevoid.mediapicker.util.IntentUtils;
-
-
-/**
- * Created by iam on 03.04.17.
- */
 
 public class MediaPickSelectAppDialog extends BottomSheetDialogFragment implements AdapterView.OnItemClickListener {
 
@@ -31,19 +26,21 @@ public class MediaPickSelectAppDialog extends BottomSheetDialogFragment implemen
 
     private ChooseAppAdapter adapter;
 
-    private OnSelectaAppCallback callback;
+    private OnSelectAppCallback callback;
+
+    ArrayList<IntentData> mParcelableArrayList;
+
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.about_dialog, container, false);
-        recyclerView = (RecyclerView) view.findViewById(R.id.recycler);
+        recyclerView = view.findViewById(R.id.recycler);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.setVerticalScrollBarEnabled(true);
 
-        ArrayList<IntentData> parcelableArrayList = getArguments().getParcelableArrayList(EXTRA_RESOLVE);
+        mParcelableArrayList = getIntentDatas(savedInstanceState);
 
-
-        adapter = new ChooseAppAdapter(getActivity(), parcelableArrayList);
+        adapter = new ChooseAppAdapter(getActivity(), mParcelableArrayList);
         adapter.setOnItemClickListener(this);
 
         recyclerView.setAdapter(adapter);
@@ -51,8 +48,19 @@ public class MediaPickSelectAppDialog extends BottomSheetDialogFragment implemen
         return view;
     }
 
+    private ArrayList<IntentData> getIntentDatas(Bundle savedInstanceState) {
+        if (savedInstanceState != null && savedInstanceState.containsKey(EXTRA_RESOLVE)) {
+            return savedInstanceState.getParcelableArrayList(EXTRA_RESOLVE);
+        } else if (getArguments() != null && getArguments().containsKey(EXTRA_RESOLVE)) {
+            return getArguments().getParcelableArrayList(EXTRA_RESOLVE);
+        } else {
+            return new ArrayList<>();
+        }
+    }
+
     @Override
     public void onSaveInstanceState(Bundle outState) {
+        outState.putParcelableArrayList(EXTRA_RESOLVE, mParcelableArrayList);
         super.onSaveInstanceState(outState);
     }
 
@@ -70,7 +78,7 @@ public class MediaPickSelectAppDialog extends BottomSheetDialogFragment implemen
     }
 
 
-    public static void showForResult(Context context, ArrayList<IntentData> intents, OnSelectaAppCallback callback) {
+    public static void showForResult(Context context, ArrayList<IntentData> intents, OnSelectAppCallback callback) {
         show(IntentUtils.getFragmentActivity(context).getSupportFragmentManager(),
                 intents,
                 callback);
@@ -79,7 +87,7 @@ public class MediaPickSelectAppDialog extends BottomSheetDialogFragment implemen
     private static <T extends IntentData> void show(
             FragmentManager fm,
             ArrayList<T> data,
-            OnSelectaAppCallback callback) {
+            OnSelectAppCallback callback) {
         Bundle bundle = new Bundle();
         bundle.putParcelableArrayList(EXTRA_RESOLVE, data);
         MediaPickSelectAppDialog fragment = new MediaPickSelectAppDialog();
@@ -101,13 +109,7 @@ public class MediaPickSelectAppDialog extends BottomSheetDialogFragment implemen
         }
     }
 
-    private static ArrayList<IntentData> makeList(IntentData... intentDatas) {
-        ArrayList<IntentData> ids = new ArrayList<>();
-        Collections.addAll(ids, intentDatas);
-        return ids;
-    }
-
-    public interface OnSelectaAppCallback {
+    public interface OnSelectAppCallback {
         void onAppSelect(IntentData intentData);
     }
 }

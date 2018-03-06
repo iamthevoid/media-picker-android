@@ -1,22 +1,11 @@
 package iam.thevoid.mediapicker.cropper;
 
-import android.graphics.Matrix;
 import android.graphics.PointF;
 import android.graphics.RectF;
-
-
-/**
- * Created by iam on 12/07/2017.
- */
 
 final class CropWindowMoveHandler {
 
     //region: Fields and Consts
-
-    /**
-     * Matrix used for rectangle rotation handling
-     */
-    private static final Matrix MATRIX = new Matrix();
 
     /**
      * Minimum width in pixels that the crop window can get.
@@ -57,7 +46,7 @@ final class CropWindowMoveHandler {
      * @param touchX            the location of the initial toch possition to measure move distance
      * @param touchY            the location of the initial toch possition to measure move distance
      */
-    public CropWindowMoveHandler(Type type, CropWindowHandler cropWindowHandler, float touchX, float touchY) {
+    CropWindowMoveHandler(Type type, CropWindowHandler cropWindowHandler, float touchX, float touchY) {
         mType = type;
         mMinCropWidth = cropWindowHandler.getMinCropWidth();
         mMinCropHeight = cropWindowHandler.getMinCropHeight();
@@ -85,7 +74,7 @@ final class CropWindowMoveHandler {
      * @param fixedAspectRatio is the aspect ration fixed and 'targetAspectRatio' should be used
      * @param aspectRatio the aspect ratio to maintain
      */
-    public void move(RectF rect, float x, float y, RectF bounds, int viewWidth, int viewHeight, float snapMargin, boolean fixedAspectRatio, float aspectRatio) {
+    void move(RectF rect, float x, float y, RectF bounds, int viewWidth, int viewHeight, float snapMargin, boolean fixedAspectRatio, float aspectRatio) {
 
         // Adjust the coordinates for the finger position's offset (i.e. the
         // distance from the initial touch to the precise handle location).
@@ -384,7 +373,7 @@ final class CropWindowMoveHandler {
      *
      * @param right the position that the right edge is dragged to
      * @param bounds the bounding box of the image that is being cropped
-     * @param viewWidth
+     * @param viewWidth width
      * @param snapMargin the snap distance to the image edge (in pixels)
      */
     private void adjustRight(RectF rect, float right, RectF bounds, int viewWidth, float snapMargin, float aspectRatio, boolean topMoves, boolean bottomMoves) {
@@ -537,7 +526,7 @@ final class CropWindowMoveHandler {
      *
      * @param bottom the position that the bottom edge is dragged to
      * @param bounds the bounding box of the image that is being cropped
-     * @param viewHeight
+     * @param viewHeight height
      * @param snapMargin the snap distance to the image edge (in pixels)
      */
     private void adjustBottom(RectF rect, float bottom, RectF bounds, int viewHeight, float snapMargin, float aspectRatio, boolean leftMoves, boolean rightMoves) {

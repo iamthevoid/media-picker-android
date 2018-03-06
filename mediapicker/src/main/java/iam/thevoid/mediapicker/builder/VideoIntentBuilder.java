@@ -7,10 +7,6 @@ import android.support.annotation.NonNull;
 
 import iam.thevoid.mediapicker.rxmediapicker.metrics.SizeUnit;
 
-/**
- * Created by iam on 03.04.17.
- */
-
 public class VideoIntentBuilder {
 
     private long videoDuration = -1;
