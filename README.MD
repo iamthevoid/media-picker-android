@@ -73,5 +73,5 @@ File contains next:
         }
 ```
 ```groovy
-        compile 'iam.void.mediapicker:mediapicker:0.2.2'
+        compile 'iam.void.mediapicker:mediapicker:0.2.3'
 ```
