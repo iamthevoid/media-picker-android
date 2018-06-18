@@ -16,15 +16,13 @@ import iam.thevoid.mediapicker.cropper.CropArea;
 import iam.thevoid.mediapicker.rxmediapicker.Purpose;
 import iam.thevoid.mediapicker.rxmediapicker.RxMediaPicker;
 import iam.thevoid.mediapicker.rxmediapicker.UriTransformer;
-import iam.thevoid.mediapicker.rxmediapicker.metrics.MemorySize;
-import iam.thevoid.mediapicker.rxmediapicker.metrics.SizeUnit;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
     ImageView mImageView;
-    Button mIndeterminatBtn;
+    Button mIndeterminateBtn;
     Button mJustBtn;
     Button mCircleCropBtn;
     Button mToastFileSizeBtn;
@@ -34,8 +32,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mImageView = (ImageView) findViewById(R.id.image);
-        mIndeterminatBtn = (Button) findViewById(R.id.btn_indeterminate);
-        mIndeterminatBtn.setOnClickListener(this);
+        mIndeterminateBtn = (Button) findViewById(R.id.btn_indeterminate);
+        mIndeterminateBtn.setOnClickListener(this);
         mToastFileSizeBtn = (Button) findViewById(R.id.btn_toast_filesize);
         mToastFileSizeBtn.setOnClickListener(this);
         mJustBtn = (Button) findViewById(R.id.btn_just);

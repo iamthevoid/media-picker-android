@@ -72,7 +72,7 @@ public class HiddenPickerFragment extends Fragment {
             popBackStack();
         } else {
             if (resultCode == Activity.RESULT_OK) {
-                if (data == null && requestCode == Purpose.REQUEST_TAKE_PHOTO && FileUtil.getPhotoPath(getActivity()).length() > 0) {
+                if (data == null || requestCode == Purpose.REQUEST_TAKE_PHOTO && FileUtil.getPhotoPath(getActivity()).length() > 0) {
                     fetchPhotoUriFromPath();
                 } else if (data != null) {
                     if (data.getData() != null) {

@@ -24,8 +24,11 @@ android {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation "com.android.support:appcompat-v7:27.1.1"
 
-    compile 'com.github.bumptech.glide:glide:3.7.0'
-    compile project(path: ':mediapicker')
+    implementation 'io.reactivex:rxjava:1.3.0'
+    implementation 'io.reactivex:rxandroid:1.2.1'
+    implementation 'com.github.bumptech.glide:glide:3.7.0'
+    implementation project(path: ':mediapicker')
 }
