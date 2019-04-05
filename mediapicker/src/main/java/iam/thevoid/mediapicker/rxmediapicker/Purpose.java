@@ -48,9 +48,9 @@ public interface Purpose {
             @Override
             public Intent getIntent(Context context, Bundle data) {
                 return new VideoIntentBuilder()
-                        .setVideoDuration(data.getLong(RxMediaPicker.EXTRA_VIDEO_MAX_DURATION, 0))
+                        .setVideoDuration(data.getLong(RxMediaPicker.EXTRA_VIDEO_MAX_DURATION, -1))
                         .setVideoFileSize(data.getLong(RxMediaPicker.EXTRA_VIDEO_MAX_SIZE), SizeUnit.BYTE)
-                        .setVideoQuality(VideoIntentBuilder.VideoQuality.HIGH)
+                        .setVideoQuality(data.getLong(RxMediaPicker.EXTRA_VIDEO_QUALITY, -1))
                         .build();
             }
 

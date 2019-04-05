@@ -17,11 +17,13 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+import iam.thevoid.mediapicker.builder.VideoIntentBuilder;
 import iam.thevoid.mediapicker.cropper.CropArea;
 import iam.thevoid.mediapicker.chooser.IntentData;
 import iam.thevoid.mediapicker.chooser.MediaPickSelectAppDialog;
 import iam.thevoid.mediapicker.rxmediapicker.metrics.Duration;
 import iam.thevoid.mediapicker.rxmediapicker.metrics.MemorySize;
+import iam.thevoid.mediapicker.rxmediapicker.metrics.Quality;
 import iam.thevoid.mediapicker.rxmediapicker.metrics.Resolution;
 import iam.thevoid.mediapicker.util.ConcurrencyUtil;
 import iam.thevoid.mediapicker.util.IntentUtils;
@@ -45,6 +47,7 @@ public class RxMediaPicker implements MediaPickSelectAppDialog.OnSelectAppCallba
     static final String EXTRA_PHOTO_MAX_PIXEL_WIDTH = "EXTRA_PHOTO_MAX_PIXEL_WIDTH";
     static final String EXTRA_PHOTO_MAX_PIXEL_HEIGHT = "EXTRA_PHOTO_MAX_PIXEL_HEIGHT";
     static final String EXTRA_VIDEO_MAX_DURATION = "EXTRA_VIDEO_MAX_DURATION";
+    static final String EXTRA_VIDEO_QUALITY = "EXTRA_VIDEO_QUALITY";
 
     private Context mContext;
 
@@ -71,14 +74,16 @@ public class RxMediaPicker implements MediaPickSelectAppDialog.OnSelectAppCallba
     // Seconds
     private long videoMaxDuration;
 
+    // Int
+    private long videoQuality;
 
-    private static RxMediaPicker instanse;
+    private static RxMediaPicker instance;
 
     private RxMediaPicker() {
     }
 
     static RxMediaPicker instance() {
-        return instanse;
+        return instance;
     }
 
     public Observable<Uri> request() {
@@ -180,6 +185,7 @@ public class RxMediaPicker implements MediaPickSelectAppDialog.OnSelectAppCallba
         bundle.putLong(EXTRA_PHOTO_MAX_SIZE, photoMaxSize);
         bundle.putLong(EXTRA_VIDEO_MAX_DURATION, videoMaxDuration);
         bundle.putLong(EXTRA_VIDEO_MAX_SIZE, videoMaxSize);
+        bundle.putLong(EXTRA_VIDEO_QUALITY, videoQuality);
         return bundle;
     }
 
@@ -199,13 +205,15 @@ public class RxMediaPicker implements MediaPickSelectAppDialog.OnSelectAppCallba
 
         private OnDismissListener onDismissListener;
 
-        private Duration videoMaxDuration = new Duration(15, TimeUnit.SECONDS);
+        private Duration videoMaxDuration = null;
 
-        private Resolution photoMaxResolution = new Resolution(3000, 3000);
+        private Resolution photoMaxResolution = null;
 
-        private MemorySize photoMaxSize = new MemorySize(5, SizeUnit.MEGABYTE);
+        private MemorySize photoMaxSize = null;
 
-        private MemorySize videoMaxSize = new MemorySize(10, SizeUnit.MEGABYTE);
+        private MemorySize videoMaxSize = null;
+
+        private Quality videoQuality = null;
 
         private Builder(Context context) {
             this.mContext = context;
@@ -232,48 +240,55 @@ public class RxMediaPicker implements MediaPickSelectAppDialog.OnSelectAppCallba
             return this;
         }
 
-        public Builder onDismiss(OnDismissListener onDismissListener) {
+        public Builder dismiss(OnDismissListener onDismissListener) {
             this.onDismissListener = onDismissListener;
             return this;
         }
 
-        public Builder setVideoMaxDuration(Duration videoMaxDuration) {
+        public Builder videoMaxDuration(Duration videoMaxDuration) {
             this.videoMaxDuration = videoMaxDuration;
             return this;
         }
 
-        public Builder setPhotoMaxSize(MemorySize photoMaxSize) {
+        public Builder photoMaxSize(MemorySize photoMaxSize) {
             this.photoMaxSize = photoMaxSize;
             return this;
         }
 
-        public Builder setVideoMaxSize(MemorySize videoMaxSize) {
+        public Builder videoMaxSize(MemorySize videoMaxSize) {
             this.videoMaxSize = videoMaxSize;
             return this;
         }
 
-        public Builder setPhotoMaxResolution(Resolution photoMaxResolution) {
+        public Builder photoMaxResolution(Resolution photoMaxResolution) {
             this.photoMaxResolution = photoMaxResolution;
+            return this;
+        }
+
+        public Builder videoQuality(Quality videoQuality) {
+            this.videoQuality = videoQuality;
+
             return this;
         }
 
         public Observable<Uri> build() {
 
-            if (RxMediaPicker.instanse == null) {
-                RxMediaPicker.instanse = new RxMediaPicker();
+            if (RxMediaPicker.instance == null) {
+                RxMediaPicker.instance = new RxMediaPicker();
             }
 
-            RxMediaPicker.instanse.purposes = new ArrayList<>(purposes);
-            RxMediaPicker.instanse.cropArea = cropArea;
-            RxMediaPicker.instanse.onDismissListener = onDismissListener;
-            RxMediaPicker.instanse.videoMaxDuration = videoMaxDuration.getSeconds();
-            RxMediaPicker.instanse.photoMaxSize = photoMaxSize.getBytes();
-            RxMediaPicker.instanse.videoMaxSize = videoMaxSize.getBytes();
-            RxMediaPicker.instanse.photoMaxPixelsHeight = photoMaxResolution.getHeight();
-            RxMediaPicker.instanse.photoMaxPixelsWidth = photoMaxResolution.getWidth();
-            RxMediaPicker.instanse.mContext = mContext;
+            RxMediaPicker.instance.purposes = new ArrayList<>(purposes);
+            RxMediaPicker.instance.cropArea = cropArea;
+            RxMediaPicker.instance.onDismissListener = onDismissListener;
+            RxMediaPicker.instance.photoMaxSize = photoMaxSize == null ? -1 : photoMaxSize.getBytes();
+            RxMediaPicker.instance.photoMaxPixelsHeight = photoMaxResolution == null ? -1 : photoMaxResolution.getHeight();
+            RxMediaPicker.instance.photoMaxPixelsWidth = photoMaxResolution == null ? -1 : photoMaxResolution.getWidth();
+            RxMediaPicker.instance.videoMaxDuration = videoMaxDuration == null ? -1 : videoMaxDuration.getSeconds();
+            RxMediaPicker.instance.videoMaxSize = videoMaxSize == null ? -1 : videoMaxSize.getBytes();
+            RxMediaPicker.instance.videoQuality = videoQuality == null ? -1 : videoQuality.getQuality();
+            RxMediaPicker.instance.mContext = mContext;
             mContext = null;
-            return RxMediaPicker.instanse.request();
+            return RxMediaPicker.instance.request();
         }
     }
 

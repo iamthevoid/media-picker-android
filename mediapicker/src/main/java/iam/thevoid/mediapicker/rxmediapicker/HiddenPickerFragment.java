@@ -139,8 +139,7 @@ public class HiddenPickerFragment extends Fragment {
     private void handleIntent(Bundle bundle) {
         cropArea = bundle.getParcelable(RxMediaPicker.EXTRA_CROP_AREA);
 
-        startActivityForResult(bundle.getParcelable(RxMediaPicker.EXTRA_INTENT),
-                bundle.getInt(RxMediaPicker.EXTRA_REQUEST_CODE, 0));
+        startActivityForResult(bundle.getParcelable(RxMediaPicker.EXTRA_INTENT), bundle.getInt(RxMediaPicker.EXTRA_REQUEST_CODE, 0));
     }
 
     private Uri bitmapToUriConverter(Object mBitmap) {

@@ -426,7 +426,7 @@ public class CropOverlayView extends View {
                 this.mPath.close();
                 canvas.save();
                 canvas.clipPath(this.mPath, Region.Op.INTERSECT);
-                canvas.clipRect(rect, Region.Op.XOR);
+                canvas.clipRect(rect);
                 canvas.drawRect(left, top, right, bottom, this.mBackgroundPaint);
                 canvas.restore();
             } else {
@@ -437,7 +437,7 @@ public class CropOverlayView extends View {
             }
         } else {
             this.mPath.reset();
-            if (Build.VERSION.SDK_INT >= 11 && Build.VERSION.SDK_INT <= 17 && this.mCropShape == CropImageView.CropShape.OVAL) {
+            if (Build.VERSION.SDK_INT <= 17 && this.mCropShape == CropImageView.CropShape.OVAL) {
                 this.mDrawRect.set(rect.left + 2.0F, rect.top + 2.0F, rect.right - 2.0F, rect.bottom - 2.0F);
             } else {
                 this.mDrawRect.set(rect.left, rect.top, rect.right, rect.bottom);
@@ -445,7 +445,7 @@ public class CropOverlayView extends View {
 
             this.mPath.addOval(this.mDrawRect, Path.Direction.CW);
             canvas.save();
-            canvas.clipPath(this.mPath, Region.Op.XOR);
+            canvas.clipPath(this.mPath);
             canvas.drawRect(left, top, right, bottom, this.mBackgroundPaint);
             canvas.restore();
         }

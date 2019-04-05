@@ -12,10 +12,12 @@ import com.bumptech.glide.Glide;
 
 import java.io.File;
 
+import iam.thevoid.mediapicker.builder.VideoIntentBuilder;
 import iam.thevoid.mediapicker.cropper.CropArea;
 import iam.thevoid.mediapicker.rxmediapicker.Purpose;
 import iam.thevoid.mediapicker.rxmediapicker.RxMediaPicker;
 import iam.thevoid.mediapicker.rxmediapicker.UriTransformer;
+import iam.thevoid.mediapicker.rxmediapicker.metrics.Quality;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -47,9 +49,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         switch (v.getId()) {
             case R.id.btn_indeterminate:
                 RxMediaPicker.builder(this)
-                        .crop(CropArea.indeterminate())
-                        .pick(Purpose.Pick.IMAGE)
-                        .take(Purpose.Take.PHOTO)
+                        .pick(Purpose.Pick.VIDEO)
+                        .take(Purpose.Take.VIDEO)
+                        .videoQuality(new Quality(VideoIntentBuilder.VideoQuality.HIGH))
                         .build()
                         .subscribe(this::loadIage);
                 break;
@@ -90,9 +92,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void loadIage(Uri filepath) {
         Glide
-                .with(this)
-                .load(filepath)
-                .asBitmap()
-                .into(mImageView);
+            .with(this)
+            .asBitmap()
+            .load(filepath)
+            .into(mImageView);
     }
 }
