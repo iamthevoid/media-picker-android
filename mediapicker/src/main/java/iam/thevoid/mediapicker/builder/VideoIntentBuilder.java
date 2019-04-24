@@ -25,8 +25,8 @@ public class VideoIntentBuilder {
         return this;
     }
 
-    public VideoIntentBuilder setVideoQuality(VideoQuality videoQuality) {
-        this.videoQuality = videoQuality.getQuality();
+    public VideoIntentBuilder setVideoQuality(long videoQuality) {
+        this.videoQuality = videoQuality;
         return this;
     }
 
@@ -49,14 +49,13 @@ public class VideoIntentBuilder {
         if (flags != 0) {
             intent.setFlags(flags);
         }
-//        if (videoOutput != null) {
-//            intent.putExtra(MediaStore.EXTRA_OUTPUT, videoOutput);
-//        }
+
         return intent;
     }
 
     public enum VideoQuality {
-        STANDART(0),
+        STANDARD(-1),
+        LOW(0),
         HIGH(1);
 
         VideoQuality(int quality) {
