@@ -12,21 +12,10 @@
         android:layout_height="match_parent" />
 
     <Button
-        android:id="@+id/btn_indeterminate"
-        style="@style/button"
-        android:text="INDETERMINATE CROP"
-        />
-    <Button
         style="@style/button"
         android:id="@+id/btn_just"
         android:layout_marginTop="48dp"
         android:text="JUST PHOTO / IMAGE"
-        />
-    <Button
-        android:id="@+id/btn_round_crop"
-        style="@style/button"
-        android:layout_marginTop="96dp"
-        android:text="ROUND (SQUARE) CROP"
         />
     <Button
         android:id="@+id/btn_toast_filesize"

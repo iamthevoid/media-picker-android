@@ -1,0 +1,57 @@
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'com.novoda.bintray-release'
+
+android {
+    compileSdkVersion 29
+
+    defaultConfig {
+        minSdkVersion 16
+        targetSdkVersion 29
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles "consumer-rules.pro"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+publish {
+    groupId = libGroupId
+    artifactId = 'rx1'
+    publishVersion = libVersion
+    userOrg = libOrg
+    desc = 'RxJava 1 implementation of library to pick images, photo or video from android phone'
+    licences = [libLicence]
+    uploadName = libUploadName
+    website = libUrl
+}
+
+dependencies {
+
+    api project(':mediapicker')
+
+    implementation fileTree(dir: "libs", include: ["*.jar"])
+
+    implementation "io.reactivex:rxjava:$rxJava1"
+    implementation "io.reactivex:rxandroid:$rxAndroid1"
+    implementation "com.tbruyelle.rxpermissions:rxpermissions:$rxPermissions1"
+
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    implementation "androidx.core:core-ktx:$ktx"
+    implementation "androidx.appcompat:appcompat:$appcompat"
+    implementation "com.google.android.material:material:$material"
+
+    testImplementation "junit:junit:$junit"
+    androidTestImplementation "androidx.test.ext:junit:$ajunit"
+    androidTestImplementation "androidx.test.espresso:espresso-core:$espresso"
+
+}

@@ -1,1 +1,2 @@
+include ':rx1-mediapicker'
 include ':app', ':mediapicker'
