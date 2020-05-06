@@ -9,21 +9,19 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
-import android.os.FileObserver;
-import android.preference.PreferenceManager;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
-import android.support.annotation.NonNull;
-import android.util.Log;
 import android.webkit.MimeTypeMap;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 
 import iam.thevoid.mediapicker.R;
-import iam.thevoid.mediapicker.builder.PhotoIntentBuilder;
 import iam.thevoid.mediapicker.rxmediapicker.metrics.SizeUnit;
 
 /**
@@ -45,6 +43,13 @@ public class FileUtil {
             ".webm",
             ".mkv",
             ".mov"
+    );
+
+    public static final List<String> imageExtensions = Arrays.asList(
+            ".png",
+            ".jpg",
+            ".jpeg",
+            ".bmp"
     );
 
     public static void storePhotoPath(Context context, String path) {
@@ -80,12 +85,19 @@ public class FileUtil {
         return path == null ? "" : path.substring(path.lastIndexOf("."));
     }
 
+    public static boolean isImage(String path) {
+        return isImageExt(getExtension(path));
+    }
+
+    public static boolean isImageExt(String ext) {
+        return ext != null && ext.length() > 0 && imageExtensions.contains(ext.toLowerCase());
+    }
     public static boolean isVideo(String path) {
         return isVideoExt(getExtension(path));
     }
 
     public static boolean isVideoExt(String ext) {
-        return ext.length() > 0 && videoExtensions.contains(ext.toLowerCase());
+        return ext != null &&  ext.length() > 0 && videoExtensions.contains(ext.toLowerCase());
     }
 
     public static boolean isGif(String path) {
@@ -93,7 +105,7 @@ public class FileUtil {
     }
 
     public static boolean isGifExt(String ext) {
-        return ext.length() > 0 && ".gif".equals(ext.toLowerCase());
+        return ext != null &&  ext.length() > 0 && ".gif".equals(ext.toLowerCase());
     }
 
     public static String extension(Context context, Uri uri) {
@@ -118,6 +130,7 @@ public class FileUtil {
         return false;
     }
 
+    @Nullable
     public static String getPath(final Context context, final Uri uri) throws Exception {
 
         if (uri == null) {

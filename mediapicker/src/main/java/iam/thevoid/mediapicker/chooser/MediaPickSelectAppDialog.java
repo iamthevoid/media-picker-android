@@ -2,18 +2,21 @@ package iam.thevoid.mediapicker.chooser;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.design.widget.BottomSheetDialogFragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.FragmentManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
+
 import java.util.ArrayList;
+import java.util.List;
 
 import iam.thevoid.mediapicker.R;
 import iam.thevoid.mediapicker.util.IntentUtils;
@@ -73,12 +76,12 @@ public class MediaPickSelectAppDialog extends BottomSheetDialogFragment implemen
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         dismiss();
         if (callback != null) {
-            callback.onAppSelect(adapter.getIntentData(position));
+            callback.onAppSelect(view.getContext(), adapter.getIntentData(position));
         }
     }
 
 
-    public static void showForResult(Context context, ArrayList<IntentData> intents, OnSelectAppCallback callback) {
+    public static void showForResult(Context context, List<IntentData> intents, OnSelectAppCallback callback) {
         show(IntentUtils.getFragmentActivity(context).getSupportFragmentManager(),
                 intents,
                 callback);
@@ -86,10 +89,10 @@ public class MediaPickSelectAppDialog extends BottomSheetDialogFragment implemen
 
     private static <T extends IntentData> void show(
             FragmentManager fm,
-            ArrayList<T> data,
+            List<T> data,
             OnSelectAppCallback callback) {
         Bundle bundle = new Bundle();
-        bundle.putParcelableArrayList(EXTRA_RESOLVE, data);
+        bundle.putParcelableArrayList(EXTRA_RESOLVE, new ArrayList<>(data));
         MediaPickSelectAppDialog fragment = new MediaPickSelectAppDialog();
         fragment.callback = callback;
         fragment.setArguments(bundle);
@@ -110,6 +113,6 @@ public class MediaPickSelectAppDialog extends BottomSheetDialogFragment implemen
     }
 
     public interface OnSelectAppCallback {
-        void onAppSelect(IntentData intentData);
+        void onAppSelect(Context context, IntentData intentData);
     }
 }
