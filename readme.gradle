@@ -61,6 +61,10 @@ RxJava 1
 ```groovy  
  implementation "iam.thevoid.mediapicker:rx1:$libVersion"
 ```
+RxJava 2
+```groovy  
+ implementation "iam.thevoid.mediapicker:rx2:$libVersion"
+```
 
 """
     }

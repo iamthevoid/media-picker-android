@@ -1,5 +1,5 @@
 
-<a href="https://bintray.com/beta/#/iamthevoid/maven/MediaPicker"><img src="https://github.com/iamthevoid/media-picker-android/blob/ver1/lib.svg"></a>
+<a href="https://bintray.com/beta/#/iamthevoid/maven/MediaPicker"><img src="https://github.com/iamthevoid/media-picker-android/blob/master/lib.svg"></a>
 
 
 Simple reactive library for pick image or video. There is Rx Java 1 implementation. 
@@ -57,6 +57,10 @@ File contains next:
 ```  
 RxJava 1
 ```groovy  
- implementation "iam.void.mediapicker:rx1:1.0-alpha01"
+ implementation "iam.thevoid.mediapicker:rx1:1.0-alpha02"
+```
+RxJava 2
+```groovy  
+ implementation "iam.thevoid.mediapicker:rx2:1.0-alpha02"
 ```
 

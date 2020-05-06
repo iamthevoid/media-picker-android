@@ -8,7 +8,7 @@ android {
 
     defaultConfig {
         minSdkVersion minSdk
-        targetSdkVersion targetSdk
+        targetSdkVersion compileSdk
         versionCode 1
         versionName "1.0"
 
@@ -26,10 +26,10 @@ android {
 
 publish {
     groupId = libGroupId
-    artifactId = 'rx1'
+    artifactId = 'rx2'
     publishVersion = libVersion
     userOrg = libOrg
-    desc = 'RxJava 1 implementation of library to pick images, photo or video from android phone'
+    desc = 'RxJava 2 implementation of library to pick images, photo or video from android phone'
     licences = [libLicence]
     uploadName = libUploadName
     website = libUrl
@@ -40,16 +40,17 @@ dependencies {
     api project(':mediapicker')
 
     implementation fileTree(dir: "libs", include: ["*.jar"])
-
-    implementation "io.reactivex:rxjava:$rxJava1"
-    implementation "io.reactivex:rxandroid:$rxAndroid1"
-    implementation "com.tbruyelle.rxpermissions:rxpermissions:$rxPermissions1"
-
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    implementation "androidx.core:core-ktx:$ktx"
-    implementation "androidx.appcompat:appcompat:$appcompat"
+
+    implementation "io.reactivex.rxjava2:rxjava:$rxJava2"
+    implementation "io.reactivex.rxjava2:rxandroid:$rxAndroid2"
+
+    implementation "com.github.tbruyelle:rxpermissions:$rxPermissions2"
+
     implementation "com.google.android.material:material:$material"
 
+    implementation "androidx.core:core-ktx:$ktx"
+    implementation "androidx.appcompat:appcompat:$appcompat"
     testImplementation "junit:junit:$junit"
     androidTestImplementation "androidx.test.ext:junit:$ajunit"
     androidTestImplementation "androidx.test.espresso:espresso-core:$espresso"
