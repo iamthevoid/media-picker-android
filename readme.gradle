@@ -4,15 +4,16 @@ task generateReadme() {
 <a href="https://bintray.com/beta/#/iamthevoid/maven/$libUploadName"><img src="https://github.com/iamthevoid/media-picker-android/blob/master/lib.svg"></a>
 
 
-Simple reactive library for pick image or video. There is Rx Java 1 implementation. 
-Later will be added Rx Java 2, Rx Java 3, Coroutines implementation.  
+Simple reactive library for pick image or video. There is Rx Java 1 and RxJava 2 implementation. 
+Later will be added Rx Java 3 and Coroutines implementation.  
+
+Next example returns stream: `Observable<Uri>`(RxJava1), `Maybe<Uri>`(RxJava2)
   
 ```kotlin  
  MediaPicker.builder(this)
   .pick(Purpose.Pick.IMAGE, Purpose.Pick.VIDEO)
   .take(Purpose.Take.PHOTO, Purpose.Take.VIDEO)
   .build()
-  .subscribe { uri : Uri -> }
 ```  
   
 also transformers provided  
@@ -31,7 +32,7 @@ mediaPickerObservable
 ## WARNING!!!  
 Since N needs `fileprovider` for correct saving and using photo. Than you need to do next:  
   
-1) Add provider to manifest  
+1) Add provider to your `AndroidManifest.xml`  
 ```xml  
  <provider android:name="android.support.v4.content.FileProvider"
   android:authorities="**{name of package of your app}**.fileprovider"
