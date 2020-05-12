@@ -8,9 +8,13 @@ import android.net.Uri
 import android.os.Environment
 import android.provider.MediaStore
 import iam.thevoid.mediapicker.exception.ExtractBitmapException
-import iam.thevoid.mediapicker.util.Editor
 import iam.thevoid.mediapicker.util.FileUtil
-import java.io.*
+import iam.thevoid.mediapicker.util.FileUtil.extension
+import iam.thevoid.mediapicker.util.currentDateFilename
+import java.io.ByteArrayOutputStream
+import java.io.File
+import java.io.FileOutputStream
+import java.io.IOException
 import java.util.*
 
 private const val TAG = "UriTransformer"
@@ -77,14 +81,4 @@ fun bitmapToUriConverter(mBitmap: Any?): Uri? {
 }
 
 fun Uri.filepath(context: Context) = FileUtil.temp(context) + "/" +
-        Editor.currentDateFilename(filenamePrefix(context, this), FileUtil.extension(context, this))
-
-private fun filenamePrefix(context: Context, uri: Uri): String {
-    val ext = FileUtil.extension(context, uri)
-    if (FileUtil.isVideoExt(ext)) {
-        return "video"
-    }
-    return if (FileUtil.isGifExt(ext)) {
-        "anim"
-    } else "image"
-}
+        currentDateFilename(extension(context))

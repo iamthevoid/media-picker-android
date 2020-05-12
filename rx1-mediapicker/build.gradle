@@ -25,6 +25,8 @@ android {
 }
 
 publish {
+    bintrayUser = libBintrayUser
+    bintrayKey = libBintrayKey
     groupId = libGroupId
     artifactId = 'rx1'
     publishVersion = libVersion
@@ -33,6 +35,7 @@ publish {
     licences = [libLicence]
     uploadName = libUploadName
     website = libUrl
+    dryRun = libDryRun
 }
 
 dependencies {
@@ -49,6 +52,8 @@ dependencies {
     implementation "androidx.core:core-ktx:$ktx"
     implementation "androidx.appcompat:appcompat:$appcompat"
     implementation "com.google.android.material:material:$material"
+
+    implementation "iam.thevoid.extensions:android:$utils"
 
     testImplementation "junit:junit:$junit"
     androidTestImplementation "androidx.test.ext:junit:$ajunit"

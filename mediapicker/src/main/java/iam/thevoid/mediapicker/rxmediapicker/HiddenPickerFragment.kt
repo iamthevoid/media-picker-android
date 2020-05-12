@@ -4,8 +4,8 @@ import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
+import iam.thevoid.mediapicker.bus.MediaPickerBus
 import iam.thevoid.mediapicker.util.FileUtil
 import iam.thevoid.noxml.core.mvvm.activityViewModel
 import java.io.File
@@ -52,12 +52,12 @@ class HiddenPickerFragment : Fragment(), ImageReceiver {
                     bundle?.getInt(Picker.EXTRA_REQUEST_CODE, 0) ?: 0)
 
     override fun onDismiss() {
-        PickerEventBus.onDismiss()
+        MediaPickerBus.onDismiss()
         popBackStack()
     }
 
     override fun onImagePickFinish(uri: Uri?) {
-        PickerEventBus.onImagePicked(uri)
+        MediaPickerBus.onImagePicked(uri)
         popBackStack()
     }
 

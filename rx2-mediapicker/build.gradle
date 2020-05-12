@@ -25,6 +25,8 @@ android {
 }
 
 publish {
+    bintrayUser = libBintrayUser
+    bintrayKey = libBintrayKey
     groupId = libGroupId
     artifactId = 'rx2'
     publishVersion = libVersion
@@ -33,6 +35,7 @@ publish {
     licences = [libLicence]
     uploadName = libUploadName
     website = libUrl
+    dryRun = libDryRun
 }
 
 dependencies {
@@ -48,6 +51,8 @@ dependencies {
     implementation "com.github.tbruyelle:rxpermissions:$rxPermissions2"
 
     implementation "com.google.android.material:material:$material"
+
+    implementation "iam.thevoid.extensions:android:$utils"
 
     implementation "androidx.core:core-ktx:$ktx"
     implementation "androidx.appcompat:appcompat:$appcompat"

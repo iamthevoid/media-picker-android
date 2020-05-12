@@ -20,15 +20,6 @@ import java.util.List;
 public final class IntentUtils {
     private IntentUtils() {}
 
-    public static Activity getActivity(Context context) {
-        if (context instanceof Activity) {
-            return (Activity) context;
-        } else if (context instanceof ContextWrapper) {
-            return getActivity(((ContextWrapper) context).getBaseContext());
-        }
-        throw new IllegalStateException("Context " + context + " NOT contains activity!");
-    }
-
     public static List<ResolveInfo> getResolveInfoList(PackageManager pm, List<Intent> intents) {
         if (intents == null || intents.size() == 0) {
             return new ArrayList<>();

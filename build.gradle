@@ -39,12 +39,15 @@ task clean(type: Delete) {
 
 ext {
 
-    libVersion = '1.0-alpha02'
+    libVersion = '1.0-alpha04'
     libGroupId = 'iam.thevoid.mediapicker'
     libOrg = 'iamthevoid'
     libUploadName = 'MediaPicker'
     libUrl = 'https://github.com/iamthevoid/media-picker-android.git'
     libLicence = 'Apache-2.0'
+    libDryRun = false
+    libBintrayUser = property('bintrayUser')
+    libBintrayKey = property('bintraySecret')
 
     compileSdk = 29
     targetSdk = 29
@@ -72,4 +75,10 @@ ext {
     junit = '4.12'
     ajunit = '1.1.1'
     espresso = '3.2.0'
+}
+
+def property(String key) {
+    Properties properties = new Properties()
+    properties.load(project.rootProject.file('local.properties').newDataInputStream())
+    return properties.getProperty(key)
 }
