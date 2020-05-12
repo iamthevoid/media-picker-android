@@ -4,7 +4,7 @@ import android.content.Context
 import android.net.Uri
 import com.tbruyelle.rxpermissions2.RxPermissions
 import iam.thevoid.ae.asFragmentActivity
-import iam.thevoid.mediapicker.rxmediapicker.Picker
+import iam.thevoid.mediapicker.picker.Picker
 import io.reactivex.Maybe
 import io.reactivex.Observable
 import io.reactivex.disposables.Disposable

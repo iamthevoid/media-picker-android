@@ -6,9 +6,9 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.net.Uri
 import android.util.Log
-import iam.thevoid.mediapicker.rxmediapicker.filepath
-import iam.thevoid.mediapicker.rxmediapicker.toBitmap
-import iam.thevoid.mediapicker.rxmediapicker.toFile
+import iam.thevoid.mediapicker.picker.filepath
+import iam.thevoid.mediapicker.picker.toBitmap
+import iam.thevoid.mediapicker.picker.toFile
 import iam.thevoid.mediapicker.util.FileUtil
 import rx.Emitter
 import rx.Observable

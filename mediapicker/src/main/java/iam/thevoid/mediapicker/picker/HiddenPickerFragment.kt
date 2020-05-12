@@ -1,4 +1,4 @@
-package iam.thevoid.mediapicker.rxmediapicker
+package iam.thevoid.mediapicker.picker
 
 import android.app.Activity
 import android.content.Intent

@@ -1,8 +1,6 @@
-package iam.thevoid.mediapicker.rxmediapicker
+package iam.thevoid.mediapicker.picker
 
 import android.net.Uri
-import android.os.Handler
-import android.os.Looper
 import androidx.lifecycle.ViewModel
 import iam.thevoid.util.weak
 import java.util.concurrent.Executors

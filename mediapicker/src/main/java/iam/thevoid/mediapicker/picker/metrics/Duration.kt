@@ -1,4 +1,4 @@
-package iam.thevoid.mediapicker.rxmediapicker.metrics
+package iam.thevoid.mediapicker.picker.metrics
 
 import java.util.concurrent.TimeUnit
 

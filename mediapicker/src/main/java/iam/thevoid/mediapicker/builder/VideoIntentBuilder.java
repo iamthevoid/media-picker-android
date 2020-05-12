@@ -6,7 +6,7 @@ import android.provider.MediaStore;
 
 import androidx.annotation.NonNull;
 
-import iam.thevoid.mediapicker.rxmediapicker.metrics.SizeUnit;
+import iam.thevoid.mediapicker.picker.metrics.SizeUnit;
 
 public class VideoIntentBuilder {
 

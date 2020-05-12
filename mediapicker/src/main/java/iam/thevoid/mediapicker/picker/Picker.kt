@@ -1,4 +1,4 @@
-package iam.thevoid.mediapicker.rxmediapicker
+package iam.thevoid.mediapicker.picker
 
 import android.Manifest
 import android.content.Context
@@ -15,13 +15,13 @@ import iam.thevoid.mediapicker.bus.MediaPickerBus
 import iam.thevoid.mediapicker.bus.SelectAppBus
 import iam.thevoid.mediapicker.chooser.IntentData
 import iam.thevoid.mediapicker.chooser.MediaPickSelectAppDialog
-import iam.thevoid.mediapicker.rxmediapicker.HiddenPickerFragment.Companion.getFragment
-import iam.thevoid.mediapicker.rxmediapicker.Purpose.Pick
-import iam.thevoid.mediapicker.rxmediapicker.Purpose.Take
-import iam.thevoid.mediapicker.rxmediapicker.metrics.Duration
-import iam.thevoid.mediapicker.rxmediapicker.metrics.MemorySize
-import iam.thevoid.mediapicker.rxmediapicker.metrics.Resolution
-import iam.thevoid.mediapicker.rxmediapicker.metrics.SizeUnit
+import iam.thevoid.mediapicker.picker.HiddenPickerFragment.Companion.getFragment
+import iam.thevoid.mediapicker.picker.Purpose.Pick
+import iam.thevoid.mediapicker.picker.Purpose.Take
+import iam.thevoid.mediapicker.picker.metrics.Duration
+import iam.thevoid.mediapicker.picker.metrics.MemorySize
+import iam.thevoid.mediapicker.picker.metrics.Resolution
+import iam.thevoid.mediapicker.picker.metrics.SizeUnit
 import iam.thevoid.mediapicker.util.IntentUtils
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -116,7 +116,7 @@ abstract class Picker<T> protected constructor() {
                 it.getIntent(context, bundle))
     }.flatten().size == 1
 
-    abstract class Builder<T, Picker : iam.thevoid.mediapicker.rxmediapicker.Picker<T>> {
+    abstract class Builder<T, Picker : iam.thevoid.mediapicker.picker.Picker<T>> {
         private val purposes: MutableSet<Purpose> = hashSetOf(Pick.Image)
         private var onDismissListener: OnDismissListener? = null
         private var videoMaxDuration = Duration(15, TimeUnit.SECONDS)

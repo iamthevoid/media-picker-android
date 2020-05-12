@@ -10,9 +10,9 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
 import iam.thevoid.e.format
+import iam.thevoid.mediapicker.picker.Purpose
 import iam.thevoid.mediapicker.rx1.MediaPicker
 import iam.thevoid.mediapicker.rx1.file
-import iam.thevoid.mediapicker.rxmediapicker.Purpose
 import java.io.File
 
 class MainActivity : AppCompatActivity(), View.OnClickListener {

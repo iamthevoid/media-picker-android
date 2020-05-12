@@ -1,4 +1,4 @@
-package iam.thevoid.mediapicker.rxmediapicker.metrics
+package iam.thevoid.mediapicker.picker.metrics
 
 enum class SizeUnit(var bytes: Long) {
     BYTE(1),

@@ -1,7 +1,7 @@
 package iam.thevoid.mediapicker.bus
 
 import android.net.Uri
-import iam.thevoid.mediapicker.rxmediapicker.Picker
+import iam.thevoid.mediapicker.picker.Picker
 
 object MediaPickerBus {
     private var picker: Picker<*>? = null

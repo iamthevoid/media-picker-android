@@ -1,6 +1,6 @@
 @file:JvmName(TAG)
 
-package iam.thevoid.mediapicker.rxmediapicker
+package iam.thevoid.mediapicker.picker
 
 import android.content.Context
 import android.graphics.Bitmap
