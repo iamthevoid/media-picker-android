@@ -14,7 +14,7 @@ import iam.thevoid.ae.asFragmentActivity
 import iam.thevoid.mediapicker.R
 import iam.thevoid.mediapicker.bus.SelectAppBus
 
-class MediaPickSelectAppDialog : BottomSheetDialogFragment(), OnSelectAppCallback {
+class PickerSelectAppDialog : BottomSheetDialogFragment(), OnSelectAppCallback {
 
     private var intentData: ArrayList<IntentData>? = null
 
@@ -36,7 +36,7 @@ class MediaPickSelectAppDialog : BottomSheetDialogFragment(), OnSelectAppCallbac
             isVerticalScrollBarEnabled = true
             adapter = activity?.let {
                 IntentDataAdapter(it.packageManager, intentData)
-                        .also { adapter -> adapter.callback = this@MediaPickSelectAppDialog }
+                        .also { adapter -> adapter.callback = this@PickerSelectAppDialog }
             }
         }
     }
@@ -79,7 +79,7 @@ class MediaPickSelectAppDialog : BottomSheetDialogFragment(), OnSelectAppCallbac
         }
 
         private fun <T : IntentData?> show(fm: FragmentManager, data: List<T>, title: String) =
-                MediaPickSelectAppDialog().apply {
+                PickerSelectAppDialog().apply {
                     arguments = Bundle().apply {
                         putParcelableArrayList(EXTRA_RESOLVE, ArrayList(data))
                         putString(EXTRA_CHOOSER_TITLE, title)

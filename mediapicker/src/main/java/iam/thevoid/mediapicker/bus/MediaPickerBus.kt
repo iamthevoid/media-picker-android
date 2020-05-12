@@ -15,6 +15,6 @@ object MediaPickerBus {
     }
 
     fun onDismiss() {
-        picker?.onDismiss()
+        picker?.onImagePickDismissed()
     }
 }

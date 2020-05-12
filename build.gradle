@@ -39,7 +39,7 @@ task clean(type: Delete) {
 
 ext {
 
-    libVersion = '1.0-alpha04'
+    libVersion = '1.0-beta01'
     libGroupId = 'iam.thevoid.mediapicker'
     libOrg = 'iamthevoid'
     libUploadName = 'MediaPicker'

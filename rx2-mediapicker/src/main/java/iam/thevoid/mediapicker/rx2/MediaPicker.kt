@@ -4,6 +4,7 @@ import android.content.Context
 import android.net.Uri
 import com.tbruyelle.rxpermissions2.RxPermissions
 import iam.thevoid.ae.asFragmentActivity
+import iam.thevoid.mediapicker.picker.OnRequestPermissionsResult
 import iam.thevoid.mediapicker.picker.Picker
 import io.reactivex.Maybe
 import io.reactivex.Observable
@@ -13,18 +14,19 @@ import io.reactivex.subjects.MaybeSubject
 class MediaPicker : Picker<Maybe<Uri>>() {
 
     private var publishSubject: MaybeSubject<Uri>? = null
-    private var permissionDisposable : Disposable? = null
+    private var permissionDisposable: Disposable? = null
 
-    override fun request(context: Context): Maybe<Uri> {
+    override fun initStream(): Maybe<Uri> =
+            MaybeSubject.create<Uri>().also { publishSubject = it }
+                    .doOnEvent { _, _ -> permissionDisposable?.dispose() }
+                    .doOnComplete { permissionDisposable?.dispose() }
+
+    override fun requestPermissions(context: Context, permissions: List<String>, result: OnRequestPermissionsResult) {
         permissionDisposable?.dispose()
-        permissionDisposable = Observable.just<Any?>(null)
+        permissionDisposable = Observable.just(Any())
                 .compose(RxPermissions(context.asFragmentActivity())
-                        .ensure(*needsPermissions()))
-                .filter { it }
-                .subscribe({ startSelection(context) }, { it.printStackTrace() })
-        return MaybeSubject.create<Uri>().also { publishSubject = it }
-                .doOnEvent  { _, _ -> permissionDisposable?.dispose() }
-                .doOnComplete  { permissionDisposable?.dispose() }
+                        .ensure(*permissions.toTypedArray()))
+                .subscribe(result::onRequestPermissionsResult, result::onRequestPermissionsFailed)
     }
 
     override fun onResult(uri: Uri) {
