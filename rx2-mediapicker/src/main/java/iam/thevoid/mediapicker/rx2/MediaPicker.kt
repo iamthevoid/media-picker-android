@@ -3,9 +3,8 @@ package iam.thevoid.mediapicker.rx2
 import android.content.Context
 import android.net.Uri
 import com.tbruyelle.rxpermissions2.RxPermissions
+import iam.thevoid.ae.asFragmentActivity
 import iam.thevoid.mediapicker.rxmediapicker.Picker
-import iam.thevoid.mediapicker.util.ConcurrencyUtil
-import iam.thevoid.mediapicker.util.IntentUtils
 import io.reactivex.Maybe
 import io.reactivex.Observable
 import io.reactivex.disposables.Disposable
@@ -19,10 +18,10 @@ class MediaPicker : Picker<Maybe<Uri>>() {
     override fun request(context: Context): Maybe<Uri> {
         permissionDisposable?.dispose()
         permissionDisposable = Observable.just<Any?>(null)
-                .compose(RxPermissions(IntentUtils.getFragmentActivity(context))
+                .compose(RxPermissions(context.asFragmentActivity())
                         .ensure(*needsPermissions()))
                 .filter { it }
-                .subscribe({ ConcurrencyUtil.postDelayed({ startSelection(context) }, 1) }, { it.printStackTrace() })
+                .subscribe({ startSelection(context) }, { it.printStackTrace() })
         return MaybeSubject.create<Uri>().also { publishSubject = it }
                 .doOnEvent  { _, _ -> permissionDisposable?.dispose() }
                 .doOnComplete  { permissionDisposable?.dispose() }

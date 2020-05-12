@@ -46,5 +46,7 @@ dependencies {
     implementation "androidx.core:core-ktx:$ktx"
     implementation "iam.thevoid.noxml:core-mvvm:$noxml"
     implementation "iam.thevoid.util:util:$utils"
+    implementation "iam.thevoid.extensions:android:$utils"
+    implementation "iam.thevoid.extensions:pure:$utils"
 
 }

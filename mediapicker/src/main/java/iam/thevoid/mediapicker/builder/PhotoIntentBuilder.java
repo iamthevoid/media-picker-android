@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
 import android.provider.MediaStore;
+
 import androidx.core.content.FileProvider;
 
 import java.io.File;
@@ -32,7 +33,7 @@ public class PhotoIntentBuilder {
             intent.setFlags(flags);
         }
 
-        String filename = Editor.currentDateFilename("", ".jpg");
+        String filename = Editor.currentDateFilename(".jpg");
 
         File file =
                 new File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES), filename);
