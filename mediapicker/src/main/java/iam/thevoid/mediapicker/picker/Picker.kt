@@ -1,20 +1,20 @@
 package iam.thevoid.mediapicker.picker
 
-import android.Manifest
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import androidx.annotation.StringRes
 import iam.thevoid.ae.asActivity
 import iam.thevoid.ae.asFragmentActivity
 import iam.thevoid.ae.string
+import iam.thevoid.e.safe
 import iam.thevoid.mediapicker.R
 import iam.thevoid.mediapicker.bus.MediaPickerBus
 import iam.thevoid.mediapicker.bus.SelectAppBus
 import iam.thevoid.mediapicker.chooser.IntentData
-import iam.thevoid.mediapicker.chooser.MediaPickSelectAppDialog
+import iam.thevoid.mediapicker.chooser.PickerSelectAppDialog
 import iam.thevoid.mediapicker.picker.HiddenPickerFragment.Companion.getFragment
 import iam.thevoid.mediapicker.picker.Purpose.Pick
 import iam.thevoid.mediapicker.picker.Purpose.Take
@@ -62,30 +62,54 @@ abstract class Picker<T> protected constructor() {
         }
     }
 
-    abstract fun request(context: Context): T
+    abstract fun initStream(): T
+
+    abstract fun requestPermissions(
+            context: Context,
+            permissions: List<String>,
+            result: OnRequestPermissionsResult
+    )
 
     abstract fun onResult(uri: Uri)
 
     abstract fun onEmptyResult()
 
-    internal fun onDismiss() {
+    fun request(context: Context): T = initStream().also {
+        SelectAppBus.attachMediaPicker(this)
+        when {
+            onlyOneAppCanHandleRequest(context) ->
+                purposes.first()
+                        .also { handleIntent(context, it.getIntentData(context, bundle)) }
+            else -> {
+                chooserTitle.safe(context.string(chooserTitleResource)).also { title ->
+                    PickerSelectAppDialog
+                            .showForResult(context, intentData(context), title)
+                }
+            }
+        }
+    }
+
+    internal fun onAppSelect(context: Context, intentData: IntentData?) =
+            intentData?.also { handleIntent(context, it) }
+
+    internal fun onImagePickDismissed() {
         onDismissListener?.onDismiss()
     }
 
     internal fun onImagePicked(uri: Uri?) = uri?.also(::onResult) ?: onEmptyResult()
 
-    internal fun onAppSelect(context: Context, intentData: IntentData?) =
-            intentData?.also { startImagePick(context, it.intent, it.requestCode) }
+    private fun handleIntent(context: Context, intentData: IntentData) {
+        requestPermissions(context, intentData.permissions, object : OnRequestPermissionsResult {
+            override fun onRequestPermissionsResult(granted: Boolean) {
+                if (granted) {
+                    startImagePick(context, intentData.intent, intentData.requestCode)
+                }
+            }
 
-    protected fun startSelection(context: Context) {
-        SelectAppBus.attachMediaPicker(this)
-        if (onlyOneAppCanHandleRequest(context)) {
-            val purpose = purposes[0]
-            startImagePick(context, purpose.getIntent(context, bundle), purpose.requestCode)
-            return
-        }
-        MediaPickSelectAppDialog.showForResult(context, intentData(context), chooserTitle
-                ?: context.string(chooserTitleResource))
+            override fun onRequestPermissionsFailed(throwable: Throwable) {
+                Log.d(TAG, "onRequestPermissionsFailed", throwable)
+            }
+        })
     }
 
     private fun intentData(context: Context): List<IntentData> =
@@ -97,18 +121,6 @@ abstract class Picker<T> protected constructor() {
                 .beginTransaction()
                 .add(getFragment(intent, requestCode), HiddenPickerFragment::class.java.canonicalName)
                 .commitAllowingStateLoss()
-    }
-
-    protected fun needsPermissions(): Array<String> {
-        val permissions: MutableList<String> = ArrayList()
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            permissions.add(Manifest.permission.READ_EXTERNAL_STORAGE)
-        }
-        permissions.add(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-        if (purposes.any { it is Take.Photo || it is Take.Video }) {
-            permissions.add(Manifest.permission.CAMERA)
-        }
-        return permissions.toTypedArray()
     }
 
     private fun onlyOneAppCanHandleRequest(context: Context): Boolean = purposes.map {
@@ -193,6 +205,9 @@ abstract class Picker<T> protected constructor() {
     }
 
     companion object {
+
+        private val TAG = Picker::class.java.simpleName
+
         const val EXTRA_INTENT = "EXTRA_INTENT"
         const val EXTRA_REQUEST_CODE = "EXTRA_REQUEST_CODE"
         const val EXTRA_PHOTO_MAX_SIZE = "EXTRA_PHOTO_MAX_SIZE"
