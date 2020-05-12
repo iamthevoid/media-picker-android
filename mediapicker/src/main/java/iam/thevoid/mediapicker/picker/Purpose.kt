@@ -1,4 +1,4 @@
-package iam.thevoid.mediapicker.rxmediapicker
+package iam.thevoid.mediapicker.picker
 
 import android.content.Context
 import android.content.Intent
@@ -9,7 +9,7 @@ import iam.thevoid.mediapicker.builder.ImageIntentBuilder
 import iam.thevoid.mediapicker.builder.PhotoIntentBuilder
 import iam.thevoid.mediapicker.builder.VideoIntentBuilder
 import iam.thevoid.mediapicker.chooser.IntentData
-import iam.thevoid.mediapicker.rxmediapicker.metrics.SizeUnit
+import iam.thevoid.mediapicker.picker.metrics.SizeUnit
 
 /**
  * Created by iam on 14/08/2017.

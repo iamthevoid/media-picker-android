@@ -4,7 +4,7 @@ import android.content.Context
 import android.net.Uri
 import com.tbruyelle.rxpermissions.RxPermissions
 import iam.thevoid.ae.asActivity
-import iam.thevoid.mediapicker.rxmediapicker.Picker
+import iam.thevoid.mediapicker.picker.Picker
 import rx.Observable
 import rx.subjects.PublishSubject
 
