@@ -143,7 +143,7 @@ abstract class Picker<T> protected constructor() {
 
         @JvmOverloads
         fun takeVideo(options: VideoOptions = VideoOptions()) = apply {
-            purposes = setOf(Take.Video())
+            purposes = setOf(Take.Video(options.chooserTitle))
             videoOptions = options
         }.build()
 
@@ -155,7 +155,7 @@ abstract class Picker<T> protected constructor() {
 
         @JvmOverloads
         fun takePhoto(options: PhotoOptions = PhotoOptions()) = apply {
-            purposes = setOf(Take.Photo())
+            purposes = setOf(Take.Photo(options.chooserTitle))
             photoOptions = options
         }.build()
 
@@ -165,7 +165,7 @@ abstract class Picker<T> protected constructor() {
 
         @JvmOverloads
         fun pickImageOrPhoto(photoOptions: PhotoOptions = PhotoOptions()) = apply {
-            purposes = setOf(Pick.Image, Take.Photo())
+            purposes = setOf(Pick.Image, Take.Photo(photoOptions.chooserTitle))
             this.photoOptions = photoOptions
         }.build()
 

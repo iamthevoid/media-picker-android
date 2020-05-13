@@ -57,7 +57,7 @@ internal sealed class Purpose {
         override val additionalPermissions: List<String>
             get() = listOf(Manifest.permission.CAMERA)
 
-        internal class Photo(@StringRes pickerTitle: Int = R.string.take_photo) : Take(pickerTitle) {
+        internal class Photo(@StringRes pickerTitle: Int) : Take(pickerTitle) {
             override val requestCode: Int
                 get() = REQUEST_TAKE_PHOTO
 
