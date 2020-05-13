@@ -18,13 +18,11 @@ import iam.thevoid.mediapicker.chooser.PickerSelectAppDialog
 import iam.thevoid.mediapicker.picker.HiddenPickerFragment.Companion.getFragment
 import iam.thevoid.mediapicker.picker.Purpose.Pick
 import iam.thevoid.mediapicker.picker.Purpose.Take
-import iam.thevoid.mediapicker.picker.metrics.Duration
-import iam.thevoid.mediapicker.picker.metrics.MemorySize
-import iam.thevoid.mediapicker.picker.metrics.Resolution
-import iam.thevoid.mediapicker.picker.metrics.SizeUnit
+import iam.thevoid.mediapicker.picker.options.PhotoOptions
+import iam.thevoid.mediapicker.picker.options.VideoOptions
 import iam.thevoid.mediapicker.util.IntentUtils
 import java.util.*
-import java.util.concurrent.TimeUnit
+import kotlin.time.ExperimentalTime
 
 abstract class Picker<T> protected constructor() {
 
@@ -37,28 +35,33 @@ abstract class Picker<T> protected constructor() {
 
     private var chooserTitle: String? = null
 
-    // Bytes
-    private var photoMaxSize: Long = 0
+    private var photoOptions: PhotoOptions? = null
 
-    // Bytes
-    private var videoMaxSize: Long = 0
+    private var videoOptions: VideoOptions? = null
 
-    // Pixels
-    private var photoMaxPixelsWidth: Long = 0
-
-    // Pixels
-    private var photoMaxPixelsHeight: Long = 0
-
-    // Seconds
-    private var videoMaxDuration: Long = 0
-
+    @OptIn(ExperimentalTime::class)
     private val bundle: Bundle by lazy {
         Bundle().apply {
-            putLong(EXTRA_PHOTO_MAX_PIXEL_HEIGHT, photoMaxPixelsHeight)
-            putLong(EXTRA_PHOTO_MAX_PIXEL_WIDTH, photoMaxPixelsWidth)
-            putLong(EXTRA_PHOTO_MAX_SIZE, photoMaxSize)
-            putLong(EXTRA_VIDEO_MAX_DURATION, videoMaxDuration)
-            putLong(EXTRA_VIDEO_MAX_SIZE, videoMaxSize)
+            photoOptions?.apply {
+                maxResolution.height.takeIf { it > 0 }
+                        ?.also { putLong(EXTRA_PHOTO_MAX_PIXEL_HEIGHT, it) }
+
+                maxResolution.width.takeIf { it > 0 }
+                        ?.also { putLong(EXTRA_PHOTO_MAX_PIXEL_WIDTH, it) }
+
+                maxSize.takeIf { it.bytes > 0 }
+                        ?.also { putLong(EXTRA_PHOTO_MAX_SIZE, it.bytes) }
+            }
+
+            videoOptions?.apply {
+                maxDuration.inSeconds.toLong().takeIf { it > 0 }
+                        ?.also { putLong(EXTRA_VIDEO_MAX_DURATION, it) }
+
+                maxSize.takeIf { it.bytes > 0 }
+                        ?.also { putLong(EXTRA_VIDEO_MAX_SIZE, it.bytes) }
+
+                putInt(EXTRA_VIDEO_QUALITY, quality.code)
+            }
         }
     }
 
@@ -131,57 +134,43 @@ abstract class Picker<T> protected constructor() {
     abstract class Builder<T, Picker : iam.thevoid.mediapicker.picker.Picker<T>> {
         private var purposes: Set<Purpose> = setOf()
         private var onDismissListener: OnDismissListener? = null
-        private var videoMaxDuration = Duration(15, TimeUnit.SECONDS)
-        private var photoMaxResolution = Resolution(3000, 3000)
-        private var photoMaxSize = MemorySize(5, SizeUnit.MEGABYTE)
-        private var videoMaxSize = MemorySize(10, SizeUnit.MEGABYTE)
+        private var photoOptions: PhotoOptions? = null
+        private var videoOptions: VideoOptions? = null
         private var appChooserTitleResource = R.string.default_chooser_title
         private var appChooserTitle: String? = null
 
         protected abstract fun create(): Picker
 
-        fun takeVideo() = apply {
+        @JvmOverloads
+        fun takeVideo(options: VideoOptions = VideoOptions()) = apply {
             purposes = setOf(Take.Video())
+            videoOptions = options
         }.build()
 
-        fun takePhoto() = apply {
+        @JvmOverloads
+        fun pickVideo(options: VideoOptions = VideoOptions()) = apply {
+            purposes = setOf(Pick.Video)
+            videoOptions = options
+        }.build()
+
+        @JvmOverloads
+        fun takePhoto(options: PhotoOptions = PhotoOptions()) = apply {
             purposes = setOf(Take.Photo())
+            photoOptions = options
         }.build()
 
         fun pickImage() = apply {
             purposes = setOf(Pick.Image)
         }.build()
 
-        fun pickVideo() = apply {
-            purposes = setOf(Pick.Video)
+        @JvmOverloads
+        fun pickImageOrPhoto(photoOptions: PhotoOptions = PhotoOptions()) = apply {
+            purposes = setOf(Pick.Image, Take.Photo())
+            this.photoOptions = photoOptions
         }.build()
 
         fun onDismiss(onDismissListener: OnDismissListener) =
                 apply { this.onDismissListener = onDismissListener }
-
-        fun setVideoMaxDuration(videoMaxDuration: Duration) =
-                apply { this.videoMaxDuration = videoMaxDuration }
-
-        fun setVideoMaxDuration(duration: Long, timeUnit: TimeUnit) =
-                setVideoMaxDuration(Duration(duration, timeUnit))
-
-        fun setPhotoMaxSize(photoMaxSize: MemorySize) =
-                apply { this.photoMaxSize = photoMaxSize }
-
-        fun setPhotoMaxSize(size: Int, sizeUnit: SizeUnit) =
-                setPhotoMaxSize(MemorySize(size, sizeUnit))
-
-        fun setVideoMaxSize(videoMaxSize: MemorySize) =
-                apply { this.videoMaxSize = videoMaxSize }
-
-        fun setVideoMaxSize(size: Int, sizeUnit: SizeUnit) =
-                setVideoMaxSize(MemorySize(size, sizeUnit))
-
-        fun setPhotoMaxResolution(photoMaxResolution: Resolution) =
-                apply { this.photoMaxResolution = photoMaxResolution }
-
-        fun setPhotoMaxResolution(widthPixels: Long, heightPixels: Long) =
-                setPhotoMaxResolution(Resolution(widthPixels, heightPixels))
 
         fun setChooserTitle(@StringRes titleResource: Int) {
             appChooserTitleResource = titleResource
@@ -197,11 +186,8 @@ abstract class Picker<T> protected constructor() {
                 create().apply {
                     purposes = ArrayList(this@Builder.purposes)
                     onDismissListener = this@Builder.onDismissListener
-                    videoMaxDuration = this@Builder.videoMaxDuration.seconds
-                    photoMaxSize = this@Builder.photoMaxSize.bytes
-                    videoMaxSize = this@Builder.videoMaxSize.bytes
-                    photoMaxPixelsHeight = this@Builder.photoMaxResolution.height
-                    photoMaxPixelsWidth = this@Builder.photoMaxResolution.width
+                    photoOptions = this@Builder.photoOptions
+                    videoOptions = this@Builder.videoOptions
                     chooserTitle = appChooserTitle
                     chooserTitleResource = appChooserTitleResource
                 }
@@ -215,12 +201,13 @@ abstract class Picker<T> protected constructor() {
 
         private val TAG = Picker::class.java.simpleName
 
-        const val EXTRA_INTENT = "EXTRA_INTENT"
-        const val EXTRA_REQUEST_CODE = "EXTRA_REQUEST_CODE"
-        const val EXTRA_PHOTO_MAX_SIZE = "EXTRA_PHOTO_MAX_SIZE"
-        const val EXTRA_VIDEO_MAX_SIZE = "EXTRA_VIDEO_MAX_SIZE"
-        const val EXTRA_PHOTO_MAX_PIXEL_WIDTH = "EXTRA_PHOTO_MAX_PIXEL_WIDTH"
-        const val EXTRA_PHOTO_MAX_PIXEL_HEIGHT = "EXTRA_PHOTO_MAX_PIXEL_HEIGHT"
-        const val EXTRA_VIDEO_MAX_DURATION = "EXTRA_VIDEO_MAX_DURATION"
+        const val EXTRA_INTENT = "iam.thevoid.mediapicker.EXTRA_INTENT"
+        const val EXTRA_REQUEST_CODE = "iam.thevoid.mediapicker.EXTRA_REQUEST_CODE"
+        const val EXTRA_PHOTO_MAX_SIZE = "iam.thevoid.mediapicker.EXTRA_PHOTO_MAX_SIZE"
+        const val EXTRA_PHOTO_MAX_PIXEL_WIDTH = "iam.thevoid.mediapicker.EXTRA_PHOTO_MAX_PIXEL_WIDTH"
+        const val EXTRA_PHOTO_MAX_PIXEL_HEIGHT = "iam.thevoid.mediapicker.EXTRA_PHOTO_MAX_PIXEL_HEIGHT"
+        const val EXTRA_VIDEO_MAX_SIZE = "iam.thevoid.mediapicker.EXTRA_VIDEO_MAX_SIZE"
+        const val EXTRA_VIDEO_MAX_DURATION = "iam.thevoid.mediapicker.EXTRA_VIDEO_MAX_DURATION"
+        const val EXTRA_VIDEO_QUALITY = "iam.thevoid.mediapicker.EXTRA_VIDEO_QUALITY"
     }
 }
