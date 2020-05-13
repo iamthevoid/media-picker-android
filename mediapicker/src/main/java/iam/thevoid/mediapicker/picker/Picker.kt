@@ -129,7 +129,7 @@ abstract class Picker<T> protected constructor() {
     }.flatten().size == 1
 
     abstract class Builder<T, Picker : iam.thevoid.mediapicker.picker.Picker<T>> {
-        private val purposes: MutableSet<Purpose> = hashSetOf(Pick.Image)
+        private var purposes: Set<Purpose> = setOf()
         private var onDismissListener: OnDismissListener? = null
         private var videoMaxDuration = Duration(15, TimeUnit.SECONDS)
         private var photoMaxResolution = Resolution(3000, 3000)
@@ -140,14 +140,21 @@ abstract class Picker<T> protected constructor() {
 
         protected abstract fun create(): Picker
 
-        fun pick(vararg purpose: Pick) = apply {
-            if (purpose.contains(Pick.Image) && purpose.contains(Pick.Video))
-                purposes.add(Purpose.Hidden.Gallery)
-            purposes.addAll(purpose)
-        }
+        fun takeVideo() = apply {
+            purposes = setOf(Take.Video())
+        }.build()
 
-        fun take(vararg purpose: Take) =
-                apply { purposes.addAll(purpose) }
+        fun takePhoto() = apply {
+            purposes = setOf(Take.Photo())
+        }.build()
+
+        fun pickImage() = apply {
+            purposes = setOf(Pick.Image)
+        }.build()
+
+        fun pickVideo() = apply {
+            purposes = setOf(Pick.Video)
+        }.build()
 
         fun onDismiss(onDismissListener: OnDismissListener) =
                 apply { this.onDismissListener = onDismissListener }

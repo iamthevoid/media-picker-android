@@ -30,7 +30,9 @@ dependencies {
     implementation "androidx.appcompat:appcompat:$appcompat"
     implementation "com.google.android.material:material:$material"
 
+    implementation "iam.thevoid.extensions:android:$utils"
     implementation "iam.thevoid.extensions:pure:$utils"
+
     implementation "io.reactivex:rxjava:$rxJava1"
     implementation "io.reactivex:rxandroid:$rxAndroid1"
     implementation "com.github.bumptech.glide:glide:$glide"

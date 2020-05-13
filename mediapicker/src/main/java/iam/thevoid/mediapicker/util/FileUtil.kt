@@ -11,6 +11,7 @@ import android.provider.DocumentsContract
 import android.provider.MediaStore
 import android.webkit.MimeTypeMap
 import iam.thevoid.ae.asActivity
+import iam.thevoid.e.remove
 import iam.thevoid.e.safe
 import java.io.File
 
@@ -92,9 +93,15 @@ object FileUtil {
                 }
                 isDownloadsDocument(uri) -> {
                     val id = DocumentsContract.getDocumentId(uri)
-                    val contentUri = ContentUris.withAppendedId(
-                            Uri.parse("content://downloads/public_downloads"), java.lang.Long.valueOf(id))
-                    return getDataColumn(context, contentUri, null, null)
+                    return when {
+                        id.startsWith("raw:") -> id.remove("raw:")
+                        id.startsWith("msf:") -> getImagePathFromMsfURI(context, uri)
+                        else -> {
+                            val contentUri = ContentUris.withAppendedId(
+                                    Uri.parse("content://downloads/public_downloads"), java.lang.Long.valueOf(id))
+                            getDataColumn(context, contentUri, null, null)
+                        }
+                    }
                 }
                 isMediaDocument(uri) -> {
                     val docId = DocumentsContract.getDocumentId(uri)
@@ -122,6 +129,27 @@ object FileUtil {
             return uri.path
         }
         return null
+    }
+
+    private fun getImagePathFromMsfURI(context: Context, uri: Uri): String? = with(context.contentResolver) {
+        query(uri, null, null, null, null)
+                ?.use { cursor ->
+                    cursor.moveToFirst()
+                    cursor.getString(0)
+                            .run { substring(lastIndexOf(":") + 1) }
+                            .let { documentId ->
+                                query(
+                                        MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                                        null,
+                                        MediaStore.Images.Media._ID + " = ? ",
+                                        arrayOf(documentId),
+                                        null
+                                )?.use {
+                                    it.moveToFirst()
+                                    it.getString(it.getColumnIndex(MediaStore.Images.Media.DATA))
+                                }
+                            }
+                }
     }
 
     /**

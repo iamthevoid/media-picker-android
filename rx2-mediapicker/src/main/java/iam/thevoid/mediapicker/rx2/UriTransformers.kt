@@ -19,7 +19,7 @@ private const val TAG = "UriTransformers";
 
 fun bitmap(context: Context) =
         MaybeTransformer<Uri, Bitmap> {
-            it.flatMap { uri: Uri -> uri.toObservable { toBitmap(context) } }
+            it.flatMap { uri: Uri -> uri.toMaybe { toBitmap(context) } }
                     .subscribeOn(Schedulers.computation())
         }
 
@@ -27,7 +27,7 @@ fun filepath(context: Context) =
         MaybeTransformer<Uri, String> {
             it.flatMap { uri: Uri ->
                 FileUtil.getPath(context, uri)?.let { Maybe.just(it) }
-                        ?: uri.toObservable { toFile(context, File(uri.filepath(context))).absolutePath }
+                        ?: uri.toMaybe { toFile(context, File(uri.filepath(context))).absolutePath }
             }.subscribeOn(Schedulers.computation())
         }
 
@@ -36,17 +36,17 @@ fun file(context: Context, path: String? = null): MaybeTransformer<Uri, File> {
     return MaybeTransformer {
         it.flatMap { uri: Uri ->
             FileUtil.getPath(context, uri)?.let(::File)?.let { Maybe.just(it) }
-                    ?: uri.toObservable { toFile(context, path?.let(::File)) }
+                    ?: uri.toMaybe { toFile(context, path?.let(::File)) }
         }.subscribeOn(Schedulers.computation())
     }
 }
 
-private fun <T> Uri.toObservable(convert: Uri.() -> T) =
+private fun <T> Uri.toMaybe(convert: Uri.() -> T) =
         Maybe.create<T> {
             try {
                 it.onSuccess(convert())
             } catch (e: Exception) {
-                Log.e(TAG, "Error converting uri", e)
+                Log.d(TAG, "Error converting uri", e)
                 it.onError(e)
             }
         }.subscribeOn(Schedulers.computation())
