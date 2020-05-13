@@ -58,10 +58,10 @@ File contains next:
 ```  
 RxJava 1
 ```groovy  
- implementation "iam.thevoid.mediapicker:rx1:1.0-beta01"
+ implementation "iam.thevoid.mediapicker:rx1:1.0-beta02"
 ```
 RxJava 2
 ```groovy  
- implementation "iam.thevoid.mediapicker:rx2:1.0-beta01"
+ implementation "iam.thevoid.mediapicker:rx2:1.0-beta02"
 ```
 
