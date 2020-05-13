@@ -12,11 +12,12 @@ import iam.thevoid.mediapicker.builder.PhotoIntentBuilder
 import iam.thevoid.mediapicker.builder.VideoIntentBuilder
 import iam.thevoid.mediapicker.chooser.IntentData
 import iam.thevoid.mediapicker.picker.metrics.SizeUnit
+import iam.thevoid.mediapicker.picker.metrics.VideoQuality
 
 /**
  * Created by iam on 14/08/2017.
  */
-sealed class Purpose {
+internal sealed class Purpose {
 
     companion object {
         const val REQUEST_PICK_GALLERY = 0x999
@@ -28,12 +29,12 @@ sealed class Purpose {
 
     protected open val additionalPermissions = emptyList<String>()
 
-    open val title
+    internal open val title
         get() = -1
 
-    abstract val requestCode: Int
+    internal abstract val requestCode: Int
 
-    abstract fun getIntent(context: Context, data: Bundle): Intent
+    internal abstract fun getIntent(context: Context, data: Bundle): Intent
 
     private fun permissions(): List<String> {
         val permissions = mutableListOf<String>()
@@ -45,10 +46,10 @@ sealed class Purpose {
         return permissions
     }
 
-    fun getIntentData(context: Context, bundle: Bundle): IntentData =
+    internal fun getIntentData(context: Context, bundle: Bundle): IntentData =
             IntentData(getIntent(context, bundle), requestCode, title, permissions())
 
-    sealed class Take(private val pickerTitle: Int) : Purpose() {
+    internal sealed class Take(private val pickerTitle: Int) : Purpose() {
 
         override val title: Int
             get() = pickerTitle
@@ -56,7 +57,7 @@ sealed class Purpose {
         override val additionalPermissions: List<String>
             get() = listOf(Manifest.permission.CAMERA)
 
-        class Photo(@StringRes pickerTitle: Int = R.string.take_photo) : Take(pickerTitle) {
+        internal class Photo(@StringRes pickerTitle: Int = R.string.take_photo) : Take(pickerTitle) {
             override val requestCode: Int
                 get() = REQUEST_TAKE_PHOTO
 
@@ -64,11 +65,11 @@ sealed class Purpose {
                     PhotoIntentBuilder().build(context)
         }
 
-        class Video(@StringRes pickerTitle: Int = R.string.take_video) : Take(pickerTitle) {
+        internal class Video(@StringRes pickerTitle: Int = R.string.take_video) : Take(pickerTitle) {
             override fun getIntent(context: Context, data: Bundle): Intent = VideoIntentBuilder()
                     .setVideoDuration(data.getLong(Picker.EXTRA_VIDEO_MAX_DURATION, 0))
                     .setVideoFileSize(data.getLong(Picker.EXTRA_VIDEO_MAX_SIZE), SizeUnit.BYTE)
-                    .setVideoQuality(VideoIntentBuilder.VideoQuality.HIGH)
+                    .setVideoQuality(data.getInt(Picker.EXTRA_VIDEO_MAX_SIZE, VideoQuality.HIGH.code))
                     .build()
 
             override val requestCode: Int
@@ -76,9 +77,9 @@ sealed class Purpose {
         }
     }
 
-    sealed class Pick : Purpose() {
+    internal sealed class Pick : Purpose() {
 
-        object Image : Pick() {
+        internal object Image : Pick() {
             override fun getIntent(context: Context, data: Bundle): Intent = ImageIntentBuilder()
                     .setLocalOnly(false)
                     .setMimetype(ImageIntentBuilder.Mimetype.IMAGE)
@@ -88,7 +89,7 @@ sealed class Purpose {
                 get() = REQUEST_PICK_IMAGE
         }
 
-        object Video : Pick() {
+        internal object Video : Pick() {
             override fun getIntent(context: Context, data: Bundle): Intent = ImageIntentBuilder()
                     .setLocalOnly(false)
                     .setMimetype(ImageIntentBuilder.Mimetype.VIDEO)
@@ -96,18 +97,6 @@ sealed class Purpose {
 
             override val requestCode: Int
                 get() = REQUEST_PICK_VIDEO
-        }
-    }
-
-    sealed class Hidden : Purpose() {
-        object Gallery : Hidden() {
-            override val requestCode
-                get(): Int = REQUEST_PICK_GALLERY
-
-            override fun getIntent(context: Context, data: Bundle): Intent = ImageIntentBuilder()
-                    .setLocalOnly(false)
-                    .setMimetype(ImageIntentBuilder.Mimetype.BOTH_IMAGE_AND_VIDEO)
-                    .build()
         }
     }
 }
