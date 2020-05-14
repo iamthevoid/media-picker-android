@@ -12,7 +12,6 @@ import iam.thevoid.mediapicker.builder.PhotoIntentBuilder
 import iam.thevoid.mediapicker.builder.VideoIntentBuilder
 import iam.thevoid.mediapicker.chooser.IntentData
 import iam.thevoid.mediapicker.picker.metrics.SizeUnit
-import iam.thevoid.mediapicker.picker.metrics.VideoQuality
 
 /**
  * Created by iam on 14/08/2017.
@@ -20,7 +19,6 @@ import iam.thevoid.mediapicker.picker.metrics.VideoQuality
 internal sealed class Purpose {
 
     companion object {
-        const val REQUEST_PICK_GALLERY = 0x999
         const val REQUEST_TAKE_PHOTO = 0x888
         const val REQUEST_TAKE_VIDEO = 0x777
         const val REQUEST_PICK_IMAGE = 0x666
@@ -66,11 +64,12 @@ internal sealed class Purpose {
         }
 
         internal class Video(@StringRes pickerTitle: Int = R.string.take_video) : Take(pickerTitle) {
-            override fun getIntent(context: Context, data: Bundle): Intent = VideoIntentBuilder()
-                    .setVideoDuration(data.getLong(Picker.EXTRA_VIDEO_MAX_DURATION, 0))
-                    .setVideoFileSize(data.getLong(Picker.EXTRA_VIDEO_MAX_SIZE), SizeUnit.BYTE)
-                    .setVideoQuality(data.getInt(Picker.EXTRA_VIDEO_MAX_SIZE, VideoQuality.HIGH.code))
-                    .build()
+            override fun getIntent(context: Context, data: Bundle): Intent = VideoIntentBuilder(
+                    videoDuration = data.getLong(Picker.EXTRA_VIDEO_MAX_DURATION).takeIf { it > 0 },
+                    videoFileSize = data.getLong(Picker.EXTRA_VIDEO_MAX_SIZE).takeIf { it > 0 }
+                            ?.let { it * SizeUnit.BYTE.bytes },
+                    videoQuality = data.getInt(Picker.EXTRA_VIDEO_MAX_SIZE)
+            ).build()
 
             override val requestCode: Int
                 get() = REQUEST_TAKE_VIDEO

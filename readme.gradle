@@ -12,11 +12,11 @@ Next usages returns `Observable<Uri>` (RxJava1), `Maybe<Uri>` (RxJava2)
   
 **1) Pick image from storage**  
 ```kotlin  
-    MediaPicker.builder().pickImage()  
+    MediaPicker.builder().pickImage(<ImageOptions>)  
 ```  
 **2) Take image from camera**  
 ```kotlin  
-    MediaPicker.builder().takePhoto(<PhotoOptions>)  
+    MediaPicker.builder().takePhoto(<ImageOptions>)  
 ```  
 **3) Pick video from storage**  
 ```kotlin  
@@ -28,7 +28,7 @@ Next usages returns `Observable<Uri>` (RxJava1), `Maybe<Uri>` (RxJava2)
 ```  
 **5) Pick image from storage  or take image from camera  (if you want single intent for both actions)**
 ```kotlin  
-    MediaPicker.builder().pickImageOrPhoto(<PhotoOptions>)  
+    MediaPicker.builder().pickImageOrPhoto(<ImageOptions>)  
 ```  
 ### Options
 `VideoOptions` and `PhotoOptions` are data classes to customize camera `Intent`

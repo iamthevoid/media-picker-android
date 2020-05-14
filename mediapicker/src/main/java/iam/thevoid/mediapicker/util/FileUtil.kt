@@ -4,16 +4,24 @@ import android.app.Activity
 import android.content.ContentUris
 import android.content.Context
 import android.database.Cursor
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Build
 import android.os.Environment
+import android.os.Looper
 import android.provider.DocumentsContract
 import android.provider.MediaStore
 import android.webkit.MimeTypeMap
+import androidx.core.graphics.scale
 import iam.thevoid.ae.asActivity
 import iam.thevoid.e.remove
 import iam.thevoid.e.safe
+import iam.thevoid.mediapicker.picker.options.ImageOptions
+import iam.thevoid.mediapicker.picker.options.VideoOptions
 import java.io.File
+import java.io.FileOutputStream
+import kotlin.math.min
 
 /**
  * Created by iam on 16.04.17.
@@ -71,6 +79,11 @@ object FileUtil {
         val extensionFromMimeType = mimeTypeMap.getExtensionFromMimeType(type)
         return "." + (extensionFromMimeType ?: MimeTypeMap.getFileExtensionFromUrl(path))
     }
+
+    internal fun applyOptions(context: Context, uri: Uri, imageOptions: ImageOptions?, videoOptions: VideoOptions?): Uri =
+            imageOptions?.let { uri.resize(context, it).compress(context, it) }
+                    ?: videoOptions?.let { uri.resize(context, it) }
+                    ?: uri
 
     @Throws(Exception::class)
     fun getPath(context: Context, uri: Uri?): String? {
@@ -207,4 +220,71 @@ object FileUtil {
     private fun isMediaDocument(uri: Uri): Boolean {
         return "com.android.providers.media.documents" == uri.authority
     }
+
+    /**
+     * Collect info about file and resize it if it declared in options
+     */
+    private fun Uri.resize(context: Context, options: ImageOptions): Uri {
+        if (Looper.getMainLooper().thread == Thread.currentThread()) {
+            throw RuntimeException("you can not apply image options in Main Thread")
+        }
+
+        val targetResolution = options.maxResolution.takeIf { it.width > 0 || it.height > 0 }
+                ?: return this
+
+        val path = getPath(context, this) ?: return this
+
+        val originBitmap = BitmapFactory.decodeFile(path)
+        val originHeight = originBitmap.height
+        val originWidth = originBitmap.width
+
+        // No need to resize
+        if (options.preserveRatio && originHeight <= targetResolution.height && originWidth <= targetResolution.width) {
+            return this
+        }
+
+        val targetHeight = targetResolution.height.takeIf { it > 0 } ?: originHeight
+        val targetWidth = targetResolution.width.takeIf { it > 0 } ?: originWidth
+
+        val targetBitmap = if (options.preserveRatio) {
+            // When preserve ratio we constrained by resolution, so we must choose scale factor
+            // which guarantee image does fit both target width and height
+            val widthScaleFactor = targetWidth.toDouble() / originWidth.toDouble()
+            val heightScaleFactor = targetHeight.toDouble() / originHeight.toDouble()
+
+            // Desired scale factor is min of found
+            val targetScaleFactor = min(widthScaleFactor, heightScaleFactor)
+            originBitmap.scale(
+                    (originWidth.toDouble() * targetScaleFactor).toInt(),
+                    (originHeight.toDouble() * targetScaleFactor).toInt()
+            )
+        } else {
+            originBitmap.scale(targetWidth, targetHeight)
+        }
+
+        val targetDir = File(context.cacheDir, "picker_images")
+        if (!targetDir.exists()) {
+            targetDir.mkdirs()
+        }
+
+        val fileExtension = extension(context)
+        val filename = path.split("/").last().remove(fileExtension)
+        val targetFile = File(targetDir, "$filename.png")
+        if (targetFile.exists())
+            targetFile.delete()
+
+        FileOutputStream(targetFile).use {
+            targetBitmap.compress(Bitmap.CompressFormat.PNG, 100, it)
+        }
+
+        return Uri.fromFile(targetFile)
+    }
+
+    /**
+     * Collect info about file and resize it to fit size
+     */
+    private fun Uri.compress(context: Context, options: ImageOptions): Uri = this
+
+    // TODO Add applying options to video pick. Take video applies options with intent
+    private fun Uri.resize(context: Context, options: VideoOptions): Uri = this
 }

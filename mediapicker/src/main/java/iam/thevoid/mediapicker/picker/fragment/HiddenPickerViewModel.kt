@@ -1,7 +1,9 @@
-package iam.thevoid.mediapicker.picker
+package iam.thevoid.mediapicker.picker.fragment
 
 import android.net.Uri
 import androidx.lifecycle.ViewModel
+import iam.thevoid.mediapicker.picker.ImageReceiver
+import iam.thevoid.mediapicker.picker.bitmapToUriConverter
 import iam.thevoid.util.weak
 import java.util.concurrent.Executors
 

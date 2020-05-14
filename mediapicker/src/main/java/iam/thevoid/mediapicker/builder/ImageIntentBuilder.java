@@ -4,7 +4,6 @@ import android.content.Intent;
 
 public class ImageIntentBuilder {
 
-    private int flags = 0;
     private Mimetype mimetype = Mimetype.BOTH_IMAGE_AND_VIDEO;
     private boolean localOnly = false;
 
@@ -27,9 +26,6 @@ public class ImageIntentBuilder {
 
         intent.putExtra(Intent.EXTRA_LOCAL_ONLY, localOnly);
 
-        if (flags != 0) {
-            intent.setFlags(flags);
-        }
         return intent;
     }
 
