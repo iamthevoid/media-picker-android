@@ -22,6 +22,7 @@ import iam.thevoid.mediapicker.picker.options.VideoOptions
 import java.io.File
 import java.io.FileOutputStream
 import kotlin.math.min
+import kotlin.math.sqrt
 
 /**
  * Created by iam on 16.04.17.
@@ -262,28 +263,59 @@ object FileUtil {
             originBitmap.scale(targetWidth, targetHeight)
         }
 
+
+        return Uri.fromFile(targetBitmap.writeToCache(context, this, path))
+    }
+
+    /**
+     * Collect info about file and resize it to fit size
+     */
+    private fun Uri.compress(context: Context, options: ImageOptions): Uri {
+        if (options.maxSize.bytes < 0)
+            return this
+
+        val path = getPath(context, this) ?: return this
+
+        val originFile = File(path)
+
+        if (originFile.length() <= options.maxSize.bytes)
+            return this
+
+        val originBitmap = BitmapFactory.decodeFile(path)
+        val originHeight = originBitmap.height
+        val originWidth = originBitmap.width
+
+        val scale = sqrt(options.maxSize.bytes.toDouble() / originFile.length().toDouble())
+
+        val targetBitmap = originBitmap.scale(
+                (originWidth.toDouble() * scale).toInt(),
+                (originHeight.toDouble() * scale).toInt()
+        )
+
+        val targetFile = targetBitmap.writeToCache(context, this, path)
+
+        if (targetFile.length() > options.maxSize.bytes)
+            return Uri.fromFile(targetFile).compress(context, options)
+
+        return Uri.fromFile(targetFile)
+    }
+
+    private fun Bitmap.writeToCache(context: Context, uri: Uri, path: String): File {
         val targetDir = File(context.cacheDir, "picker_images")
         if (!targetDir.exists()) {
             targetDir.mkdirs()
         }
-
-        val fileExtension = extension(context)
+        val fileExtension = uri.extension(context)
         val filename = path.split("/").last().remove(fileExtension)
         val targetFile = File(targetDir, "$filename.png")
         if (targetFile.exists())
             targetFile.delete()
 
         FileOutputStream(targetFile).use {
-            targetBitmap.compress(Bitmap.CompressFormat.PNG, 100, it)
+            compress(Bitmap.CompressFormat.PNG, 100, it)
         }
-
-        return Uri.fromFile(targetFile)
+        return targetFile
     }
-
-    /**
-     * Collect info about file and resize it to fit size
-     */
-    private fun Uri.compress(context: Context, options: ImageOptions): Uri = this
 
     // TODO Add applying options to video pick. Take video applies options with intent
     private fun Uri.resize(context: Context, options: VideoOptions): Uri = this

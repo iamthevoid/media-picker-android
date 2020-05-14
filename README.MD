@@ -1,6 +1,6 @@
 
 
-![lib-version](lib.svg)
+[<img src="lib.svg">](https://bintray.com/beta/#/iamthevoid/maven/MediaPicker)
   
   # Picker  
 Simple reactive library for pick image or video. There are Rx Java 1 and RxJava 2 implementation.  
@@ -120,7 +120,9 @@ Since **N (Api 24)** needs `fileprovider` for correct saving and using photo. Fo
 File contains next:  
 ```xml  
  <paths>  
-   <external-path name="my_images" // Any name path="Android/data/**{name of package of your app}**/files/Pictures" />  
+   <external-path 
+    name="my_images" <!-- Any Image --> 
+    path="Android/data/**{name of package of your app}**/files/Pictures" />  
  </paths>  
 ```  
   
