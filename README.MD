@@ -1,6 +1,6 @@
 
 
-<a href="https://bintray.com/beta/#/iamthevoid/maven/MediaPicker"><img src="https://github.com/iamthevoid/media-picker-android/blob/master/lib.svg"></a>  
+![lib-version](lib.svg)
   
   # Picker  
 Simple reactive library for pick image or video. There are Rx Java 1 and RxJava 2 implementation.  
