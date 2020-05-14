@@ -4,6 +4,8 @@ import android.annotation.SuppressLint
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
@@ -28,6 +30,7 @@ import java.io.File
 
 class MainActivity : AppCompatActivity(), View.OnClickListener {
 
+    private var progressBar: ProgressBar? = null
     private var imageView: ImageView? = null
     private var videoView: VideoView? = null
     private var pathText: TextView? = null
@@ -44,6 +47,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        progressBar = findViewById(R.id.progress)
         imageView = findViewById(R.id.image)
         videoView = findViewById(R.id.video)
         pathText = findViewById(R.id.path)
@@ -67,6 +71,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                     MediaPicker.builder()
                             .takePhoto(it)
                             .request(this)
+                            .compose(loading())
                             .compose(load(::showImage))
                             .subscribe(::showFileInfo) { it.printStackTrace() }
                 }
@@ -76,6 +81,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                     MediaPicker.builder()
                             .pickImage(it)
                             .request(this)
+                            .compose(loading())
                             .compose(load(::showImage))
                             .observeOn(AndroidSchedulers.mainThread())
                             .subscribe(::showFileInfo) { it.printStackTrace() }
@@ -86,6 +92,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                 MediaPicker.builder()
                         .takeVideo()
                         .request(this)
+                        .compose(loading())
                         .compose(load(::showVideo))
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(::showFileInfo) { it.printStackTrace() }
@@ -94,6 +101,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                 MediaPicker.builder()
                         .pickVideo()
                         .request(this)
+                        .compose(loading())
                         .compose(load(::showVideo))
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(::showFileInfo) { it.printStackTrace() }
@@ -109,7 +117,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         lastImageOptions?.apply {
             widthEditText.setText(maxResolution.width.takeIf { it > 0 }?.toString().safe())
             heightEditText.setText(maxResolution.height.takeIf { it > 0 }?.toString().safe())
-            sizeEditText.setText(maxSize.bytes.takeIf { it > 0 }?.toString().safe())
+            sizeEditText.setText(maxSize.kiloBytes.takeIf { it > 0 }?.toString().safe())
             preserveRatioCheckbox.isChecked = preserveRatio
         }
         AlertDialog.Builder(this)
@@ -183,4 +191,9 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             } catch (e: Exception) {
                 -1
             }
+
+    private fun <T> loading() = Observable.Transformer<T, T> {
+        it.doOnSubscribe { Handler(Looper.getMainLooper()).post { progressBar.show() } }
+                .doOnTerminate { Handler(Looper.getMainLooper()).post { progressBar.hide() } }
+    }
 }
