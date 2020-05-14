@@ -20,6 +20,7 @@ import iam.thevoid.mediapicker.picker.metrics.MemorySize
 import iam.thevoid.mediapicker.picker.metrics.Resolution
 import iam.thevoid.mediapicker.picker.metrics.SizeUnit
 import iam.thevoid.mediapicker.picker.options.ImageOptions
+import iam.thevoid.mediapicker.picker.options.VideoOptions
 import iam.thevoid.mediapicker.rx1.MediaPicker
 import iam.thevoid.mediapicker.rx1.file
 import iam.thevoid.mediapicker.util.FileUtil
@@ -27,6 +28,8 @@ import rx.Observable
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
 import java.io.File
+import kotlin.time.ExperimentalTime
+import kotlin.time.milliseconds
 
 class MainActivity : AppCompatActivity(), View.OnClickListener {
 
@@ -43,6 +46,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     private var fileInfo: View? = null
 
     private var lastImageOptions: ImageOptions? = null
+    private var lastVideoOptions: VideoOptions? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -67,9 +71,9 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     override fun onClick(v: View) {
         when (v.id) {
             R.id.take_photo ->
-                imageOptionsDialog {
+                imageOptionsDialog { options ->
                     MediaPicker.builder()
-                            .takePhoto(it)
+                            .takePhoto(options)
                             .request(this)
                             .compose(loading())
                             .compose(load(::showImage))
@@ -77,9 +81,9 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                 }
 
             R.id.pick_image ->
-                imageOptionsDialog {
+                imageOptionsDialog { options ->
                     MediaPicker.builder()
-                            .pickImage(it)
+                            .pickImage(options)
                             .request(this)
                             .compose(loading())
                             .compose(load(::showImage))
@@ -89,13 +93,15 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
 
             R.id.take_video ->
-                MediaPicker.builder()
-                        .takeVideo()
-                        .request(this)
-                        .compose(loading())
-                        .compose(load(::showVideo))
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(::showFileInfo) { it.printStackTrace() }
+                videoOptionsDialog { options ->
+                    MediaPicker.builder()
+                            .takeVideo(options)
+                            .request(this)
+                            .compose(loading())
+                            .compose(load(::showVideo))
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(::showFileInfo) { it.printStackTrace() }
+                }
 
             R.id.pick_video ->
                 MediaPicker.builder()
@@ -135,6 +141,31 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                             ),
                             preserveRatio = preserveRatioCheckbox.isChecked
                     ).also { lastImageOptions = it })
+                }
+                .setNegativeButton(android.R.string.cancel) { _, _ -> }
+                .show()
+    }
+
+    @OptIn(ExperimentalTime::class)
+    private fun videoOptionsDialog(onCustomized: (VideoOptions) -> Unit) {
+        val view = inflate(R.layout.dialog_video_options)
+        val durationEditText = view.findViewById<EditText>(R.id.duration)
+        val sizeEditText = view.findViewById<EditText>(R.id.size)
+        lastVideoOptions?.apply {
+            durationEditText.setText(maxDuration.inMilliseconds.takeIf { it > 0 }?.toInt()?.toString().safe())
+            sizeEditText.setText(maxSize.kiloBytes.takeIf { it > 0 }?.toString().safe())
+        }
+        AlertDialog.Builder(this)
+                .setView(view)
+                .setMessage(getString(R.string.pick_image_description))
+                .setPositiveButton(android.R.string.ok) { _, _ ->
+                    onCustomized(VideoOptions(
+                            maxDuration = durationEditText.number().milliseconds,
+                            maxSize = MemorySize(
+                                    size = sizeEditText.number(),
+                                    unit = SizeUnit.KILOBYTE
+                            )
+                    ).also { lastVideoOptions = it })
                 }
                 .setNegativeButton(android.R.string.cancel) { _, _ -> }
                 .show()

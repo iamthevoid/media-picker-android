@@ -42,21 +42,8 @@ abstract class Picker<T> protected constructor() {
     private var videoOptions: VideoOptions? = null
 
     @OptIn(ExperimentalTime::class)
-    private val bundle: Bundle by lazy {
-        Bundle().apply {
-//            imageOptions?.apply {
-//                maxResolution.height.takeIf { it > 0 }
-//                        ?.also { putInt(EXTRA_PHOTO_MAX_PIXEL_HEIGHT, it) }
-//
-//                maxResolution.width.takeIf { it > 0 }
-//                        ?.also { putInt(EXTRA_PHOTO_MAX_PIXEL_WIDTH, it) }
-//
-//                maxSize.takeIf { it.bytes > 0 }
-//                        ?.also { putLong(EXTRA_PHOTO_MAX_SIZE, it.bytes) }
-//
-//                putBoolean(EXTRA_PHOTO_PRESERVE_RATIO, preserveRatio)
-//            }
-
+    private val bundle: Bundle
+        get() = Bundle().apply {
             videoOptions?.apply {
                 maxDuration.inSeconds.toLong().takeIf { it > 0 }
                         ?.also { putLong(EXTRA_VIDEO_MAX_DURATION, it) }
@@ -67,7 +54,7 @@ abstract class Picker<T> protected constructor() {
                 putInt(EXTRA_VIDEO_QUALITY, quality.code)
             }
         }
-    }
+
 
     protected abstract fun initStream(applyOptions: (Uri) -> Uri): T
 
