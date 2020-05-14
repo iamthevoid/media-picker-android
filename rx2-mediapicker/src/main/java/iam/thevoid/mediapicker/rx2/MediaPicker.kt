@@ -9,6 +9,7 @@ import iam.thevoid.mediapicker.picker.Picker
 import io.reactivex.Maybe
 import io.reactivex.Observable
 import io.reactivex.disposables.Disposable
+import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.MaybeSubject
 
 class MediaPicker : Picker<Maybe<Uri>>() {
@@ -16,10 +17,12 @@ class MediaPicker : Picker<Maybe<Uri>>() {
     private var publishSubject: MaybeSubject<Uri>? = null
     private var permissionDisposable: Disposable? = null
 
-    override fun initStream(): Maybe<Uri> =
+    override fun initStream(applyOptions: (Uri) -> Uri): Maybe<Uri> =
             MaybeSubject.create<Uri>().also { publishSubject = it }
                     .doOnEvent { _, _ -> permissionDisposable?.dispose() }
                     .doOnComplete { permissionDisposable?.dispose() }
+                    .observeOn(Schedulers.io())
+                    .map { applyOptions(it) }
 
     override fun requestPermissions(context: Context, permissions: List<String>, result: OnRequestPermissionsResult) {
         permissionDisposable?.dispose()

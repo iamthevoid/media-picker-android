@@ -8,6 +8,7 @@ import iam.thevoid.mediapicker.picker.OnRequestPermissionsResult
 import iam.thevoid.mediapicker.picker.Picker
 import rx.Observable
 import rx.Subscription
+import rx.schedulers.Schedulers
 import rx.subjects.PublishSubject
 
 class MediaPicker : Picker<Observable<Uri>>() {
@@ -15,9 +16,11 @@ class MediaPicker : Picker<Observable<Uri>>() {
     private var publishSubject: PublishSubject<Uri>? = null
     private var subscription: Subscription? = null
 
-    override fun initStream(): Observable<Uri> =
+    override fun initStream(applyOptions: (Uri) -> Uri): Observable<Uri> =
             PublishSubject.create<Uri>().also { publishSubject = it }
                     .doOnTerminate { subscription?.unsubscribe() }
+                    .observeOn(Schedulers.io())
+                    .map { applyOptions(it) }
 
     override fun requestPermissions(context: Context, permissions: List<String>, result: OnRequestPermissionsResult) {
         subscription?.unsubscribe()

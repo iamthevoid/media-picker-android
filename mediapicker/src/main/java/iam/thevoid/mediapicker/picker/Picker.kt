@@ -15,11 +15,13 @@ import iam.thevoid.mediapicker.bus.MediaPickerBus
 import iam.thevoid.mediapicker.bus.SelectAppBus
 import iam.thevoid.mediapicker.chooser.IntentData
 import iam.thevoid.mediapicker.chooser.PickerSelectAppDialog
-import iam.thevoid.mediapicker.picker.HiddenPickerFragment.Companion.getFragment
 import iam.thevoid.mediapicker.picker.Purpose.Pick
 import iam.thevoid.mediapicker.picker.Purpose.Take
-import iam.thevoid.mediapicker.picker.options.PhotoOptions
+import iam.thevoid.mediapicker.picker.fragment.HiddenPickerFragment
+import iam.thevoid.mediapicker.picker.fragment.HiddenPickerFragment.Companion.getFragment
+import iam.thevoid.mediapicker.picker.options.ImageOptions
 import iam.thevoid.mediapicker.picker.options.VideoOptions
+import iam.thevoid.mediapicker.util.FileUtil
 import iam.thevoid.mediapicker.util.IntentUtils
 import java.util.*
 import kotlin.time.ExperimentalTime
@@ -35,23 +37,25 @@ abstract class Picker<T> protected constructor() {
 
     private var chooserTitle: String? = null
 
-    private var photoOptions: PhotoOptions? = null
+    private var imageOptions: ImageOptions? = null
 
     private var videoOptions: VideoOptions? = null
 
     @OptIn(ExperimentalTime::class)
     private val bundle: Bundle by lazy {
         Bundle().apply {
-            photoOptions?.apply {
-                maxResolution.height.takeIf { it > 0 }
-                        ?.also { putLong(EXTRA_PHOTO_MAX_PIXEL_HEIGHT, it) }
-
-                maxResolution.width.takeIf { it > 0 }
-                        ?.also { putLong(EXTRA_PHOTO_MAX_PIXEL_WIDTH, it) }
-
-                maxSize.takeIf { it.bytes > 0 }
-                        ?.also { putLong(EXTRA_PHOTO_MAX_SIZE, it.bytes) }
-            }
+//            imageOptions?.apply {
+//                maxResolution.height.takeIf { it > 0 }
+//                        ?.also { putInt(EXTRA_PHOTO_MAX_PIXEL_HEIGHT, it) }
+//
+//                maxResolution.width.takeIf { it > 0 }
+//                        ?.also { putInt(EXTRA_PHOTO_MAX_PIXEL_WIDTH, it) }
+//
+//                maxSize.takeIf { it.bytes > 0 }
+//                        ?.also { putLong(EXTRA_PHOTO_MAX_SIZE, it.bytes) }
+//
+//                putBoolean(EXTRA_PHOTO_PRESERVE_RATIO, preserveRatio)
+//            }
 
             videoOptions?.apply {
                 maxDuration.inSeconds.toLong().takeIf { it > 0 }
@@ -65,19 +69,21 @@ abstract class Picker<T> protected constructor() {
         }
     }
 
-    abstract fun initStream(): T
+    protected abstract fun initStream(applyOptions: (Uri) -> Uri): T
 
-    abstract fun requestPermissions(
+    protected abstract fun requestPermissions(
             context: Context,
             permissions: List<String>,
             result: OnRequestPermissionsResult
     )
 
-    abstract fun onResult(uri: Uri)
+    protected abstract fun onResult(uri: Uri)
 
-    abstract fun onEmptyResult()
+    protected abstract fun onEmptyResult()
 
-    fun request(context: Context): T = initStream().also {
+    fun request(context: Context): T = initStream {
+        FileUtil.applyOptions(context, it, imageOptions, videoOptions)
+    }.also {
         SelectAppBus.attachMediaPicker(this)
         when {
             onlyOneAppCanHandleRequest(context) ->
@@ -134,7 +140,7 @@ abstract class Picker<T> protected constructor() {
     abstract class Builder<T, Picker : iam.thevoid.mediapicker.picker.Picker<T>> {
         private var purposes: Set<Purpose> = setOf()
         private var onDismissListener: OnDismissListener? = null
-        private var photoOptions: PhotoOptions? = null
+        private var imageOptions: ImageOptions? = null
         private var videoOptions: VideoOptions? = null
         private var appChooserTitleResource = R.string.default_chooser_title
         private var appChooserTitle: String? = null
@@ -154,19 +160,20 @@ abstract class Picker<T> protected constructor() {
         }.build()
 
         @JvmOverloads
-        fun takePhoto(options: PhotoOptions = PhotoOptions()) = apply {
+        fun takePhoto(options: ImageOptions = ImageOptions()) = apply {
             purposes = setOf(Take.Photo(options.chooserTitle))
-            photoOptions = options
+            imageOptions = options
         }.build()
 
-        fun pickImage() = apply {
+        fun pickImage(options: ImageOptions = ImageOptions()) = apply {
             purposes = setOf(Pick.Image)
+            imageOptions = options
         }.build()
 
         @JvmOverloads
-        fun pickImageOrPhoto(photoOptions: PhotoOptions = PhotoOptions()) = apply {
-            purposes = setOf(Pick.Image, Take.Photo(photoOptions.chooserTitle))
-            this.photoOptions = photoOptions
+        fun pickImageOrPhoto(imageOptions: ImageOptions = ImageOptions()) = apply {
+            purposes = setOf(Pick.Image, Take.Photo(imageOptions.chooserTitle))
+            this.imageOptions = imageOptions
         }.build()
 
         fun onDismiss(onDismissListener: OnDismissListener) =
@@ -186,7 +193,7 @@ abstract class Picker<T> protected constructor() {
                 create().apply {
                     purposes = ArrayList(this@Builder.purposes)
                     onDismissListener = this@Builder.onDismissListener
-                    photoOptions = this@Builder.photoOptions
+                    imageOptions = this@Builder.imageOptions
                     videoOptions = this@Builder.videoOptions
                     chooserTitle = appChooserTitle
                     chooserTitleResource = appChooserTitleResource
@@ -203,9 +210,11 @@ abstract class Picker<T> protected constructor() {
 
         const val EXTRA_INTENT = "iam.thevoid.mediapicker.EXTRA_INTENT"
         const val EXTRA_REQUEST_CODE = "iam.thevoid.mediapicker.EXTRA_REQUEST_CODE"
-        const val EXTRA_PHOTO_MAX_SIZE = "iam.thevoid.mediapicker.EXTRA_PHOTO_MAX_SIZE"
-        const val EXTRA_PHOTO_MAX_PIXEL_WIDTH = "iam.thevoid.mediapicker.EXTRA_PHOTO_MAX_PIXEL_WIDTH"
-        const val EXTRA_PHOTO_MAX_PIXEL_HEIGHT = "iam.thevoid.mediapicker.EXTRA_PHOTO_MAX_PIXEL_HEIGHT"
+
+        //        const val EXTRA_PHOTO_MAX_SIZE = "iam.thevoid.mediapicker.EXTRA_PHOTO_MAX_SIZE"
+//        const val EXTRA_PHOTO_PRESERVE_RATIO = "iam.thevoid.mediapicker.EXTRA_PHOTO_PRESERVE_RATIO"
+//        const val EXTRA_PHOTO_MAX_PIXEL_WIDTH = "iam.thevoid.mediapicker.EXTRA_PHOTO_MAX_PIXEL_WIDTH"
+//        const val EXTRA_PHOTO_MAX_PIXEL_HEIGHT = "iam.thevoid.mediapicker.EXTRA_PHOTO_MAX_PIXEL_HEIGHT"
         const val EXTRA_VIDEO_MAX_SIZE = "iam.thevoid.mediapicker.EXTRA_VIDEO_MAX_SIZE"
         const val EXTRA_VIDEO_MAX_DURATION = "iam.thevoid.mediapicker.EXTRA_VIDEO_MAX_DURATION"
         const val EXTRA_VIDEO_QUALITY = "iam.thevoid.mediapicker.EXTRA_VIDEO_QUALITY"

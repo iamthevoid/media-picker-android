@@ -1,4 +1,4 @@
-package iam.thevoid.mediapicker.picker
+package iam.thevoid.mediapicker.picker.fragment
 
 import android.app.Activity
 import android.content.Intent
@@ -6,8 +6,10 @@ import android.net.Uri
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import iam.thevoid.mediapicker.bus.MediaPickerBus
+import iam.thevoid.mediapicker.picker.ImageReceiver
+import iam.thevoid.mediapicker.picker.Picker
+import iam.thevoid.mediapicker.picker.Purpose
 import iam.thevoid.mediapicker.util.FileUtil
-import iam.thevoid.noxml.core.mvvm.activityViewModel
 import java.io.File
 
 class HiddenPickerFragment : Fragment(), ImageReceiver {
