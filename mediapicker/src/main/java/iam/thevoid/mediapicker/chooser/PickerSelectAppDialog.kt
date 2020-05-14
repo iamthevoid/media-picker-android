@@ -1,6 +1,7 @@
 package iam.thevoid.mediapicker.chooser
 
 import android.content.Context
+import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -12,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import iam.thevoid.ae.asFragmentActivity
 import iam.thevoid.mediapicker.R
+import iam.thevoid.mediapicker.bus.MediaPickerBus
 import iam.thevoid.mediapicker.bus.SelectAppBus
 
 class PickerSelectAppDialog : BottomSheetDialogFragment(), OnSelectAppCallback {
@@ -39,6 +41,11 @@ class PickerSelectAppDialog : BottomSheetDialogFragment(), OnSelectAppCallback {
                         .also { adapter -> adapter.callback = this@PickerSelectAppDialog }
             }
         }
+    }
+
+    override fun onDismiss(dialog: DialogInterface) {
+        super.onDismiss(dialog)
+        MediaPickerBus.onDismissSelectApp()
     }
 
     private fun getIntentDatas(savedInstanceState: Bundle?): ArrayList<IntentData>? =

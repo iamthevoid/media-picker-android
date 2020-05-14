@@ -41,7 +41,7 @@ ext {
 
     kotlinJvmTarget = "1.8"
 
-    libVersion = '1.0.0-rc01'
+    libVersion = '1.0.0-rc02'
     libGroupId = 'iam.thevoid.mediapicker'
     libOrg = 'iamthevoid'
     libUploadName = 'MediaPicker'

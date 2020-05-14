@@ -56,6 +56,7 @@ abstract class Picker<T> protected constructor() {
         }
 
 
+
     protected abstract fun initStream(applyOptions: (Uri) -> Uri): T
 
     protected abstract fun requestPermissions(
@@ -68,31 +69,39 @@ abstract class Picker<T> protected constructor() {
 
     protected abstract fun onEmptyResult()
 
+
     fun request(context: Context): T = initStream {
         FileUtil.applyOptions(context, it, imageOptions, videoOptions)
     }.also {
         SelectAppBus.attachMediaPicker(this)
         when {
-            onlyOneAppCanHandleRequest(context) ->
+            isOnlyOneAppCanHandleRequest(context) ->
                 purposes.first()
                         .also { handleIntent(context, it.getIntentData(context, bundle)) }
             else -> {
                 chooserTitle.safe(context.string(chooserTitleResource)).also { title ->
                     PickerSelectAppDialog
-                            .showForResult(context, intentData(context), title)
+                            .showForResult(context, purposes.map { it.getIntentData(context, bundle) }, title)
                 }
             }
         }
     }
 
+
     internal fun onAppSelect(context: Context, intentData: IntentData?) =
             intentData?.also { handleIntent(context, it) }
 
+    internal fun onImagePicked(uri: Uri?) =
+            uri?.also(::onResult) ?: onEmptyResult()
+
+    internal fun onDismissSelectApp() =
+            onEmptyResult()
+
     internal fun onImagePickDismissed() {
+        onEmptyResult()
         onDismissListener?.onDismiss()
     }
 
-    internal fun onImagePicked(uri: Uri?) = uri?.also(::onResult) ?: onEmptyResult()
 
     private fun handleIntent(context: Context, intentData: IntentData) {
         requestPermissions(context, intentData.permissions, object : OnRequestPermissionsResult {
@@ -108,9 +117,6 @@ abstract class Picker<T> protected constructor() {
         })
     }
 
-    private fun intentData(context: Context): List<IntentData> =
-            purposes.map { it.getIntentData(context, bundle) }
-
     private fun startImagePick(context: Context, intent: Intent, requestCode: Int) {
         MediaPickerBus.attachMediaPicker(this)
         context.asFragmentActivity().supportFragmentManager
@@ -119,7 +125,7 @@ abstract class Picker<T> protected constructor() {
                 .commitAllowingStateLoss()
     }
 
-    private fun onlyOneAppCanHandleRequest(context: Context): Boolean = purposes.map {
+    private fun isOnlyOneAppCanHandleRequest(context: Context): Boolean = purposes.map {
         IntentUtils.getResolveInfoList(context.asActivity().packageManager,
                 it.getIntent(context, bundle))
     }.flatten().size == 1
@@ -197,11 +203,6 @@ abstract class Picker<T> protected constructor() {
 
         const val EXTRA_INTENT = "iam.thevoid.mediapicker.EXTRA_INTENT"
         const val EXTRA_REQUEST_CODE = "iam.thevoid.mediapicker.EXTRA_REQUEST_CODE"
-
-        //        const val EXTRA_PHOTO_MAX_SIZE = "iam.thevoid.mediapicker.EXTRA_PHOTO_MAX_SIZE"
-//        const val EXTRA_PHOTO_PRESERVE_RATIO = "iam.thevoid.mediapicker.EXTRA_PHOTO_PRESERVE_RATIO"
-//        const val EXTRA_PHOTO_MAX_PIXEL_WIDTH = "iam.thevoid.mediapicker.EXTRA_PHOTO_MAX_PIXEL_WIDTH"
-//        const val EXTRA_PHOTO_MAX_PIXEL_HEIGHT = "iam.thevoid.mediapicker.EXTRA_PHOTO_MAX_PIXEL_HEIGHT"
         const val EXTRA_VIDEO_MAX_SIZE = "iam.thevoid.mediapicker.EXTRA_VIDEO_MAX_SIZE"
         const val EXTRA_VIDEO_MAX_DURATION = "iam.thevoid.mediapicker.EXTRA_VIDEO_MAX_DURATION"
         const val EXTRA_VIDEO_QUALITY = "iam.thevoid.mediapicker.EXTRA_VIDEO_QUALITY"
