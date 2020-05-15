@@ -10,7 +10,7 @@ import kotlinx.android.parcel.Parcelize
 data class IntentData(
         val intent: Intent,
         val requestCode: Int,
-        val title: Int = -1,
+        val title: String? = null,
         val permissions: List<String> = emptyList()
 ) : Parcelable {
 

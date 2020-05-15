@@ -16,6 +16,7 @@ import iam.thevoid.ae.inflate
 import iam.thevoid.ae.show
 import iam.thevoid.e.format
 import iam.thevoid.e.safe
+import iam.thevoid.mediapicker.picker.Purpose
 import iam.thevoid.mediapicker.picker.metrics.MemorySize
 import iam.thevoid.mediapicker.picker.metrics.Resolution
 import iam.thevoid.mediapicker.picker.metrics.SizeUnit
@@ -73,7 +74,9 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             R.id.take_photo ->
                 imageOptionsDialog { options ->
                     MediaPicker.builder()
-                            .takePhoto(options)
+                            .setImageOptions(options)
+                            .take(Purpose.Take.Photo)
+                            .build()
                             .request(this)
                             .compose(loading())
                             .compose(load(::showImage))
@@ -83,7 +86,9 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             R.id.pick_image ->
                 imageOptionsDialog { options ->
                     MediaPicker.builder()
-                            .pickImage(options)
+                            .setImageOptions(options)
+                            .pick(Purpose.Pick.Image)
+                            .build()
                             .request(this)
                             .compose(loading())
                             .compose(load(::showImage))
@@ -95,7 +100,9 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             R.id.take_video ->
                 videoOptionsDialog { options ->
                     MediaPicker.builder()
-                            .takeVideo(options)
+                            .setTakeVideoOptions(options)
+                            .take(Purpose.Take.Video)
+                            .build()
                             .request(this)
                             .compose(loading())
                             .compose(load(::showVideo))
@@ -105,7 +112,8 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
             R.id.pick_video ->
                 MediaPicker.builder()
-                        .pickVideo()
+                        .pick(Purpose.Pick.Video)
+                        .build()
                         .request(this)
                         .compose(loading())
                         .compose(load(::showVideo))
@@ -208,7 +216,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             return
         pathText?.text = "Path: ${file.absolutePath}"
         sizeText?.text = "Size: ${filesizeInMb(file)} MB"
-        val isImage = file.extension.let { !FileUtil.isVideoExt(it) && !FileUtil.isGifExt(it) }
+        val isImage = file.extension.let { !FileUtil.isVideoExt(it) }
         resolutionText?.gone(!isImage)
         if (isImage) {
             val bitmap = BitmapFactory.decodeFile(file.absolutePath)

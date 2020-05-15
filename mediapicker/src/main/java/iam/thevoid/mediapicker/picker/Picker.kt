@@ -30,12 +30,24 @@ abstract class Picker<T> protected constructor() {
 
     private var purposes = listOf<Purpose>()
 
-    private var onDismissListener: OnDismissListener? = null
+    private var onDismissPickListener: OnDismissListener? = null
+
+    private var onDismissAppSelectListener: OnDismissListener? = null
 
     @StringRes
     private var chooserTitleResource: Int = -1
 
     private var chooserTitle: String? = null
+
+    @StringRes
+    private var takePhotoChooserTitleResource: Int = -1
+
+    private var takePhotoChooserTitle: String? = null
+
+    @StringRes
+    private var takeVideoChooserTitleResource: Int = -1
+
+    private var takeVideoChooserTitle: String? = null
 
     private var imageOptions: ImageOptions? = null
 
@@ -54,7 +66,6 @@ abstract class Picker<T> protected constructor() {
                 putInt(EXTRA_VIDEO_QUALITY, quality.code)
             }
         }
-
 
 
     protected abstract fun initStream(applyOptions: (Uri) -> Uri): T
@@ -87,19 +98,20 @@ abstract class Picker<T> protected constructor() {
         }
     }
 
-
     internal fun onAppSelect(context: Context, intentData: IntentData?) =
             intentData?.also { handleIntent(context, it) }
 
     internal fun onImagePicked(uri: Uri?) =
             uri?.also(::onResult) ?: onEmptyResult()
 
-    internal fun onDismissSelectApp() =
-            onEmptyResult()
+    internal fun onDismissSelectApp() {
+        onDismissAppSelectListener?.onDismiss()
+    }
+
 
     internal fun onImagePickDismissed() {
         onEmptyResult()
-        onDismissListener?.onDismiss()
+        onDismissPickListener?.onDismiss()
     }
 
 
@@ -130,66 +142,108 @@ abstract class Picker<T> protected constructor() {
                 it.getIntent(context, bundle))
     }.flatten().size == 1
 
+    private fun Purpose.toIntentData(context: Context) =
+            getIntentData(context, bundle, title(context))
+
+    private fun Purpose.title(context: Context) = when (this) {
+        Take.Photo -> takePhotoChooserTitle ?: takePhotoChooserTitleResource
+                .takeIf { it > 0 }?.let { context.string(it) }
+        Take.Video -> takeVideoChooserTitle ?: takeVideoChooserTitleResource
+                .takeIf { it > 0 }?.let { context.string(it) }
+        else -> null
+    }
+
     abstract class Builder<T, Picker : iam.thevoid.mediapicker.picker.Picker<T>> {
-        private var purposes: Set<Purpose> = setOf()
-        private var onDismissListener: OnDismissListener? = null
+        private var purposes: HashSet<Purpose> = hashSetOf()
+        private var onDismissPickListener: OnDismissListener? = null
+        private var onDismissAppSelectListener: OnDismissListener? = null
         private var imageOptions: ImageOptions? = null
         private var videoOptions: VideoOptions? = null
         private var appChooserTitleResource = R.string.default_chooser_title
         private var appChooserTitle: String? = null
+        private var takePhotoAppChooserTitleResource = R.string.take_photo
+        private var takePhotoAppChooserTitle: String? = null
+        private var takeVideoAppChooserTitleResource = R.string.take_video
+        private var takeVideoAppChooserTitle: String? = null
 
         protected abstract fun create(): Picker
 
-        @JvmOverloads
-        fun takeVideo(options: VideoOptions = VideoOptions()) = apply {
-            purposes = setOf(Take.Video(options.chooserTitle))
-            videoOptions = options
-        }.build()
+        fun setTakeVideoOptions(options: VideoOptions) = apply {
+            this.videoOptions = options
+        }
 
-        @JvmOverloads
-        fun pickVideo(options: VideoOptions = VideoOptions()) = apply {
-            purposes = setOf(Pick.Video)
-            videoOptions = options
-        }.build()
+        fun setImageOptions(options: ImageOptions) = apply {
+            this.imageOptions = options
+        }
 
-        @JvmOverloads
-        fun takePhoto(options: ImageOptions = ImageOptions()) = apply {
-            purposes = setOf(Take.Photo(options.chooserTitle))
-            imageOptions = options
-        }.build()
+        fun pick(vararg pickPurposes: Pick) = apply {
+            when {
+                pickPurposes.contains(Pick.Image) && pickPurposes.contains(Pick.Video) -> {
+                    purposes.add(Purpose.Hidden.Gallery)
+                    pickPurposes.filter { it !is Pick.Image && it !is Pick.Video }
+                            .also { purposes.addAll(it) }
+                }
+                else -> {
+                    purposes.addAll(pickPurposes)
+                }
+            }
 
-        fun pickImage(options: ImageOptions = ImageOptions()) = apply {
-            purposes = setOf(Pick.Image)
-            imageOptions = options
-        }.build()
 
-        @JvmOverloads
-        fun pickImageOrPhoto(imageOptions: ImageOptions = ImageOptions()) = apply {
-            purposes = setOf(Pick.Image, Take.Photo(imageOptions.chooserTitle))
-            this.imageOptions = imageOptions
-        }.build()
+        }
 
-        fun onDismiss(onDismissListener: OnDismissListener) =
-                apply { this.onDismissListener = onDismissListener }
+        fun take(vararg take: Take) = apply {
+            purposes.addAll(take)
+        }
 
-        fun setChooserTitle(@StringRes titleResource: Int) {
+        fun onDismissPick(onDismissListener: OnDismissListener) =
+                apply { this.onDismissPickListener = onDismissListener }
+
+        fun onDismissAppSelect(onDismissListener: OnDismissListener) =
+                apply { this.onDismissAppSelectListener = onDismissListener }
+
+        fun setChooserTitle(@StringRes titleResource: Int) = apply {
             appChooserTitleResource = titleResource
             appChooserTitle = null
         }
 
-        fun setChooserTitle(title: String) {
+        fun setChooserTitle(title: String) = apply {
             appChooserTitleResource = -1
             appChooserTitle = title
+        }
+
+        fun setTakePhotoAppChooserTitle(@StringRes titleResource: Int = -1) = apply {
+            takePhotoAppChooserTitleResource = titleResource
+            takePhotoAppChooserTitle = null
+        }
+
+        fun setTakePhotoAppChooserTitle(title: String? = null) = apply {
+            takePhotoAppChooserTitleResource = -1
+            takePhotoAppChooserTitle = title
+        }
+
+        fun setTakeVideoAppChooserTitle(@StringRes titleResource: Int = -1) = apply {
+            takeVideoAppChooserTitleResource = titleResource
+            takeVideoAppChooserTitle = null
+        }
+
+        fun setTakeVideoAppChooserTitle(title: String? = null) = apply {
+            takeVideoAppChooserTitleResource = -1
+            takeVideoAppChooserTitle = title
         }
 
         fun build(): Picker =
                 create().apply {
                     purposes = ArrayList(this@Builder.purposes)
-                    onDismissListener = this@Builder.onDismissListener
+                    onDismissPickListener = this@Builder.onDismissPickListener
+                    onDismissAppSelectListener = this@Builder.onDismissAppSelectListener
                     imageOptions = this@Builder.imageOptions
                     videoOptions = this@Builder.videoOptions
                     chooserTitle = appChooserTitle
                     chooserTitleResource = appChooserTitleResource
+                    takePhotoChooserTitle = takePhotoAppChooserTitle
+                    takePhotoChooserTitleResource = takePhotoAppChooserTitleResource
+                    takeVideoChooserTitle = takePhotoAppChooserTitle
+                    takeVideoChooserTitleResource = takeVideoAppChooserTitleResource
                 }
     }
 

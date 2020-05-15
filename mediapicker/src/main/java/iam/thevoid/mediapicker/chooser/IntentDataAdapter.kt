@@ -43,8 +43,7 @@ class IntentDataAdapter internal constructor(pm: PackageManager, intentDatas: Li
 
         fun onBind(pm: PackageManager?, resolveInfo: ResolveInfo, intentData: IntentData?) {
             imageView.setImageDrawable(resolveInfo.loadIcon(pm))
-            textView.text = intentData?.title?.takeIf { it > 0 }?.let(textView.context::getString)
-                    ?: resolveInfo.loadLabel(pm)
+            textView.text = intentData?.title ?: resolveInfo.loadLabel(pm)
             itemView.setOnClickListener { callback?.onSelectApp(textView.context, intentData) }
         }
     }
