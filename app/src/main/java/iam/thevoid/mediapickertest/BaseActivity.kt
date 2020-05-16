@@ -4,8 +4,6 @@ import android.annotation.SuppressLint
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.view.View
 import android.widget.CheckBox
 import android.widget.EditText
@@ -26,19 +24,14 @@ import iam.thevoid.mediapicker.picker.metrics.SizeUnit
 import iam.thevoid.mediapicker.picker.metrics.VideoQuality
 import iam.thevoid.mediapicker.picker.options.ImageOptions
 import iam.thevoid.mediapicker.picker.options.VideoOptions
-import iam.thevoid.mediapicker.rx1.MediaPicker
-import iam.thevoid.mediapicker.rx1.file
 import iam.thevoid.mediapicker.util.FileUtil
-import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.activity_main.size
-import rx.Observable
-import rx.android.schedulers.AndroidSchedulers
-import rx.schedulers.Schedulers
+import kotlinx.android.synthetic.main.activity_demo.*
+import kotlinx.android.synthetic.main.activity_demo.size
 import java.io.File
 import kotlin.time.ExperimentalTime
 import kotlin.time.milliseconds
 
-class MainActivity : AppCompatActivity(), View.OnClickListener, Picker.OnDismissListener {
+abstract class BaseActivity : AppCompatActivity(), View.OnClickListener, Picker.OnDismissListener {
 
     private var lastImageOptions: ImageOptions? = null
     private var lastVideoOptions: VideoOptions? = null
@@ -46,7 +39,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, Picker.OnDismiss
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        setContentView(R.layout.activity_demo)
         pick_image?.setOnClickListener(this)
         pick_video?.setOnClickListener(this)
         take_photo?.setOnClickListener(this)
@@ -55,78 +48,19 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, Picker.OnDismiss
 
     }
 
+    abstract fun onPickImageSelect(options: ImageOptions)
+    abstract fun onPickVideoSelect()
+    abstract fun onTakePhotoSelect(options: ImageOptions)
+    abstract fun onTakeVideoSelect(options: VideoOptions)
+    abstract fun onCustomPurpose(purpose: List<Purpose>)
+
     override fun onClick(v: View) {
         when (v.id) {
-            R.id.take_photo ->
-                imageOptionsDialog { options ->
-                    MediaPicker.builder()
-                            .setImageOptions(options)
-                            .take(Purpose.Take.Photo)
-                            .onDismissAppSelect(this)
-                            .onDismissPick(this)
-                            .build()
-                            .request(this)
-                            .compose(loading())
-                            .compose(load(::showImage))
-                            .subscribe(::showFileInfo) { it.printStackTrace() }
-                }
-
-            R.id.pick_image ->
-                imageOptionsDialog { options ->
-                    MediaPicker.builder()
-                            .setImageOptions(options)
-                            .pick(Purpose.Pick.Image)
-                            .onDismissAppSelect(this)
-                            .onDismissPick(this)
-                            .build()
-                            .request(this)
-                            .compose(loading())
-                            .compose(load(::showImage))
-                            .observeOn(AndroidSchedulers.mainThread())
-                            .subscribe(::showFileInfo) { it.printStackTrace() }
-                }
-
-
-            R.id.take_video ->
-                videoOptionsDialog { options ->
-                    MediaPicker.builder()
-                            .setTakeVideoOptions(options)
-                            .take(Purpose.Take.Video)
-                            .onDismissAppSelect(this)
-                            .onDismissPick(this)
-                            .build()
-                            .request(this)
-                            .compose(loading())
-                            .compose(load(::showVideo))
-                            .observeOn(AndroidSchedulers.mainThread())
-                            .subscribe(::showFileInfo) { it.printStackTrace() }
-                }
-
-            R.id.pick_video ->
-                MediaPicker.builder()
-                        .pick(Purpose.Pick.Video)
-                        .onDismissAppSelect(this)
-                        .onDismissPick(this)
-                        .build()
-                        .request(this)
-                        .compose(loading())
-                        .compose(load(::showVideo))
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(::showFileInfo) { it.printStackTrace() }
-
-            R.id.customize -> customOptionsDialog { purposes ->
-                MediaPicker.builder()
-                        .pick(*purposes.filterIsInstance<Purpose.Pick>().toTypedArray())
-                        .take(*purposes.filterIsInstance<Purpose.Take>().toTypedArray())
-                        .onDismissAppSelect(this)
-                        .onDismissPick(this)
-                        .build()
-                        .request(this)
-                        .compose(loading())
-                        .compose(load(::showVideo))
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(::showFileInfo) { it.printStackTrace() }
-            }
+            R.id.take_photo -> imageOptionsDialog(::onTakePhotoSelect)
+            R.id.pick_image -> imageOptionsDialog(::onPickImageSelect)
+            R.id.take_video -> videoOptionsDialog(::onTakeVideoSelect)
+            R.id.pick_video -> onPickVideoSelect()
+            R.id.customize -> customOptionsDialog(::onCustomPurpose)
         }
     }
 
@@ -226,21 +160,13 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, Picker.OnDismiss
                 .show()
     }
 
-    private fun filesizeInMb(file: File): String {
+    protected fun filesizeInMb(file: File): String {
         val size = file.length().toDouble()
         return (size / 1024 / 1024).format(2)
     }
 
 
-    private fun load(show: (Uri) -> Unit): Observable.Transformer<Uri, File> =
-            Observable.Transformer { observable ->
-                observable.observeOn(AndroidSchedulers.mainThread())
-                        .doOnNext { show(it) }
-                        .observeOn(Schedulers.io())
-                        .compose(file(this))
-            }
-
-    private fun showImage(uri: Uri) {
+    protected fun showImage(uri: Uri) {
         video?.gone()
         video?.stopPlayback()
         image?.show()
@@ -248,7 +174,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, Picker.OnDismiss
         image?.setImageURI(uri)
     }
 
-    private fun showVideo(uri: Uri) {
+    protected fun showVideo(uri: Uri) {
         video?.show()
         image?.gone()
         video?.setVideoURI(uri)
@@ -256,7 +182,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, Picker.OnDismiss
     }
 
     @SuppressLint("SetTextI18n")
-    private fun showFileInfo(file: File) {
+    protected fun showFileInfo(file: File) {
         val exists = file.exists()
         file_info.hide(!exists)
         if (!exists)
@@ -277,11 +203,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, Picker.OnDismiss
             } catch (e: Exception) {
                 -1
             }
-
-    private fun <T> loading() = Observable.Transformer<T, T> {
-        it.doOnSubscribe { Handler(Looper.getMainLooper()).post { progress.show() } }
-                .doOnTerminate { Handler(Looper.getMainLooper()).post { progress.hide() } }
-    }
 
     override fun onDismiss() = progress.hide()
 }

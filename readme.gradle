@@ -109,7 +109,8 @@ All of these realized as global functions. In Java can be used as static functio
  .setChooserTitle("Select video source")  
  .setTakeVideoOptions(VideoOptions(duration = 10.toSeconds(), quality = VideoQuality.HIGH))
  .take(Purpose.Take.Video)    
-.request(this /* context */ ) 
+ .request(this /* context */ ) 
+ .subscribe { uri : Uri -> showVideo(uri) } 
 ``` 
 Also examples available in demo application [Code](app/src/main/java/iam/thevoid/mediapickertest)  
   ## WARNING!!! 

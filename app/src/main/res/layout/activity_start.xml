@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:orientation="vertical">
+
+    <Button
+        android:id="@+id/button_rx_java_1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Rx Java 1 demo" />
+
+    <Button
+        android:id="@+id/button_rx_java_2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Rx Java 2 demo" />
+
+    <TextView
+        android:layout_marginTop="24dp"
+        android:gravity="center"
+        android:alpha="0.5"
+        android:lineSpacingExtra="4dp"
+        android:textColor="#ccc"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="All demos has the same\nmechanic, only streams\n library differs" />
+</LinearLayout>

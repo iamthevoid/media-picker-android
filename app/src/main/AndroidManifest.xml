@@ -15,14 +15,20 @@
         android:theme="@style/AppTheme">
 
         <activity
-            android:name="iam.thevoid.mediapickertest.MainActivity"
-            android:screenOrientation="portrait"
-            android:configChanges="orientation|screenSize">
+            android:name="iam.thevoid.mediapickertest.BaseActivity"
+            android:configChanges="orientation|screenSize"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".StartActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".RxJava1Activity" />
+        <activity android:name=".RxJava2Activity" />
 
         <provider
             android:name="androidx.core.content.FileProvider"
