@@ -18,6 +18,7 @@ MediaPicker.builder()
 Under the hood purposes combines into available Intents list and user see chooser (or doesn't see if there is only one app available). After finishing stream emits result or completes. 
 
 **Pick** means that you will get media from storage. Available `Pick.Image` and `Pick.Video` options
+
 **Take** means that you will capture media with camera. Available `Take.Photo` and `Take.Video` options
   
 ## Builder   
@@ -143,11 +144,11 @@ maven { url "https://dl.bintray.com/iamthevoid/maven/" }
 ``` 
 RxJava 1 
 ```groovy      
-implementation "iam.thevoid.mediapicker:rx1:1.0-beta03"
+implementation "iam.thevoid.mediapicker:rx1:$libVersion"
  ```
  RxJava 2 
  ```groovy      
-implementation "iam.thevoid.mediapicker:rx2:1.0-beta03"
+implementation "iam.thevoid.mediapicker:rx2:$libVersion"
  ```
 """
     }

@@ -1,143 +1,160 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout android:orientation="vertical"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
+    android:orientation="vertical">
 
     <TextView
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
         android:id="@+id/pick_title"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        android:layout_margin="8dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Pick:" />
+        android:layout_alignTop="@+id/pick_buttons"
+        android:layout_alignBottom="@+id/pick_buttons"
+        android:layout_alignParentLeft="true"
+        android:layout_margin="8dp"
+        android:gravity="center"
+        android:text="Pick:"
+        android:textSize="16sp"
+        android:textStyle="bold" />
 
     <LinearLayout
         android:id="@+id/pick_buttons"
-        android:layout_below="@+id/pick_title"
-        android:padding="8dp"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/pick_title"
+        android:padding="8dp">
 
         <Button
+            android:drawableLeft="@drawable/ic_baseline_image_24"
             android:id="@+id/pick_image"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Image"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:text="Image" />
 
         <Button
+            android:drawableLeft="@drawable/ic_baseline_video_library_24"
             android:id="@+id/pick_video"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="video"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:text="video" />
     </LinearLayout>
 
     <TextView
         android:id="@+id/take_title"
-        android:textSize="16sp"
-        android:layout_below="@+id/pick_buttons"
-        android:textStyle="bold"
-        android:layout_margin="8dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Take:" />
+        android:layout_alignTop="@+id/take_buttons"
+        android:layout_alignBottom="@+id/take_buttons"
+        android:layout_margin="8dp"
+        android:gravity="center"
+        android:text="Take:"
+        android:textSize="16sp"
+        android:textStyle="bold" />
 
     <LinearLayout
         android:id="@+id/take_buttons"
-        android:layout_below="@id/take_title"
-        android:padding="8dp"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/pick_buttons"
+        android:layout_alignLeft="@id/pick_buttons"
+        android:padding="8dp">
 
         <Button
+            android:drawableLeft="@drawable/ic_baseline_add_a_photo_24"
             android:id="@+id/take_photo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Photo"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:text="Photo" />
 
         <Button
+            android:drawableLeft="@drawable/ic_baseline_videocam_24"
             android:id="@+id/take_video"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Video"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:text="Video" />
     </LinearLayout>
 
+
+    <Button
+        android:layout_below="@id/take_buttons"
+        android:id="@+id/customize"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Custom" />
+
     <FrameLayout
-        android:padding="8dp"
-        android:layout_below="@+id/take_buttons"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/customize"
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentBottom="true"
         android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:padding="8dp">
 
         <ImageView
             android:id="@+id/image"
-            android:visibility="gone"
-            android:scaleType="center"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:scaleType="center"
+            android:visibility="gone" />
 
         <VideoView
             android:id="@+id/video"
-            android:visibility="gone"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:visibility="gone" />
 
         <ProgressBar
-            android:visibility="invisible"
             android:id="@+id/progress"
-            android:layout_gravity="center"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:visibility="invisible" />
 
         <LinearLayout
             android:id="@+id/file_info"
-            android:visibility="invisible"
-            android:padding="8dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_gravity="bottom"
             android:background="#ccc"
             android:orientation="vertical"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:padding="8dp"
+            android:visibility="invisible">
 
             <LinearLayout
-                android:orientation="horizontal"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
 
                 <TextView
-                    android:textColor="#2b2b2b"
                     android:id="@+id/size"
-                    tools:text="Size: 7.23MB"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:textColor="#2b2b2b"
+                    tools:text="Size: 7.23MB" />
 
                 <TextView
-                    android:textColor="#2b2b2b"
                     android:id="@+id/resolution"
-                    android:layout_marginLeft="16dp"
-                    tools:text="1080 x 1920"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="16dp"
+                    android:textColor="#2b2b2b"
+                    tools:text="1080 x 1920" />
             </LinearLayout>
 
             <TextView
+                android:id="@+id/path"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:textColor="#2b2b2b"
-                android:id="@+id/path"
-                tools:text="Path: /data/data/com.example.application/files/image.png"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                tools:text="Path: /data/data/com.example.application/files/image.png" />
         </LinearLayout>
 
     </FrameLayout>

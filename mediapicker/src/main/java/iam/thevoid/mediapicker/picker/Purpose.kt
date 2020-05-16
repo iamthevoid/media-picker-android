@@ -61,7 +61,7 @@ sealed class Purpose {
                     videoDuration = data.getLong(Picker.EXTRA_VIDEO_MAX_DURATION).takeIf { it > 0 },
                     videoFileSize = data.getLong(Picker.EXTRA_VIDEO_MAX_SIZE).takeIf { it > 0 }
                             ?.let { it * SizeUnit.BYTE.bytes },
-                    videoQuality = data.getInt(Picker.EXTRA_VIDEO_MAX_SIZE)
+                    videoQuality = data.getInt(Picker.EXTRA_VIDEO_QUALITY)
             ).build()
 
             override val requestCode: Int
