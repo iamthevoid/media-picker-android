@@ -27,19 +27,26 @@ android {
 dependencies {
     implementation project(':rx1-mediapicker')
     implementation project(':rx2-mediapicker')
+    implementation project(':rx3-mediapicker')
+
     implementation fileTree(dir: 'libs', include: ['*.jar'])
+
     implementation "androidx.appcompat:appcompat:$appcompat"
     implementation "com.google.android.material:material:$material"
 
     implementation "iam.thevoid.extensions:android:$utils"
     implementation "iam.thevoid.extensions:pure:$utils"
 
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+
     implementation "io.reactivex:rxjava:$rxJava1"
     implementation "io.reactivex:rxandroid:$rxAndroid1"
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
     implementation "io.reactivex.rxjava2:rxjava:$rxJava2"
     implementation "io.reactivex.rxjava2:rxandroid:$rxAndroid2"
+
+    implementation "io.reactivex.rxjava3:rxjava:$rxJava3"
+    implementation "io.reactivex.rxjava3:rxandroid:$rxAndroid3"
 }
 repositories {
     mavenCentral()

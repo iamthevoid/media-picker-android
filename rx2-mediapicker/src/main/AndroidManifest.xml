@@ -1,5 +1,1 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="iam.thevoid.mediapicker.rx2">
-
-    /
-</manifest>
+<manifest package="iam.thevoid.mediapicker.rx2" />

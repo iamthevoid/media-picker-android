@@ -44,19 +44,13 @@ dependencies {
 
     implementation fileTree(dir: "libs", include: ["*.jar"])
 
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+
     implementation "io.reactivex:rxjava:$rxJava1"
     implementation "io.reactivex:rxandroid:$rxAndroid1"
+
     implementation "com.tbruyelle.rxpermissions:rxpermissions:$rxPermissions1"
 
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    implementation "androidx.core:core-ktx:$ktx"
-    implementation "androidx.appcompat:appcompat:$appcompat"
-    implementation "com.google.android.material:material:$material"
-
     implementation "iam.thevoid.extensions:android:$utils"
-
-    testImplementation "junit:junit:$junit"
-    androidTestImplementation "androidx.test.ext:junit:$ajunit"
-    androidTestImplementation "androidx.test.espresso:espresso-core:$espresso"
 
 }

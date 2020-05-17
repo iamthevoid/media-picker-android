@@ -4,9 +4,9 @@ task generateReadme() {
 [<img src="lib.svg">](https://bintray.com/beta/#/iamthevoid/maven/MediaPicker)  
 
 # Picker
-Simple reactive library for pick image or video. There are Rx Java 1 and RxJava 2 implementation. Later will be added Rx Java 3 and Coroutines implementation.   
+Simple reactive library for pick image or video. There are Rx Java 1, 2 and 3 implementation. Later will be added Coroutines implementation.   
  
-Usage such a simple. Next example returns `Observable<Uri>` (RxJava1), `Maybe<Uri>` (RxJava2)    
+Usage such a simple. Next example returns `Observable<Uri>` (RxJava1), `Maybe<Uri>` (RxJava2), `Maybe<Uri>` (RxJava3)     
  
 ```kotlin    
 MediaPicker.builder()
@@ -150,6 +150,10 @@ implementation "iam.thevoid.mediapicker:rx1:$libVersion"
  RxJava 2 
  ```groovy      
 implementation "iam.thevoid.mediapicker:rx2:$libVersion"
+ ```
+ RxJava 3 
+ ```groovy      
+implementation "iam.thevoid.mediapicker:rx3:$libVersion"
  ```
 """
     }

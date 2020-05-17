@@ -33,12 +33,12 @@ object FileUtil {
     fun temp(context: Context): String = context.filesDir.path + "/temp"
 
     private val videoExtensions = listOf(
-            ".3gp",
-            ".mp4",
-            ".ts",
-            ".webm",
-            ".mkv",
-            ".mov"
+            "3gp",
+            "mp4",
+            "ts",
+            "webm",
+            "mkv",
+            "mov"
     )
 
     @JvmStatic
@@ -66,11 +66,11 @@ object FileUtil {
     }
 
     fun isVideoExt(ext: String?): Boolean {
-        return ext != null && ext.isNotEmpty() && videoExtensions.contains(ext.toLowerCase())
+        return !ext.isNullOrBlank() && videoExtensions.contains(ext.toLowerCase().replace(".", ""))
     }
 
     fun isGifExt(ext: String?): Boolean {
-        return ext != null && ext.isNotEmpty() && ".gif" == ext.toLowerCase()
+        return !ext.isNullOrBlank() && "gif" == ext.toLowerCase().replace(".", "")
     }
 
     fun Uri.mimeType(context: Context): String? =
