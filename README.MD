@@ -1,6 +1,12 @@
 
 [<img src="lib.svg">](https://bintray.com/beta/#/iamthevoid/maven/MediaPicker)  
 
+#### Features
+
+Android Sdk ≥ ***14***
+
+Minimum Dependencies 
+
 # Picker
 Simple reactive library for pick image or video. There are Rx Java 1, 2 and 3 implementation. Later will be added Coroutines implementation.   
  
@@ -143,13 +149,13 @@ maven { url "https://dl.bintray.com/iamthevoid/maven/" }
 ``` 
 RxJava 1 
 ```groovy      
-implementation "iam.thevoid.mediapicker:rx1:1.0.0-rc05"
+implementation "iam.thevoid.mediapicker:rx1:1.0.0-rc06"
  ```
  RxJava 2 
  ```groovy      
-implementation "iam.thevoid.mediapicker:rx2:1.0.0-rc05"
+implementation "iam.thevoid.mediapicker:rx2:1.0.0-rc06"
  ```
  RxJava 3 
  ```groovy      
-implementation "iam.thevoid.mediapicker:rx3:1.0.0-rc05"
+implementation "iam.thevoid.mediapicker:rx3:1.0.0-rc06"
  ```

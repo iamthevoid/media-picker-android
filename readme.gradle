@@ -3,6 +3,12 @@ task generateReadme() {
         new File("$projectDir/README.MD").text = """
 [<img src="lib.svg">](https://bintray.com/beta/#/iamthevoid/maven/MediaPicker)  
 
+#### Features
+
+Android Sdk ≥ ***14*** 
+
+Minimum Dependencies 
+
 # Picker
 Simple reactive library for pick image or video. There are Rx Java 1, 2 and 3 implementation. Later will be added Coroutines implementation.   
  
