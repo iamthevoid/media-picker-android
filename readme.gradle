@@ -58,7 +58,7 @@ If there are few options to get media then will be shown BottomSheet chooser for
 ```kotlin    
 <builder>.setChooserTitle(R.string.whatever_title_you_want)  
  ``` 
- When you pass to builder both `Take.Photo` and `Take.Video` purposes to builder, you can see title "Camera" twice. Its weird, but it is correct, because it is different intents. To avoid this added possibility to customize these titles. 
+ When you pass to builder both `Take.Photo` and `Take.Video` purposes, you can see title "Camera" twice. Its weird, but it is correct, because it is different intents. To avoid this added possibility to customize these titles. 
 ```kotlin    
 <builder>
   .setTakePhotoAppChooserTitle(R.string.whatever_title_you_want)
@@ -114,7 +114,7 @@ All of these realized as global functions. In Java can be used as static functio
  MediaPicker.builder()  
  .setChooserTitle("Select video source")  
  .setTakeVideoOptions(VideoOptions(duration = 10.toSeconds(), quality = VideoQuality.HIGH))
- .take(Purpose.Take.Video)    
+ .take(Purpose.Pick.Video)    
  .request(this /* context */ ) 
  .subscribe { uri : Uri -> showVideo(uri) } 
 ``` 
