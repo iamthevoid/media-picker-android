@@ -51,5 +51,5 @@ private fun <T> Uri.toObservable(convert: Uri.() -> T) =
                 Log.e(TAG, "Error converting uri", e)
                 it.onError(e)
             }
-        }, Emitter.BackpressureMode.NONE)
+        }, Emitter.BackpressureMode.BUFFER)
                 .subscribeOn(Schedulers.computation())

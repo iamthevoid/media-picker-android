@@ -11,25 +11,16 @@ android {
         targetSdkVersion targetSdk
         versionCode 1
         versionName libVersion
-        vectorDrawables.useSupportLibrary true
 
-        testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
-
-    }
-
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles "consumer-rules.pro"
     }
 
     buildTypes {
         release {
             minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
-    }
-    lintOptions {
-        abortOnError false
     }
 
     tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
@@ -44,29 +35,29 @@ publish {
     bintrayUser = libBintrayUser
     bintrayKey = libBintrayKey
     groupId = libGroupId
-    artifactId = 'core'
+    artifactId = 'coroutines'
     publishVersion = libVersion
     userOrg = libOrg
-    desc = 'core of library to pick images, photo or video from android phone'
+    desc = 'Coroutines implementation of library to pick images, photo or video from android phone'
     licences = [libLicence]
     uploadName = libUploadName
     website = libUrl
     dryRun = libDryRun
 }
 
-repositories {
-    mavenCentral()
-}
-
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    api project(':mediapicker')
+
+    implementation fileTree(dir: "libs", include: ["*.jar"])
+
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+
     implementation "com.google.android.material:material:$material"
-    implementation "androidx.recyclerview:recyclerview:$recycler"
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation "androidx.fragment:fragment:$fragment"
-    implementation "androidx.core:core-ktx:$ktx"
-    implementation "iam.thevoid.util:util:$utils"
+
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines"
+    implementation "com.afollestad.assent:coroutines:$coroutinesPermissions"
+
     implementation "iam.thevoid.extensions:android:$utils"
-    implementation "iam.thevoid.extensions:pure:$utils"
 
 }

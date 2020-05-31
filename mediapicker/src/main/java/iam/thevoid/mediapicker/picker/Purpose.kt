@@ -74,7 +74,7 @@ sealed class Purpose {
         object Image : Pick() {
             override fun getIntent(context: Context, data: Bundle): Intent = ImageIntentBuilder()
                     .setLocalOnly(false)
-                    .setMimetype(ImageIntentBuilder.Mimetype.IMAGE)
+                    .setMimeType(ImageIntentBuilder.MimeType.IMAGE)
                     .build()
 
             override val requestCode: Int
@@ -84,7 +84,7 @@ sealed class Purpose {
         object Video : Pick() {
             override fun getIntent(context: Context, data: Bundle): Intent = ImageIntentBuilder()
                     .setLocalOnly(false)
-                    .setMimetype(ImageIntentBuilder.Mimetype.VIDEO)
+                    .setMimeType(ImageIntentBuilder.MimeType.VIDEO)
                     .build()
 
             override val requestCode: Int
@@ -99,7 +99,7 @@ sealed class Purpose {
 
             override fun getIntent(context: Context, data: Bundle): Intent = ImageIntentBuilder()
                     .setLocalOnly(false)
-                    .setMimetype(ImageIntentBuilder.Mimetype.BOTH_IMAGE_AND_VIDEO)
+                    .setMimeType(ImageIntentBuilder.MimeType.BOTH_IMAGE_AND_VIDEO)
                     .build()
         }
     }

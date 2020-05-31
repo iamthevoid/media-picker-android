@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" group="media-picker-android/app" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/coroutines-mediapicker/coroutines-mediapicker.iml" filepath="$PROJECT_DIR$/.idea/modules/coroutines-mediapicker/coroutines-mediapicker.iml" group="media-picker-android/coroutines-mediapicker" />
       <module fileurl="file://$PROJECT_DIR$/media-picker-android.iml" filepath="$PROJECT_DIR$/media-picker-android.iml" group="media-picker-android" />
       <module fileurl="file://$PROJECT_DIR$/mediapicker/mediapicker.iml" filepath="$PROJECT_DIR$/mediapicker/mediapicker.iml" group="media-picker-android/mediapicker" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/rx1-mediapicker/rx1-mediapicker.iml" filepath="$PROJECT_DIR$/.idea/modules/rx1-mediapicker/rx1-mediapicker.iml" group="media-picker-android/rx1-mediapicker" />

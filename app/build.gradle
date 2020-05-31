@@ -11,6 +11,7 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
+        multiDexEnabled true
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -22,20 +23,36 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
+        kotlinOptions {
+            jvmTarget = "$kotlinJvmTarget"
+            freeCompilerArgs = ['-Xopt-in=kotlin.RequiresOptIn']
+        }
+    }
 }
 
 dependencies {
-    implementation project(':rx1-mediapicker')
-    implementation project(':rx2-mediapicker')
-    implementation project(':rx3-mediapicker')
+//    implementation project(':rx1-mediapicker')
+//    implementation project(':rx2-mediapicker')
+//    implementation project(':rx3-mediapicker')
+//    implementation project(':coroutines-mediapicker')
 
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
     implementation "androidx.appcompat:appcompat:$appcompat"
     implementation "com.google.android.material:material:$material"
+    implementation "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle"
+    implementation "androidx.multidex:multidex:$multidex"
+
 
     implementation "iam.thevoid.extensions:android:$utils"
     implementation "iam.thevoid.extensions:pure:$utils"
+
+//    implementation "iam.thevoid.mediapicker:core:$picker"
+    implementation "iam.thevoid.mediapicker:coroutines:$picker"
+    implementation "iam.thevoid.mediapicker:rx1:$picker"
+    implementation "iam.thevoid.mediapicker:rx2:$picker"
+    implementation "iam.thevoid.mediapicker:rx3:$picker"
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
@@ -47,6 +64,9 @@ dependencies {
 
     implementation "io.reactivex.rxjava3:rxjava:$rxJava3"
     implementation "io.reactivex.rxjava3:rxandroid:$rxAndroid3"
+
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines"
 }
 repositories {
     mavenCentral()

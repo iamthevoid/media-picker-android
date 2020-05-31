@@ -25,6 +25,8 @@ import iam.thevoid.mediapicker.picker.metrics.VideoQuality
 import iam.thevoid.mediapicker.picker.options.ImageOptions
 import iam.thevoid.mediapicker.picker.options.VideoOptions
 import iam.thevoid.mediapicker.util.FileUtil
+import iam.thevoid.mediapicker.util.FileUtil.isImage
+import iam.thevoid.mediapicker.util.FileUtil.isVideo
 import kotlinx.android.synthetic.main.activity_demo.*
 import kotlinx.android.synthetic.main.activity_demo.size
 import java.io.File
@@ -160,13 +162,21 @@ abstract class BaseActivity : AppCompatActivity(), View.OnClickListener, Picker.
                 .show()
     }
 
-    protected fun filesizeInMb(file: File): String {
+    private fun filesizeInMb(file: File): String {
         val size = file.length().toDouble()
         return (size / 1024 / 1024).format(2)
     }
 
 
-    protected fun showImage(uri: Uri) {
+    protected fun showImageOrVideo(uri: Uri) {
+        when {
+            uri.isImage(this) -> showImage(uri)
+            uri.isVideo(this) -> showVideo(uri)
+        }
+    }
+
+
+    private fun showImage(uri: Uri) {
         video?.gone()
         video?.stopPlayback()
         image?.show()
@@ -174,7 +184,7 @@ abstract class BaseActivity : AppCompatActivity(), View.OnClickListener, Picker.
         image?.setImageURI(uri)
     }
 
-    protected fun showVideo(uri: Uri) {
+    private fun showVideo(uri: Uri) {
         video?.show()
         image?.gone()
         video?.setVideoURI(uri)

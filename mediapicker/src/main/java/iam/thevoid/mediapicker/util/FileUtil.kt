@@ -318,9 +318,9 @@ object FileUtil {
 
     // TODO Add applying options to video pick. Take video applies options with intent
     @Suppress("UNUSED_PARAMETER")
-    private fun Uri.resize(context: Context, options: VideoOptions): Uri = this
+    fun Uri.resize(context: Context, options: VideoOptions): Uri = this
 
-    private fun Uri.isImage(context: Context) = !isVideoExt(extension(context))
+    fun Uri.isImage(context: Context) = !isVideoExt(extension(context))
 
-    private fun Uri.isVideo(context: Context) = isVideoExt(extension(context))
+    fun Uri.isVideo(context: Context) = isVideoExt(extension(context))
 }

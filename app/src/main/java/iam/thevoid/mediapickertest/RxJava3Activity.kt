@@ -30,7 +30,7 @@ class RxJava3Activity : BaseActivity() {
                 .build()
                 .request(this)
                 .compose(loading())
-                .compose(load(::showImage))
+                .compose(load(::showImageOrVideo))
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(::showFileInfo) { it.printStackTrace() }
     }
@@ -43,7 +43,7 @@ class RxJava3Activity : BaseActivity() {
                 .build()
                 .request(this)
                 .compose(loading())
-                .compose(load(::showVideo))
+                .compose(load(::showImageOrVideo))
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(::showFileInfo) { it.printStackTrace() }
     }
@@ -57,7 +57,7 @@ class RxJava3Activity : BaseActivity() {
                 .build()
                 .request(this)
                 .compose(loading())
-                .compose(load(::showImage))
+                .compose(load(::showImageOrVideo))
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(::showFileInfo) { it.printStackTrace() }
     }
@@ -71,7 +71,7 @@ class RxJava3Activity : BaseActivity() {
                 .build()
                 .request(this)
                 .compose(loading())
-                .compose(load(::showVideo))
+                .compose(load(::showImageOrVideo))
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(::showFileInfo) { it.printStackTrace() }
     }
@@ -85,7 +85,7 @@ class RxJava3Activity : BaseActivity() {
                 .build()
                 .request(this)
                 .compose(loading())
-                .compose(load(::showVideo))
+                .compose(load(::showImageOrVideo))
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(::showFileInfo) { it.printStackTrace() }
     }

@@ -8,9 +8,9 @@ Android Sdk ≥ ***14***
 Minimum Dependencies 
 
 # Picker
-Simple reactive library for pick image or video. There are Rx Java 1, 2 and 3 implementation. Later will be added Coroutines implementation.   
+Simple reactive library for pick image or video. There are Rx Java 1, 2, 3 and Coroutines implementation. 
  
-Usage such a simple. Next example returns `Observable<Uri>` (RxJava1), `Maybe<Uri>` (RxJava2), `Maybe<Uri>` (RxJava3)     
+Usage such a simple. Next example returns `Observable<Uri>` (RxJava1), `Maybe<Uri>` (RxJava2), `Maybe<Uri>` (RxJava3), Flow<Uri> (Coroutines)    
  
 ```kotlin    
 MediaPicker.builder()
@@ -112,7 +112,7 @@ All of these realized as global functions. In Java can be used as static functio
  MediaPicker.builder()  
  .setChooserTitle("Select video source")  
  .setTakeVideoOptions(VideoOptions(duration = 10.toSeconds(), quality = VideoQuality.HIGH))
- .take(Purpose.Pick.Video)    
+ .take(Purpose.Take.Video)    
  .request(this /* context */ ) 
  .subscribe { uri : Uri -> showVideo(uri) } 
 ``` 
@@ -149,13 +149,17 @@ maven { url "https://dl.bintray.com/iamthevoid/maven/" }
 ``` 
 RxJava 1 
 ```groovy      
-implementation "iam.thevoid.mediapicker:rx1:1.0.0-rc06"
+implementation "iam.thevoid.mediapicker:rx1:1.0.4"
  ```
  RxJava 2 
  ```groovy      
-implementation "iam.thevoid.mediapicker:rx2:1.0.0-rc06"
+implementation "iam.thevoid.mediapicker:rx2:1.0.4"
  ```
  RxJava 3 
  ```groovy      
-implementation "iam.thevoid.mediapicker:rx3:1.0.0-rc06"
+implementation "iam.thevoid.mediapicker:rx3:1.0.4"
+ ```
+ Coroutines 
+ ```groovy      
+implementation "iam.thevoid.mediapicker:coroutines:1.0.4"
  ```

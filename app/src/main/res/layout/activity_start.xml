@@ -23,6 +23,12 @@
         android:layout_height="wrap_content"
         android:text="Rx Java 3 Demo" />
 
+    <Button
+        android:id="@+id/button_coroutines"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Coroutines Demo" />
+
     <TextView
         android:layout_marginTop="24dp"
         android:gravity="center"

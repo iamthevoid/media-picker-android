@@ -1,4 +1,6 @@
-include ':rx2-mediapicker'
+include ':app'
+include ':mediapicker'
 include ':rx1-mediapicker'
-include ':app', ':mediapicker'
+include ':rx2-mediapicker'
 include ':rx3-mediapicker'
+include ':coroutines-mediapicker'
