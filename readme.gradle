@@ -12,7 +12,7 @@ Minimum Dependencies
 # Picker
 Simple reactive library for pick image or video. There are Rx Java 1, 2, 3 and Coroutines implementation. 
  
-Usage such a simple. Next example returns `Observable<Uri>` (RxJava1), `Maybe<Uri>` (RxJava2), `Maybe<Uri>` (RxJava3), Flow<Uri> (Coroutines)    
+Usage such a simple. Next example returns `Observable<Uri>` (RxJava1), `Maybe<Uri>` (RxJava2), `Maybe<Uri>` (RxJava3), `Flow<Uri>` (Coroutines)    
  
 ```kotlin    
 MediaPicker.builder()
