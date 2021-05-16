@@ -4,10 +4,10 @@ import android.annotation.SuppressLint
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.View
-import android.widget.CheckBox
-import android.widget.EditText
-import android.widget.RadioGroup
+import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import iam.thevoid.ae.gone
@@ -27,13 +27,24 @@ import iam.thevoid.mediapicker.picker.options.VideoOptions
 import iam.thevoid.mediapicker.util.FileUtil
 import iam.thevoid.mediapicker.util.FileUtil.isImage
 import iam.thevoid.mediapicker.util.FileUtil.isVideo
-import kotlinx.android.synthetic.main.activity_demo.*
-import kotlinx.android.synthetic.main.activity_demo.size
 import java.io.File
+import kotlin.time.Duration
 import kotlin.time.ExperimentalTime
-import kotlin.time.milliseconds
 
 abstract class BaseActivity : AppCompatActivity(), View.OnClickListener, Picker.OnDismissListener {
+
+    private lateinit var pickImage: View
+    private lateinit var pickVideo: View
+    private lateinit var takePhoto: View
+    private lateinit var takeVideo: View
+    private lateinit var customize: View
+    private lateinit var video: VideoView
+    private lateinit var image: ImageView
+    private lateinit var fileInfo: View
+    private lateinit var path: TextView
+    private lateinit var size: TextView
+    private lateinit var resolution: TextView
+    private lateinit var progress: View
 
     private var lastImageOptions: ImageOptions? = null
     private var lastVideoOptions: VideoOptions? = null
@@ -42,11 +53,18 @@ abstract class BaseActivity : AppCompatActivity(), View.OnClickListener, Picker.
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_demo)
-        pick_image?.setOnClickListener(this)
-        pick_video?.setOnClickListener(this)
-        take_photo?.setOnClickListener(this)
-        take_video?.setOnClickListener(this)
-        customize?.setOnClickListener(this)
+        pickImage = findViewById<View>(R.id.pick_image).also { it.setOnClickListener(this) }
+        pickVideo = findViewById<View>(R.id.pick_video).also { it.setOnClickListener(this) }
+        takePhoto = findViewById<View>(R.id.take_photo).also { it.setOnClickListener(this) }
+        takeVideo = findViewById<View>(R.id.take_video).also { it.setOnClickListener(this) }
+        customize = findViewById<View>(R.id.customize).also { it.setOnClickListener(this) }
+        video = findViewById(R.id.video)
+        image = findViewById(R.id.image)
+        fileInfo = findViewById(R.id.file_info)
+        path = findViewById(R.id.path)
+        size = findViewById(R.id.size)
+        resolution = findViewById(R.id.resolution)
+        progress = findViewById(R.id.progress)
 
     }
 
@@ -113,8 +131,8 @@ abstract class BaseActivity : AppCompatActivity(), View.OnClickListener, Picker.
                 .setPositiveButton(android.R.string.ok) { _, _ ->
                     onCustomized(ImageOptions(
                             maxResolution = Resolution(
-                                    width = widthEditText.number(),
-                                    height = heightEditText.number()
+                                width = widthEditText.number(),
+                                height = heightEditText.number()
                             ),
                             maxSize = MemorySize(
                                     size = sizeEditText.number(),
@@ -134,35 +152,39 @@ abstract class BaseActivity : AppCompatActivity(), View.OnClickListener, Picker.
         val sizeEditText = view.findViewById<EditText>(R.id.video_size)
         val qualityRadioGroup = view.findViewById<RadioGroup>(R.id.quality_radio_group)
         lastVideoOptions?.apply {
-            durationEditText.setText(maxDuration.inMilliseconds.takeIf { it > 0 }?.toInt()?.toString().safe())
+            durationEditText.setText(
+                maxDuration.inWholeMilliseconds.takeIf { it > 0 }?.toInt()?.toString().safe()
+            )
             sizeEditText.setText(maxSize.kiloBytes.takeIf { it > 0 }?.toString().safe())
-            qualityRadioGroup.check(when (quality) {
-                VideoQuality.LOW -> R.id.low
-                VideoQuality.HIGH -> R.id.high
-            })
+            qualityRadioGroup.check(
+                when (quality) {
+                    VideoQuality.LOW -> R.id.low
+                    VideoQuality.HIGH -> R.id.high
+                }
+            )
         }
         AlertDialog.Builder(this)
                 .setView(view)
                 .setMessage(getString(R.string.pick_image_description))
                 .setPositiveButton(android.R.string.ok) { _, _ ->
                     onCustomized(VideoOptions(
-                            maxDuration = durationEditText.number().milliseconds,
-                            maxSize = MemorySize(
-                                    size = sizeEditText.number(),
-                                    unit = SizeUnit.KILOBYTE
-                            ),
-                            quality = when (qualityRadioGroup.checkedRadioButtonId) {
-                                R.id.low -> VideoQuality.LOW
-                                R.id.high -> VideoQuality.HIGH
-                                else -> VideoQuality.HIGH
-                            }
+                        maxDuration = Duration.milliseconds(durationEditText.number()),
+                        maxSize = MemorySize(
+                            size = sizeEditText.number(),
+                            unit = SizeUnit.KILOBYTE
+                        ),
+                        quality = when (qualityRadioGroup.checkedRadioButtonId) {
+                            R.id.low -> VideoQuality.LOW
+                            R.id.high -> VideoQuality.HIGH
+                            else -> VideoQuality.HIGH
+                        }
                     ).also { lastVideoOptions = it })
                 }
                 .setNegativeButton(android.R.string.cancel) { _, _ -> }
                 .show()
     }
 
-    private fun filesizeInMb(file: File): String {
+    private fun fileSizeInMb(file: File): String {
         val size = file.length().toDouble()
         return (size / 1024 / 1024).format(2)
     }
@@ -177,42 +199,50 @@ abstract class BaseActivity : AppCompatActivity(), View.OnClickListener, Picker.
 
 
     private fun showImage(uri: Uri) {
-        video?.gone()
-        video?.stopPlayback()
-        image?.show()
-        image?.setImageURI(null)
-        image?.setImageURI(uri)
+        video.gone()
+        video.stopPlayback()
+        image.show()
+        image.setImageURI(null)
+        image.setImageURI(uri)
     }
 
     private fun showVideo(uri: Uri) {
-        video?.show()
-        image?.gone()
-        video?.setVideoURI(uri)
-        video?.start()
+        video.show()
+        image.gone()
+        video.setVideoURI(uri)
+        video.start()
     }
 
     @SuppressLint("SetTextI18n")
     protected fun showFileInfo(file: File) {
         val exists = file.exists()
-        file_info.hide(!exists)
+        fileInfo.hide(!exists)
         if (!exists)
             return
-        path?.text = "Path: ${file.absolutePath}"
-        size?.text = "Size: ${filesizeInMb(file)} MB"
+        path.text = "Path: ${file.absolutePath}"
+        size.text = "Size: ${fileSizeInMb(file)} MB"
         val isImage = file.extension.let { !FileUtil.isVideoExt(it) }
-        resolution?.gone(!isImage)
+        resolution.gone(!isImage)
         if (isImage) {
             val bitmap = BitmapFactory.decodeFile(file.absolutePath)
-            resolution?.text = "${bitmap.width} X ${bitmap.height}"
+            resolution.text = "${bitmap.width} X ${bitmap.height}"
         }
     }
 
     private fun EditText.number() =
-            try {
-                text.toString().takeIf { it.isNotBlank() }?.toInt() ?: -1
-            } catch (e: Exception) {
-                -1
-            }
+        try {
+            text.toString().takeIf { it.isNotBlank() }?.toInt() ?: -1
+        } catch (e: Exception) {
+            -1
+        }
 
     override fun onDismiss() = progress.hide()
+
+    fun showProgress() {
+        Handler(Looper.getMainLooper()).post { progress.show() }
+    }
+
+    fun hideProgress() {
+        Handler(Looper.getMainLooper()).post { progress.hide() }
+    }
 }

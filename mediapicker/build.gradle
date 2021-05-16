@@ -1,16 +1,15 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-android-extensions'
-apply plugin: 'com.novoda.bintray-release'
+apply plugin: 'kotlin-parcelize'
 
 android {
-    compileSdkVersion compileSdk
+    compileSdkVersion deps.android.compileSdk
 
     defaultConfig {
-        minSdkVersion minSdk
-        targetSdkVersion targetSdk
+        minSdkVersion deps.android.minSdk
+        targetSdkVersion deps.android.targetSdk
         versionCode 1
-        versionName libVersion
+        versionName deps.lib.version
         vectorDrawables.useSupportLibrary true
 
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
@@ -34,25 +33,18 @@ android {
 
     tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
         kotlinOptions {
-            jvmTarget = "$kotlinJvmTarget"
+            jvmTarget = "${deps.api.kotlinJvmTarget}"
             freeCompilerArgs = ['-Xopt-in=kotlin.RequiresOptIn']
         }
     }
 }
 
-publish {
-    bintrayUser = libBintrayUser
-    bintrayKey = libBintrayKey
-    groupId = libGroupId
-    artifactId = 'core'
-    publishVersion = libVersion
-    userOrg = libOrg
-    desc = 'core of library to pick images, photo or video from android phone'
-    licences = [libLicence]
-    uploadName = libUploadName
-    website = libUrl
-    dryRun = libDryRun
+ext {
+    deps.lib.artifactId = 'core'
+    deps.lib.desc = 'core of library to pick images, photo or video from android phone'
 }
+
+apply from: "${rootProject.projectDir}/scripts/publish-mavencentral.gradle"
 
 repositories {
     mavenCentral()
@@ -60,13 +52,13 @@ repositories {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation "com.google.android.material:material:$material"
-    implementation "androidx.recyclerview:recyclerview:$recycler"
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation "androidx.fragment:fragment:$fragment"
-    implementation "androidx.core:core-ktx:$ktx"
-    implementation "iam.thevoid.util:util:$utils"
-    implementation "iam.thevoid.extensions:android:$utils"
-    implementation "iam.thevoid.extensions:pure:$utils"
+    implementation "com.google.android.material:material:${deps.libs.material}"
+    implementation "androidx.recyclerview:recyclerview:${deps.libs.recycler}"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:${deps.api.kotlin}"
+    implementation "androidx.fragment:fragment-ktx:${deps.libs.fragment}"
+    implementation "androidx.core:core-ktx:${deps.libs.ktx}"
+    implementation "io.github.iamthevoid.extensions:util:${deps.utils}"
+    implementation "io.github.iamthevoid.extensions:android:${deps.utils}@aar"
+    implementation "io.github.iamthevoid.extensions:pure:${deps.utils}"
 
 }

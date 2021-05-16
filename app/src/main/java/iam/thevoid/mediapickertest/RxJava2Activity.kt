@@ -1,10 +1,6 @@
 package iam.thevoid.mediapickertest
 
 import android.net.Uri
-import android.os.Handler
-import android.os.Looper
-import iam.thevoid.ae.hide
-import iam.thevoid.ae.show
 import iam.thevoid.mediapicker.picker.Purpose
 import iam.thevoid.mediapicker.picker.options.ImageOptions
 import iam.thevoid.mediapicker.picker.options.VideoOptions
@@ -14,7 +10,6 @@ import io.reactivex.MaybeTransformer
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.activity_demo.*
 import java.io.File
 
 class RxJava2Activity : BaseActivity() {
@@ -99,8 +94,10 @@ class RxJava2Activity : BaseActivity() {
             }
 
     private fun <T> loading() = MaybeTransformer<T, T> {
-        it.doOnSubscribe { Handler(Looper.getMainLooper()).post { progress.show() } }
-                .doOnTerminate { Handler(Looper.getMainLooper()).post { progress.hide() } }
+        it.doOnSubscribe { showProgress() }
+            .doOnComplete { hideProgress() }
+            .doOnSuccess { hideProgress() }
+            .doOnError { hideProgress() }
     }
 
     override fun onDestroy() {

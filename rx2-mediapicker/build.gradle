@@ -1,16 +1,14 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-android-extensions'
-apply plugin: 'com.novoda.bintray-release'
 
 android {
-    compileSdkVersion compileSdk
+    compileSdkVersion deps.android.compileSdk
 
     defaultConfig {
-        minSdkVersion minSdk
-        targetSdkVersion targetSdk
+        minSdkVersion deps.android.minSdk
+        targetSdkVersion deps.android.targetSdk
         versionCode 1
-        versionName libVersion
+        versionName deps.lib.version
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
@@ -24,32 +22,24 @@ android {
     }
 }
 
-publish {
-    bintrayUser = libBintrayUser
-    bintrayKey = libBintrayKey
-    groupId = libGroupId
-    artifactId = 'rx2'
-    publishVersion = libVersion
-    userOrg = libOrg
-    desc = 'RxJava 2 implementation of library to pick images, photo or video from android phone'
-    licences = [libLicence]
-    uploadName = libUploadName
-    website = libUrl
-    dryRun = libDryRun
+ext {
+    deps.lib.artifactId = 'rx2'
+    deps.lib.desc = 'RxJava 2 implementation of library to pick images, photo or video from android phone'
 }
+
+apply from: "${rootProject.projectDir}/scripts/publish-mavencentral.gradle"
 
 dependencies {
 
     api project(':mediapicker')
 
     implementation fileTree(dir: "libs", include: ["*.jar"])
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:${deps.api.kotlin}"
 
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    implementation "io.reactivex.rxjava2:rxjava:${deps.rx2.version}"
+    implementation "com.github.tbruyelle:rxpermissions:${deps.rx2.permissions}"
 
-    implementation "io.reactivex.rxjava2:rxjava:$rxJava2"
-    implementation "com.github.tbruyelle:rxpermissions:$rxPermissions2"
+    implementation "com.google.android.material:material:${deps.libs.material}"
 
-    implementation "com.google.android.material:material:$material"
-
-    implementation "iam.thevoid.extensions:android:$utils"
+    implementation "io.github.iamthevoid.extensions:android:${deps.utils}@aar"
 }

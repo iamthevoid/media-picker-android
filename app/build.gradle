@@ -1,13 +1,12 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-android-extensions'
 
 android {
-    compileSdkVersion compileSdk
+    compileSdkVersion deps.android.compileSdk
     defaultConfig {
         applicationId "iam.thevoid.mediapicker"
-        minSdkVersion minSdk
-        targetSdkVersion targetSdk
+        minSdkVersion deps.android.minSdk
+        targetSdkVersion deps.android.targetSdk
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
@@ -25,7 +24,7 @@ android {
     }
     tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
         kotlinOptions {
-            jvmTarget = "$kotlinJvmTarget"
+            jvmTarget = "${deps.api.kotlinJvmTarget}"
             freeCompilerArgs = ['-Xopt-in=kotlin.RequiresOptIn']
         }
     }
@@ -39,35 +38,32 @@ dependencies {
 
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    implementation "androidx.appcompat:appcompat:$appcompat"
-    implementation "com.google.android.material:material:$material"
-    implementation "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle"
-    implementation "androidx.multidex:multidex:$multidex"
+    implementation "androidx.appcompat:appcompat:${deps.libs.appcompat}"
+    implementation "com.google.android.material:material:${deps.libs.material}"
+    implementation "androidx.lifecycle:lifecycle-runtime-ktx:${deps.libs.lifecycle}"
+    implementation "androidx.multidex:multidex:${deps.libs.multidex}"
 
 
-    implementation "iam.thevoid.extensions:android:$utils"
-    implementation "iam.thevoid.extensions:pure:$utils"
+    implementation "io.github.iamthevoid.extensions:android:${deps.utils}@aar"
+    implementation "io.github.iamthevoid.extensions:pure:${deps.utils}"
 
-//    implementation "iam.thevoid.mediapicker:core:$picker"
-    implementation "iam.thevoid.mediapicker:coroutines:$picker"
-    implementation "iam.thevoid.mediapicker:rx1:$picker"
-    implementation "iam.thevoid.mediapicker:rx2:$picker"
-    implementation "iam.thevoid.mediapicker:rx3:$picker"
+    implementation "${deps.lib.groupId}:core:${deps.lib.version}@aar"
+    implementation "${deps.lib.groupId}:coroutines:${deps.lib.version}@aar"
+    implementation "${deps.lib.groupId}:rx1:${deps.lib.version}@aar"
+    implementation "${deps.lib.groupId}:rx2:${deps.lib.version}@aar"
+    implementation "${deps.lib.groupId}:rx3:${deps.lib.version}@aar"
 
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:${deps.api.kotlin}"
 
-    implementation "io.reactivex:rxjava:$rxJava1"
-    implementation "io.reactivex:rxandroid:$rxAndroid1"
+    implementation "io.reactivex:rxjava:${deps.rx1.version}"
+    implementation "io.reactivex:rxandroid:${deps.rx1.android}"
 
-    implementation "io.reactivex.rxjava2:rxjava:$rxJava2"
-    implementation "io.reactivex.rxjava2:rxandroid:$rxAndroid2"
+    implementation "io.reactivex.rxjava2:rxjava:${deps.rx2.version}"
+    implementation "io.reactivex.rxjava2:rxandroid:${deps.rx2.android}"
 
-    implementation "io.reactivex.rxjava3:rxjava:$rxJava3"
-    implementation "io.reactivex.rxjava3:rxandroid:$rxAndroid3"
+    implementation "io.reactivex.rxjava3:rxjava:${deps.rx3.version}"
+    implementation "io.reactivex.rxjava3:rxandroid:${deps.rx3.android}"
 
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines"
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines"
-}
-repositories {
-    mavenCentral()
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:${deps.coroutines.version}"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:${deps.coroutines.version}"
 }

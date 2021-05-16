@@ -1,0 +1,6 @@
+./gradlew generateVersionSVG generateReadme clean assemble\
+ mediapicker:publishReleasePublicationToSonatypeRepository\
+ rx1:publishReleasePublicationToSonatypeRepository\
+ rx2:publishReleasePublicationToSonatypeRepository\
+ rx3:publishReleasePublicationToSonatypeRepository\
+ coroutines:publishReleasePublicationToSonatypeRepository

@@ -1,17 +1,12 @@
 package iam.thevoid.mediapickertest
 
 import android.net.Uri
-import android.os.Handler
-import android.os.Looper
 import androidx.lifecycle.lifecycleScope
-import iam.thevoid.ae.hide
-import iam.thevoid.ae.show
 import iam.thevoid.mediapicker.coroutines.MediaPicker
 import iam.thevoid.mediapicker.coroutines.file
 import iam.thevoid.mediapicker.picker.Purpose
 import iam.thevoid.mediapicker.picker.options.ImageOptions
 import iam.thevoid.mediapicker.picker.options.VideoOptions
-import kotlinx.android.synthetic.main.activity_demo.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.*
@@ -103,9 +98,9 @@ class CoroutinesActivity : BaseActivity() {
     }
 
     private fun <T> loading(): Flow<T>.() -> Flow<T> = {
-        onStart { Handler(Looper.getMainLooper()).post { progress.show() } }
-                .onCompletion { Handler(Looper.getMainLooper()).post { progress.hide() } }
-                .onEach { Handler(Looper.getMainLooper()).post { progress.hide() } }
+        onStart { showProgress() }
+            .onCompletion { hideProgress() }
+            .onEach { hideProgress() }
     }
 
     override fun onDestroy() {

@@ -1,16 +1,11 @@
 package iam.thevoid.mediapickertest
 
 import android.net.Uri
-import android.os.Handler
-import android.os.Looper
-import iam.thevoid.ae.hide
-import iam.thevoid.ae.show
 import iam.thevoid.mediapicker.picker.Purpose
 import iam.thevoid.mediapicker.picker.options.ImageOptions
 import iam.thevoid.mediapicker.picker.options.VideoOptions
 import iam.thevoid.mediapicker.rx1.MediaPicker
 import iam.thevoid.mediapicker.rx1.file
-import kotlinx.android.synthetic.main.activity_demo.*
 import rx.Observable
 import rx.Subscription
 import rx.android.schedulers.AndroidSchedulers
@@ -99,8 +94,8 @@ class RxJava1Activity : BaseActivity() {
             }
 
     private fun <T> loading() = Observable.Transformer<T, T> {
-        it.doOnSubscribe { Handler(Looper.getMainLooper()).post { progress.show() } }
-                .doOnTerminate { Handler(Looper.getMainLooper()).post { progress.hide() } }
+        it.doOnSubscribe { showProgress() }
+            .doOnTerminate { hideProgress() }
     }
 
     override fun onDestroy() {

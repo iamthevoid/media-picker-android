@@ -1,0 +1,70 @@
+ext.deps = [:]
+def deps = [:]
+
+def api = [:]
+api.kotlin = '1.5.0'
+api.dokka = '1.4.32'
+api.kotlinJvmTarget = "1.8"
+deps.api = api
+
+def lib = [:]
+lib.version = '1.0.5'
+lib.groupId = 'io.github.iamthevoid.mediapicker'
+lib.uploadName = 'MediaPicker'
+lib.url = 'https://github.com/iamthevoid/media-picker-android'
+lib.licenceUrl = 'https://www.apache.org/licenses/LICENSE-2.0.txt'
+lib.scmConnection = 'scm:git:github.com/iamthevoid/media-picker-android.git'
+lib.scmDeveloperConnection = 'scm:git:ssh://github.com/iamthevoid/media-picker-android.git'
+lib.scmUrl = 'https://github.com/iamthevoid/media-picker-android/tree/main'
+deps.lib = lib
+
+def android = [:]
+android.compileSdk = 29
+android.targetSdk = 29
+android.minSdk = 14
+deps.android = android
+
+def rx1 = [:]
+rx1.version = '1.3.8'
+rx1.android = '1.2.1'
+rx1.permissions = '0.9.4@aar'
+deps.rx1 = rx1
+
+def rx2 = [:]
+rx2.version = "2.2.19"
+rx2.android = "2.1.1"
+rx2.permissions = '0.10.2'
+deps.rx2 = rx2
+
+def rx3 = [:]
+rx3.version = "3.0.3"
+rx3.android = "3.0.0"
+rx3.permissions = '0.11.2'
+deps.rx3 = rx3
+
+def coroutines = [:]
+coroutines.version = "1.4.1"
+coroutines.permissions = "3.0.0-RC4"
+deps.coroutines = coroutines
+
+deps.picker = lib.version
+
+def libs = [:]
+libs.appcompat = '1.1.0'
+libs.material = '1.3.0'
+libs.recycler = '1.2.0'
+libs.fragment = '1.3.3'
+libs.ktx = '1.3.2'
+libs.lifecycle = '2.3.1'
+libs.multidex = '2.0.1'
+deps.libs = libs
+
+deps.utils = '0.6.6'
+
+def test = [:]
+test.junit = '4.12'
+test.ajunit = '1.1.1'
+test.espresso = '3.2.0'
+deps.test = test
+
+ext.deps = deps

@@ -4,11 +4,11 @@ import iam.thevoid.mediapicker.picker.metrics.MemorySize
 import iam.thevoid.mediapicker.picker.metrics.VideoQuality
 import kotlin.time.Duration
 import kotlin.time.ExperimentalTime
-import kotlin.time.milliseconds
 
 @OptIn(ExperimentalTime::class)
-data class VideoOptions @JvmOverloads constructor(
-        val maxDuration: Duration = (-1).milliseconds,
+data class VideoOptions constructor(
+        val maxDuration: Duration = Duration.milliseconds(-1),
         val maxSize: MemorySize = MemorySize(),
         val quality: VideoQuality = VideoQuality.HIGH
-)
+) {
+}
