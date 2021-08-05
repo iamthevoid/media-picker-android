@@ -31,9 +31,8 @@ apply from: "${rootProject.projectDir}/scripts/publish-mavencentral.gradle"
 
 dependencies {
 
-    api project(':mediapicker')
+    api project(':core')
 
-    implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation "org.jetbrains.kotlin:kotlin-stdlib:${deps.api.kotlin}"
 
     implementation "io.reactivex.rxjava2:rxjava:${deps.rx2.version}"
@@ -41,5 +40,5 @@ dependencies {
 
     implementation "com.google.android.material:material:${deps.libs.material}"
 
-    implementation "io.github.iamthevoid.extensions:android:${deps.utils}@aar"
+    implementation "io.github.iamthevoid.extensions:android:${deps.utils}"
 }

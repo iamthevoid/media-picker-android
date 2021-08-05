@@ -51,14 +51,13 @@ repositories {
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "com.google.android.material:material:${deps.libs.material}"
     implementation "androidx.recyclerview:recyclerview:${deps.libs.recycler}"
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:${deps.api.kotlin}"
     implementation "androidx.fragment:fragment-ktx:${deps.libs.fragment}"
     implementation "androidx.core:core-ktx:${deps.libs.ktx}"
     implementation "io.github.iamthevoid.extensions:util:${deps.utils}"
-    implementation "io.github.iamthevoid.extensions:android:${deps.utils}@aar"
+    implementation "io.github.iamthevoid.extensions:android:${deps.utils}"
     implementation "io.github.iamthevoid.extensions:pure:${deps.utils}"
 
 }

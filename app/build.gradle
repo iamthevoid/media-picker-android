@@ -44,14 +44,14 @@ dependencies {
     implementation "androidx.multidex:multidex:${deps.libs.multidex}"
 
 
-    implementation "io.github.iamthevoid.extensions:android:${deps.utils}@aar"
+    implementation "io.github.iamthevoid.extensions:android:${deps.utils}"
     implementation "io.github.iamthevoid.extensions:pure:${deps.utils}"
 
-    implementation "${deps.lib.groupId}:core:${deps.lib.version}@aar"
-    implementation "${deps.lib.groupId}:coroutines:${deps.lib.version}@aar"
-    implementation "${deps.lib.groupId}:rx1:${deps.lib.version}@aar"
-    implementation "${deps.lib.groupId}:rx2:${deps.lib.version}@aar"
-    implementation "${deps.lib.groupId}:rx3:${deps.lib.version}@aar"
+    implementation "${deps.lib.groupId}:core:${deps.lib.version}"
+    implementation "${deps.lib.groupId}:coroutines:${deps.lib.version}"
+    implementation "${deps.lib.groupId}:rx1:${deps.lib.version}"
+    implementation "${deps.lib.groupId}:rx2:${deps.lib.version}"
+    implementation "${deps.lib.groupId}:rx3:${deps.lib.version}"
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:${deps.api.kotlin}"
 

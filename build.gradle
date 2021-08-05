@@ -1,7 +1,7 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
-apply from: 'version.gradle'
-apply from: 'readme.gradle'
+apply from: 'scripts/version.gradle'
+apply from: 'scripts/readme.gradle'
 
 buildscript {
 
@@ -27,6 +27,8 @@ allprojects {
         jcenter() // needed by rx permissions
         mavenCentral()
         maven { url 'https://jitpack.io' }
+//        maven { url 'https://s01.oss.sonatype.org/service/local/repositories/releases/content' }
+        maven { url 'https://s01.oss.sonatype.org/service/local/repositories/iogithubiamthevoid-1010/content' }
     }
 }
 

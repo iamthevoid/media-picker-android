@@ -1,5 +1,5 @@
 include ':app'
-include ':mediapicker'
+include ':core'
 include ':rx1-mediapicker'
 include ':rx2-mediapicker'
 include ':rx3-mediapicker'

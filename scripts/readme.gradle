@@ -151,25 +151,25 @@ maven { url "https://dl.bintray.com/iamthevoid/maven/" }
 ``` 
 RxJava 1 
 ```groovy      
-implementation "io.github.iamthevoid.mediapicker:rx1:${deps.lib.version}@aar"
+implementation "io.github.iamthevoid.mediapicker:rx1:${deps.lib.version}"
  ```
  RxJava 2 
  ```groovy      
-implementation "io.github.iamthevoid.mediapicker:rx2:${deps.lib.version}@aar"
+implementation "io.github.iamthevoid.mediapicker:rx2:${deps.lib.version}"
  ```
  RxJava 3 
  ```groovy      
-implementation "io.github.iamthevoid.mediapicker:rx3:${deps.lib.version}@aar"
+implementation "io.github.iamthevoid.mediapicker:rx3:${deps.lib.version}"
  ```
  Coroutines 
  ```groovy      
-implementation "io.github.iamthevoid.mediapicker:coroutines:${deps.lib.version}@aar"
+implementation "io.github.iamthevoid.mediapicker:coroutines:${deps.lib.version}"
  ```
  
  Do not forget to add core
  
  ```groovy      
-implementation "io.github.iamthevoid.mediapicker:core:${deps.lib.version}@aar"
+implementation "io.github.iamthevoid.mediapicker:core:${deps.lib.version}"
  ```
 """
     }

@@ -31,14 +31,13 @@ apply from: "${rootProject.projectDir}/scripts/publish-mavencentral.gradle"
 
 dependencies {
 
-    api project(':mediapicker')
+    api project(':core')
 
-    implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation "org.jetbrains.kotlin:kotlin-stdlib:${deps.api.kotlin}"
 
     implementation "io.reactivex:rxjava:${deps.rx1.version}"
     implementation "com.tbruyelle.rxpermissions:rxpermissions:${deps.rx1.permissions}"
 
-    implementation "io.github.iamthevoid.extensions:android:${deps.utils}@aar"
+    implementation "io.github.iamthevoid.extensions:android:${deps.utils}"
 
 }
