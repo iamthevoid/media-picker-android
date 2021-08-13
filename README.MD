@@ -1,5 +1,5 @@
 
-[<img src="lib.svg">](https://bintray.com/beta/#/iamthevoid/maven/MediaPicker)  
+[<img src="lib.svg">](https://search.maven.org/search?q=g:io.github.iamthevoid.mediapicker)  
 
 #### Features
 
