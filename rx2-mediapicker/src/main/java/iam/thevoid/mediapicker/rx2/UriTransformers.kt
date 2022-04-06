@@ -31,7 +31,6 @@ fun filepath(context: Context) =
             }.subscribeOn(Schedulers.computation())
         }
 
-@Deprecated("Not compatible with android 10+")
 @JvmOverloads
 fun file(context: Context, path: String? = null): MaybeTransformer<Uri, File> {
     return MaybeTransformer {

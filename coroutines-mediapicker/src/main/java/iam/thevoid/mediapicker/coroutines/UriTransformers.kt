@@ -31,7 +31,6 @@ fun filepath(context: Context): Flow<Uri>.() -> Flow<String> = {
 }
 
 
-@Deprecated("Not compatible with android 10+")
 @JvmOverloads
 fun file(context: Context): Flow<Uri>.() -> Flow<File> = {
     flatMapConcat { uri: Uri ->

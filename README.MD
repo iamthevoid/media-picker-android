@@ -166,24 +166,24 @@ Also examples available in demo application [Code](app/src/main/java/iam/thevoid
  Add core (each case)
  
  ```groovy      
-implementation "io.github.iamthevoid.mediapicker:core:1.1.1"
+implementation "io.github.iamthevoid.mediapicker:core:1.1.2"
  ```
  
  And then:
 
 RxJava 1 
 ```groovy      
-implementation "io.github.iamthevoid.mediapicker:rx1:1.1.1"
+implementation "io.github.iamthevoid.mediapicker:rx1:1.1.2"
  ```
  RxJava 2 
  ```groovy      
-implementation "io.github.iamthevoid.mediapicker:rx2:1.1.1"
+implementation "io.github.iamthevoid.mediapicker:rx2:1.1.2"
  ```
  RxJava 3 
  ```groovy      
-implementation "io.github.iamthevoid.mediapicker:rx3:1.1.1"
+implementation "io.github.iamthevoid.mediapicker:rx3:1.1.2"
  ```
  Coroutines 
  ```groovy      
-implementation "io.github.iamthevoid.mediapicker:coroutines:1.1.1"
+implementation "io.github.iamthevoid.mediapicker:coroutines:1.1.2"
  ```

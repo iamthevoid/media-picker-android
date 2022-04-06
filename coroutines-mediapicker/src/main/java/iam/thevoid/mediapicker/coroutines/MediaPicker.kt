@@ -12,17 +12,14 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 
 @OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
-class MediaPicker : Picker<Flow<Uri?>>(), CoroutineScope by CoroutineScope(Dispatchers.IO) {
+class MediaPicker : Picker<Flow<Uri>>(), CoroutineScope by CoroutineScope(Dispatchers.IO) {
 
-    private var channel: MutableSharedFlow<Uri?> = MutableSharedFlow()
-    private var job: Job? = null
+    private var channel: MutableSharedFlow<Any> = MutableSharedFlow()
 
-    override fun initStream(applyOptions: (Uri) -> Uri): Flow<Uri?> =
-        channel
-            .take(1)
-            .onEach { job?.cancel() }
-            .onCompletion { job?.cancel() }
-            .map { if (it != null) applyOptions(it) else it }
+    override fun initStream(applyOptions: (Uri) -> Uri): Flow<Uri> =
+        channel.take(1)
+            .takeIfInstance<Uri>()
+            .map { applyOptions(it) }
             .flowOn(Dispatchers.IO)
 
     override fun requestPermissions(
@@ -35,14 +32,12 @@ class MediaPicker : Picker<Flow<Uri?>>(), CoroutineScope by CoroutineScope(Dispa
             return
         }
 
-        fun Permission.toAndroid() = let { it.value }
-
         context.asActivity().askForPermissions(*permissions.map(Permission::parse).toTypedArray()) {
             handler.onRequestPermissionsResult(
                 PermissionResult(
-                    granted = it.granted().map(Permission::toAndroid),
-                    notGranted = (it.denied() - it.permanentlyDenied()).map(Permission::toAndroid),
-                    foreverDenied = it.permanentlyDenied().map(Permission::toAndroid)
+                    granted = it.granted().map(Permission::value),
+                    notGranted = (it.denied() - it.permanentlyDenied()).map(Permission::value),
+                    foreverDenied = it.permanentlyDenied().map(Permission::value)
                 )
             )
         }
@@ -53,10 +48,10 @@ class MediaPicker : Picker<Flow<Uri?>>(), CoroutineScope by CoroutineScope(Dispa
     }
 
     override fun onEmptyResult() {
-        launch { channel.emit(null) }
+        launch { channel.emit(Any()) }
     }
 
-    class Builder1 : Builder<Flow<Uri?>, MediaPicker>() {
+    class Builder1 : Builder<Flow<Uri>, MediaPicker>() {
         override fun create(): MediaPicker =
             instanse ?: MediaPicker().also { instanse = it }
     }
@@ -66,5 +61,9 @@ class MediaPicker : Picker<Flow<Uri?>>(), CoroutineScope by CoroutineScope(Dispa
         private var instanse: MediaPicker? = null
 
         fun builder(): Builder1 = Builder1()
+    }
+
+    private inline fun <reified T> Flow<Any>.takeIfInstance(): Flow<T> {
+        return takeWhile { it is T }.map { it as T }
     }
 }

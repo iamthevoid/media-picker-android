@@ -328,6 +328,13 @@ object FileUtil {
     fun Uri.isVideo(context: Context) = isVideoExt(extension(context))
 
     fun copyFileToAppDir(context: Context, uri: Uri): File? {
+
+        if (context.externalCacheDir?.parent != null &&
+            uri.path.orEmpty().startsWith(context.externalCacheDir?.parent.orEmpty())
+        ) {
+            return getPath(context, uri)?.let(::File)
+        }
+
         val returnCursor: Cursor = context.contentResolver.query(
             uri, arrayOf(
                 OpenableColumns.DISPLAY_NAME, OpenableColumns.SIZE
