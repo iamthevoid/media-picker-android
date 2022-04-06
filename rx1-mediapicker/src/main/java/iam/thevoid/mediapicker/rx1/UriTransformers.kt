@@ -18,38 +18,51 @@ import java.io.File
 private const val TAG = "UriTransformers";
 
 fun bitmap(context: Context) =
-        Observable.Transformer<Uri, Bitmap> {
-            it.flatMap { uri: Uri -> uri.toObservable { toBitmap(context) } }
-                    .subscribeOn(Schedulers.computation())
-        }
+    Observable.Transformer<Uri, Bitmap> {
+        it.flatMap { uri: Uri -> uri.toObservable { toBitmap(context) } }
+            .subscribeOn(Schedulers.computation())
+    }
 
 fun filepath(context: Context) =
-        Observable.Transformer<Uri, String> {
-            it.flatMap { uri: Uri ->
-                FileUtil.getPath(context, uri)?.let { Observable.just(it) }
-                        ?: uri.toObservable { toFile(context, File(uri.filepath(context))).absolutePath }
-            }.subscribeOn(Schedulers.computation())
-        }
+    Observable.Transformer<Uri, String> {
+        it.flatMap { uri: Uri ->
+            FileUtil.getPath(context, uri)?.let { Observable.just(it) }
+                ?: uri.toObservable { toFile(context, File(uri.filepath(context))).absolutePath }
+        }.subscribeOn(Schedulers.computation())
+    }
 
+@Deprecated("Not compatible with android 10+")
 @JvmOverloads
 fun file(context: Context, path: String? = null): Observable.Transformer<Uri, File> {
     return Observable.Transformer { uriObservable: Observable<Uri> ->
         uriObservable
-                .flatMap { uri: Uri ->
-                    FileUtil.getPath(context, uri)?.let(::File)?.let { Observable.just(it) }
-                            ?: uri.toObservable { toFile(context, path?.let(::File)) }
-                }.subscribeOn(Schedulers.computation())
+            .flatMap { uri: Uri ->
+                FileUtil.getPath(context, uri)?.let(::File)?.let { Observable.just(it) }
+                    ?: uri.toObservable { toFile(context, path?.let(::File)) }
+            }.subscribeOn(Schedulers.computation())
+    }
+}
+
+@JvmOverloads
+fun copyFileToAppDir(context: Context): Observable.Transformer<Uri, File> {
+    return Observable.Transformer { uriObservable: Observable<Uri> ->
+        uriObservable
+            .flatMap { uri: Uri ->
+                FileUtil.copyFileToAppDir(context, uri)
+                    ?.let { Observable.just(it) }
+                    ?: Observable.error(IllegalAccessError("Can not copy file"))
+            }.subscribeOn(Schedulers.computation())
     }
 }
 
 private fun <T> Uri.toObservable(convert: Uri.() -> T) =
-        Observable.create<T>({
-            try {
-                it.onNext(convert())
-                it.onCompleted()
-            } catch (e: Exception) {
-                Log.e(TAG, "Error converting uri", e)
-                it.onError(e)
-            }
-        }, Emitter.BackpressureMode.BUFFER)
-                .subscribeOn(Schedulers.computation())
+    Observable.create<T>({
+        try {
+            it.onNext(convert())
+            it.onCompleted()
+        } catch (e: Exception) {
+            Log.e(TAG, "Error converting uri", e)
+            it.onError(e)
+        }
+    }, Emitter.BackpressureMode.BUFFER)
+        .subscribeOn(Schedulers.computation())

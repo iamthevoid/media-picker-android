@@ -31,13 +31,21 @@ fun filepath(context: Context): Flow<Uri>.() -> Flow<String> = {
 }
 
 
+@Deprecated("Not compatible with android 10+")
 @JvmOverloads
-fun file(context: Context, path: String? = null): Flow<Uri>.() -> Flow<File> = {
+fun file(context: Context): Flow<Uri>.() -> Flow<File> = {
     flatMapConcat { uri: Uri ->
         FileUtil.getPath(context, uri)?.let(::File)?.let { flowOf(it) }
-                ?: uri.toFlow { toFile(context, path?.let(::File)) }
+            ?: uri.toFlow { toFile(context, path?.let(::File)) }
     }.flowOn(Dispatchers.IO)
 }
 
+
+@JvmOverloads
+fun copyToAppDir(context: Context): Flow<Uri>.() -> Flow<File?> = {
+    flatMapConcat { uri: Uri -> flowOf(FileUtil.copyFileToAppDir(context, uri)) }
+        .flowOn(Dispatchers.IO)
+}
+
 private fun <T> Uri.toFlow(convert: Uri.() -> T) =
-        flow { emit(convert()) }
+    flow { emit(convert()) }

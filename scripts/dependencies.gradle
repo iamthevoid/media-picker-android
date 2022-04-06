@@ -8,7 +8,7 @@ api.kotlinJvmTarget = "1.8"
 deps.api = api
 
 def lib = [:]
-lib.version = '1.1.0'
+lib.version = '1.1.1'
 lib.groupId = 'io.github.iamthevoid.mediapicker'
 lib.uploadName = 'MediaPicker'
 lib.url = 'https://github.com/iamthevoid/media-picker-android'

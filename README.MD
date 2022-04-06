@@ -162,29 +162,28 @@ Also examples available in demo application [Code](app/src/main/java/iam/thevoid
 
 
  ## Adding to project    
- Add repository: 
- ```groovy    
-maven { url "https://dl.bintray.com/iamthevoid/maven/" } 
-``` 
+
+ Add core (each case)
+ 
+ ```groovy      
+implementation "io.github.iamthevoid.mediapicker:core:1.1.1"
+ ```
+ 
+ And then:
+
 RxJava 1 
 ```groovy      
-implementation "io.github.iamthevoid.mediapicker:rx1:1.1.0"
+implementation "io.github.iamthevoid.mediapicker:rx1:1.1.1"
  ```
  RxJava 2 
  ```groovy      
-implementation "io.github.iamthevoid.mediapicker:rx2:1.1.0"
+implementation "io.github.iamthevoid.mediapicker:rx2:1.1.1"
  ```
  RxJava 3 
  ```groovy      
-implementation "io.github.iamthevoid.mediapicker:rx3:1.1.0"
+implementation "io.github.iamthevoid.mediapicker:rx3:1.1.1"
  ```
  Coroutines 
  ```groovy      
-implementation "io.github.iamthevoid.mediapicker:coroutines:1.1.0"
- ```
- 
- Do not forget to add core
- 
- ```groovy      
-implementation "io.github.iamthevoid.mediapicker:core:1.1.0"
+implementation "io.github.iamthevoid.mediapicker:coroutines:1.1.1"
  ```

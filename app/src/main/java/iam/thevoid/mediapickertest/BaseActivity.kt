@@ -231,6 +231,8 @@ abstract class BaseActivity : AppCompatActivity(), View.OnClickListener, Picker.
         fileInfo.hide(!exists)
         if (!exists)
             return
+
+
         path.text = "Path: ${file.absolutePath}"
         size.text = "Size: ${fileSizeInMb(file)} MB"
         val isImage = file.extension.let { !FileUtil.isVideoExt(it) }
@@ -241,6 +243,7 @@ abstract class BaseActivity : AppCompatActivity(), View.OnClickListener, Picker.
             }
         }
     }
+
 
     private fun EditText.number() =
         try {

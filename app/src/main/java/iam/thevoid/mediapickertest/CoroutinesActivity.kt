@@ -3,7 +3,7 @@ package iam.thevoid.mediapickertest
 import android.net.Uri
 import androidx.lifecycle.lifecycleScope
 import iam.thevoid.mediapicker.coroutines.MediaPicker
-import iam.thevoid.mediapicker.coroutines.file
+import iam.thevoid.mediapicker.coroutines.copyToAppDir
 import iam.thevoid.mediapicker.picker.Purpose
 import iam.thevoid.mediapicker.picker.options.ImageOptions
 import iam.thevoid.mediapicker.picker.options.VideoOptions
@@ -12,6 +12,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import java.io.File
+
 
 class CoroutinesActivity : BaseActivity() {
 
@@ -30,6 +31,7 @@ class CoroutinesActivity : BaseActivity() {
                 .let(loading())
                 .filterNotNull()
                 .let(load(::showImageOrVideo))
+                .filterNotNull()
                 .collect { showFileInfo(it) }
         }
     }
@@ -46,6 +48,7 @@ class CoroutinesActivity : BaseActivity() {
                 .let(loading())
                 .filterNotNull()
                 .let(load(::showImageOrVideo))
+                .filterNotNull()
                 .collect { showFileInfo(it) }
         }
     }
@@ -63,6 +66,7 @@ class CoroutinesActivity : BaseActivity() {
                 .let(loading())
                 .filterNotNull()
                 .let(load(::showImageOrVideo))
+                .filterNotNull()
                 .collect { showFileInfo(it) }
         }
     }
@@ -80,6 +84,7 @@ class CoroutinesActivity : BaseActivity() {
                 .let(loading())
                 .filterNotNull()
                 .let(load(::showImageOrVideo))
+                .filterNotNull()
                 .collect { showFileInfo(it) }
         }
     }
@@ -97,14 +102,15 @@ class CoroutinesActivity : BaseActivity() {
                 .let(loading())
                 .filterNotNull()
                 .let(load(::showImageOrVideo))
+                .filterNotNull()
                 .collect { showFileInfo(it) }
         }
     }
 
-    private fun load(show: (Uri) -> Unit): Flow<Uri>.() -> Flow<File> = {
+    private fun load(show: (Uri) -> Unit): Flow<Uri>.() -> Flow<File?> = {
         onEach { show(it) }
             .flowOn(Dispatchers.Main)
-            .let(file(this@CoroutinesActivity))
+            .let(copyToAppDir(this@CoroutinesActivity))
     }
 
     private fun <T> loading(): Flow<T>.() -> Flow<T> = {

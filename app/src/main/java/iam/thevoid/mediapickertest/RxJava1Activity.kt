@@ -5,7 +5,7 @@ import iam.thevoid.mediapicker.picker.Purpose
 import iam.thevoid.mediapicker.picker.options.ImageOptions
 import iam.thevoid.mediapicker.picker.options.VideoOptions
 import iam.thevoid.mediapicker.rx1.MediaPicker
-import iam.thevoid.mediapicker.rx1.file
+import iam.thevoid.mediapicker.rx1.copyFileToAppDir
 import rx.Observable
 import rx.Subscription
 import rx.android.schedulers.AndroidSchedulers
@@ -95,7 +95,7 @@ class RxJava1Activity : BaseActivity() {
             observable.observeOn(AndroidSchedulers.mainThread())
                 .doOnNext { show(it) }
                 .observeOn(Schedulers.io())
-                .compose(file(this))
+                .compose(copyFileToAppDir(this))
         }
 
     private fun <T> loading() = Observable.Transformer<T, T> {

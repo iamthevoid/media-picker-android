@@ -7,7 +7,7 @@ import iam.thevoid.mediapicker.picker.Purpose
 import iam.thevoid.mediapicker.picker.options.ImageOptions
 import iam.thevoid.mediapicker.picker.options.VideoOptions
 import iam.thevoid.mediapicker.rx3.MediaPicker
-import iam.thevoid.mediapicker.rx3.file
+import iam.thevoid.mediapicker.rx3.copyFileToAppDir
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.MaybeTransformer
 import io.reactivex.rxjava3.disposables.Disposable
@@ -97,7 +97,7 @@ class RxJava3Activity : BaseActivity() {
             observable.observeOn(AndroidSchedulers.mainThread())
                 .doOnSuccess { show(it) }
                 .observeOn(Schedulers.io())
-                .compose(file(this))
+                .compose(copyFileToAppDir(this))
         }
 
     private fun <T> loading() = MaybeTransformer<T, T> {
