@@ -44,8 +44,8 @@ class PickerSelectAppDialog : BottomSheetDialogFragment(), OnSelectAppCallback {
     }
 
     override fun onDismiss(dialog: DialogInterface) {
-        super.onDismiss(dialog)
         MediaPickerBus.onDismissSelectApp()
+        super.onDismiss(dialog)
     }
 
     private fun getIntentDatas(savedInstanceState: Bundle?): ArrayList<IntentData>? =

@@ -77,6 +77,25 @@ There are provides two callbacks
     <builder>.onDismissAppSelect(<OnDismissListener>)  
 ```
 Both are `OnDismissListener` which are functional interface with only one method `void onDismiss()`. It can be helpful (for example) if you show `ProgressBar` to user, but he just closes picker activity without completes his choice.  
+ 3. On permissions result (If you need add reaction wnen permissions granted or denied)
+```kotlin    
+    <builder>.setPermissionResultHandler(<PermissionsHandler>)  
+```
+
+```kotlin    
+interface PermissionsHandler {
+    fun onRequestPermissionsResult(result: PermissionResult) = Unit
+    fun onRequestPermissionsFailed(throwable: Throwable) = Unit
+}
+```
+
+```kotlin    
+data class PermissionResult(
+    val granted: List<String> = emptyList(),
+    val notGranted: List<String> = emptyList(),
+    val foreverDenied: List<String> = emptyList()
+)
+```
 
 ## Transformers  
 For streams also provided transformers  
@@ -149,23 +168,23 @@ maven { url "https://dl.bintray.com/iamthevoid/maven/" }
 ``` 
 RxJava 1 
 ```groovy      
-implementation "io.github.iamthevoid.mediapicker:rx1:1.0.6"
+implementation "io.github.iamthevoid.mediapicker:rx1:1.1.0"
  ```
  RxJava 2 
  ```groovy      
-implementation "io.github.iamthevoid.mediapicker:rx2:1.0.6"
+implementation "io.github.iamthevoid.mediapicker:rx2:1.1.0"
  ```
  RxJava 3 
  ```groovy      
-implementation "io.github.iamthevoid.mediapicker:rx3:1.0.6"
+implementation "io.github.iamthevoid.mediapicker:rx3:1.1.0"
  ```
  Coroutines 
  ```groovy      
-implementation "io.github.iamthevoid.mediapicker:coroutines:1.0.6"
+implementation "io.github.iamthevoid.mediapicker:coroutines:1.1.0"
  ```
  
  Do not forget to add core
  
  ```groovy      
-implementation "io.github.iamthevoid.mediapicker:core:1.0.6"
+implementation "io.github.iamthevoid.mediapicker:core:1.1.0"
  ```

@@ -20,81 +20,91 @@ class CoroutinesActivity : BaseActivity() {
     override fun onPickImageSelect(options: ImageOptions) {
         job = lifecycleScope.launch {
             MediaPicker.builder()
-                    .setImageOptions(options)
-                    .pick(Purpose.Pick.Image)
-                    .onDismissAppSelect(this@CoroutinesActivity)
-                    .onDismissPick(this@CoroutinesActivity)
-                    .build()
-                    .request(this@CoroutinesActivity)
-                    .let(loading())
-                    .let(load(::showImageOrVideo))
-                    .collect { showFileInfo(it) }
+                .setPermissionResultHandler(permissionsHandler)
+                .setImageOptions(options)
+                .pick(Purpose.Pick.Image)
+                .onDismissAppSelect(this@CoroutinesActivity)
+                .onDismissPick(this@CoroutinesActivity)
+                .build()
+                .request(this@CoroutinesActivity)
+                .let(loading())
+                .filterNotNull()
+                .let(load(::showImageOrVideo))
+                .collect { showFileInfo(it) }
         }
     }
 
     override fun onPickVideoSelect() {
         job = lifecycleScope.launch {
             MediaPicker.builder()
-                    .pick(Purpose.Pick.Video)
-                    .onDismissAppSelect(this@CoroutinesActivity)
-                    .onDismissPick(this@CoroutinesActivity)
-                    .build()
-                    .request(this@CoroutinesActivity)
-                    .let(loading())
-                    .let(load(::showImageOrVideo))
-                    .collect { showFileInfo(it) }
+                .setPermissionResultHandler(permissionsHandler)
+                .pick(Purpose.Pick.Video)
+                .onDismissAppSelect(this@CoroutinesActivity)
+                .onDismissPick(this@CoroutinesActivity)
+                .build()
+                .request(this@CoroutinesActivity)
+                .let(loading())
+                .filterNotNull()
+                .let(load(::showImageOrVideo))
+                .collect { showFileInfo(it) }
         }
     }
 
     override fun onTakePhotoSelect(options: ImageOptions) {
         job = lifecycleScope.launch {
             MediaPicker.builder()
-                    .setImageOptions(options)
-                    .take(Purpose.Take.Photo)
-                    .onDismissAppSelect(this@CoroutinesActivity)
-                    .onDismissPick(this@CoroutinesActivity)
-                    .build()
-                    .request(this@CoroutinesActivity)
-                    .let(loading())
-                    .let(load(::showImageOrVideo))
-                    .collect { showFileInfo(it) }
+                .setPermissionResultHandler(permissionsHandler)
+                .setImageOptions(options)
+                .take(Purpose.Take.Photo)
+                .onDismissAppSelect(this@CoroutinesActivity)
+                .onDismissPick(this@CoroutinesActivity)
+                .build()
+                .request(this@CoroutinesActivity)
+                .let(loading())
+                .filterNotNull()
+                .let(load(::showImageOrVideo))
+                .collect { showFileInfo(it) }
         }
     }
 
     override fun onTakeVideoSelect(options: VideoOptions) {
         job = lifecycleScope.launch {
             MediaPicker.builder()
-                    .setTakeVideoOptions(options)
-                    .take(Purpose.Take.Video)
-                    .onDismissAppSelect(this@CoroutinesActivity)
-                    .onDismissPick(this@CoroutinesActivity)
-                    .build()
-                    .request(this@CoroutinesActivity)
-                    .let(loading())
-                    .let(load(::showImageOrVideo))
-                    .collect { showFileInfo(it) }
+                .setPermissionResultHandler(permissionsHandler)
+                .setTakeVideoOptions(options)
+                .take(Purpose.Take.Video)
+                .onDismissAppSelect(this@CoroutinesActivity)
+                .onDismissPick(this@CoroutinesActivity)
+                .build()
+                .request(this@CoroutinesActivity)
+                .let(loading())
+                .filterNotNull()
+                .let(load(::showImageOrVideo))
+                .collect { showFileInfo(it) }
         }
     }
 
     override fun onCustomPurpose(purpose: List<Purpose>) {
         job = lifecycleScope.launch {
             MediaPicker.builder()
-                    .pick(*purpose.filterIsInstance<Purpose.Pick>().toTypedArray())
-                    .take(*purpose.filterIsInstance<Purpose.Take>().toTypedArray())
-                    .onDismissAppSelect(this@CoroutinesActivity)
-                    .onDismissPick(this@CoroutinesActivity)
-                    .build()
-                    .request(this@CoroutinesActivity)
-                    .let(loading())
-                    .let(load(::showImageOrVideo))
-                    .collect { showFileInfo(it) }
+                .setPermissionResultHandler(permissionsHandler)
+                .pick(*purpose.filterIsInstance<Purpose.Pick>().toTypedArray())
+                .take(*purpose.filterIsInstance<Purpose.Take>().toTypedArray())
+                .onDismissAppSelect(this@CoroutinesActivity)
+                .onDismissPick(this@CoroutinesActivity)
+                .build()
+                .request(this@CoroutinesActivity)
+                .let(loading())
+                .filterNotNull()
+                .let(load(::showImageOrVideo))
+                .collect { showFileInfo(it) }
         }
     }
 
     private fun load(show: (Uri) -> Unit): Flow<Uri>.() -> Flow<File> = {
         onEach { show(it) }
-                .flowOn(Dispatchers.Main)
-                .let(file(this@CoroutinesActivity))
+            .flowOn(Dispatchers.Main)
+            .let(file(this@CoroutinesActivity))
     }
 
     private fun <T> loading(): Flow<T>.() -> Flow<T> = {

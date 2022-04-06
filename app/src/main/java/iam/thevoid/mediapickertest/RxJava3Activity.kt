@@ -20,80 +20,85 @@ class RxJava3Activity : BaseActivity() {
 
     override fun onPickImageSelect(options: ImageOptions) {
         disposable = MediaPicker.builder()
-                .setImageOptions(options)
-                .pick(Purpose.Pick.Image)
-                .onDismissAppSelect(this)
-                .onDismissPick(this)
-                .build()
-                .request(this)
-                .compose(loading())
-                .compose(load(::showImageOrVideo))
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(::showFileInfo) { it.printStackTrace() }
+            .setPermissionResultHandler(permissionsHandler)
+            .setImageOptions(options)
+            .pick(Purpose.Pick.Image)
+            .onDismissAppSelect(this)
+            .onDismissPick(this)
+            .build()
+            .request(this)
+            .compose(loading())
+            .compose(load(::showImageOrVideo))
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(::showFileInfo) { it.printStackTrace() }
     }
 
     override fun onPickVideoSelect() {
         disposable = MediaPicker.builder()
-                .pick(Purpose.Pick.Video)
-                .onDismissAppSelect(this)
-                .onDismissPick(this)
-                .build()
-                .request(this)
-                .compose(loading())
-                .compose(load(::showImageOrVideo))
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(::showFileInfo) { it.printStackTrace() }
+            .setPermissionResultHandler(permissionsHandler)
+            .pick(Purpose.Pick.Video)
+            .onDismissAppSelect(this)
+            .onDismissPick(this)
+            .build()
+            .request(this)
+            .compose(loading())
+            .compose(load(::showImageOrVideo))
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(::showFileInfo) { it.printStackTrace() }
     }
 
     override fun onTakePhotoSelect(options: ImageOptions) {
         disposable = MediaPicker.builder()
-                .setImageOptions(options)
-                .take(Purpose.Take.Photo)
-                .onDismissAppSelect(this)
-                .onDismissPick(this)
-                .build()
-                .request(this)
-                .compose(loading())
-                .compose(load(::showImageOrVideo))
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(::showFileInfo) { it.printStackTrace() }
+            .setPermissionResultHandler(permissionsHandler)
+            .setImageOptions(options)
+            .take(Purpose.Take.Photo)
+            .onDismissAppSelect(this)
+            .onDismissPick(this)
+            .build()
+            .request(this)
+            .compose(loading())
+            .compose(load(::showImageOrVideo))
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(::showFileInfo) { it.printStackTrace() }
     }
 
     override fun onTakeVideoSelect(options: VideoOptions) {
         disposable = MediaPicker.builder()
-                .setTakeVideoOptions(options)
-                .take(Purpose.Take.Video)
-                .onDismissAppSelect(this)
-                .onDismissPick(this)
-                .build()
-                .request(this)
-                .compose(loading())
-                .compose(load(::showImageOrVideo))
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(::showFileInfo) { it.printStackTrace() }
+            .setPermissionResultHandler(permissionsHandler)
+            .setTakeVideoOptions(options)
+            .take(Purpose.Take.Video)
+            .onDismissAppSelect(this)
+            .onDismissPick(this)
+            .build()
+            .request(this)
+            .compose(loading())
+            .compose(load(::showImageOrVideo))
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(::showFileInfo) { it.printStackTrace() }
     }
 
     override fun onCustomPurpose(purpose: List<Purpose>) {
         disposable = MediaPicker.builder()
-                .pick(*purpose.filterIsInstance<Purpose.Pick>().toTypedArray())
-                .take(*purpose.filterIsInstance<Purpose.Take>().toTypedArray())
-                .onDismissAppSelect(this)
-                .onDismissPick(this)
-                .build()
-                .request(this)
-                .compose(loading())
-                .compose(load(::showImageOrVideo))
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(::showFileInfo) { it.printStackTrace() }
+            .setPermissionResultHandler(permissionsHandler)
+            .pick(*purpose.filterIsInstance<Purpose.Pick>().toTypedArray())
+            .take(*purpose.filterIsInstance<Purpose.Take>().toTypedArray())
+            .onDismissAppSelect(this)
+            .onDismissPick(this)
+            .build()
+            .request(this)
+            .compose(loading())
+            .compose(load(::showImageOrVideo))
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(::showFileInfo) { it.printStackTrace() }
     }
 
     private fun load(show: (Uri) -> Unit): MaybeTransformer<Uri, File> =
-            MaybeTransformer { observable ->
-                observable.observeOn(AndroidSchedulers.mainThread())
-                        .doOnSuccess { show(it) }
-                        .observeOn(Schedulers.io())
-                        .compose(file(this))
-            }
+        MaybeTransformer { observable ->
+            observable.observeOn(AndroidSchedulers.mainThread())
+                .doOnSuccess { show(it) }
+                .observeOn(Schedulers.io())
+                .compose(file(this))
+        }
 
     private fun <T> loading() = MaybeTransformer<T, T> {
         it.doOnSubscribe { Handler(Looper.getMainLooper()).post { showProgress() } }

@@ -24,6 +24,8 @@ import iam.thevoid.mediapicker.picker.metrics.SizeUnit
 import iam.thevoid.mediapicker.picker.metrics.VideoQuality
 import iam.thevoid.mediapicker.picker.options.ImageOptions
 import iam.thevoid.mediapicker.picker.options.VideoOptions
+import iam.thevoid.mediapicker.picker.permission.PermissionResult
+import iam.thevoid.mediapicker.picker.permission.PermissionsHandler
 import iam.thevoid.mediapicker.util.FileUtil
 import iam.thevoid.mediapicker.util.FileUtil.isImage
 import iam.thevoid.mediapicker.util.FileUtil.isVideo
@@ -49,6 +51,16 @@ abstract class BaseActivity : AppCompatActivity(), View.OnClickListener, Picker.
     private var lastImageOptions: ImageOptions? = null
     private var lastVideoOptions: VideoOptions? = null
     private var lastPurposes: List<Purpose> = emptyList()
+
+    protected val permissionsHandler = object : PermissionsHandler {
+        override fun onRequestPermissionsResult(result: PermissionResult) {
+            println("granted = ${result.granted.joinToString()}, denied = ${result.notGranted.joinToString()}, foreverDenied = ${result.foreverDenied.joinToString()}")
+        }
+
+        override fun onRequestPermissionsFailed(throwable: Throwable) {
+            println(throwable.message)
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -224,8 +236,9 @@ abstract class BaseActivity : AppCompatActivity(), View.OnClickListener, Picker.
         val isImage = file.extension.let { !FileUtil.isVideoExt(it) }
         resolution.gone(!isImage)
         if (isImage) {
-            val bitmap = BitmapFactory.decodeFile(file.absolutePath)
-            resolution.text = "${bitmap.width} X ${bitmap.height}"
+            BitmapFactory.decodeFile(file.absolutePath)?.also { bitmap ->
+                resolution.text = "${bitmap.width} X ${bitmap.height}"
+            }
         }
     }
 

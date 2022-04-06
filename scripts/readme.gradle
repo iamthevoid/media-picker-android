@@ -79,6 +79,25 @@ There are provides two callbacks
     <builder>.onDismissAppSelect(<OnDismissListener>)  
 ```
 Both are `OnDismissListener` which are functional interface with only one method `void onDismiss()`. It can be helpful (for example) if you show `ProgressBar` to user, but he just closes picker activity without completes his choice.  
+ 3. On permissions result (If you need add reaction wnen permissions granted or denied)
+```kotlin    
+    <builder>.setPermissionResultHandler(<PermissionsHandler>)  
+```
+
+```kotlin    
+interface PermissionsHandler {
+    fun onRequestPermissionsResult(result: PermissionResult) = Unit
+    fun onRequestPermissionsFailed(throwable: Throwable) = Unit
+}
+```
+
+```kotlin    
+data class PermissionResult(
+    val granted: List<String> = emptyList(),
+    val notGranted: List<String> = emptyList(),
+    val foreverDenied: List<String> = emptyList()
+)
+```
 
 ## Transformers  
 For streams also provided transformers  

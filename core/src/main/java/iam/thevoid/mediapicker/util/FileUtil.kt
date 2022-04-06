@@ -30,7 +30,7 @@ import kotlin.math.sqrt
 object FileUtil {
     private val FILEPATH_KEY = FileUtil::class.java.name + ".FILEPATH_KEY"
 
-    fun temp(context: Context): String = context.filesDir.path + "/temp"
+    fun temp(context: Context): String = context.filesDir.absolutePath + "/temp"
 
     private val videoExtensions = listOf(
             "3gp",

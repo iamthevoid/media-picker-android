@@ -46,7 +46,7 @@ dependencies {
     implementation "com.google.android.material:material:${deps.libs.material}"
 
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:${deps.coroutines.version}"
-    implementation "com.afollestad.assent:coroutines:${deps.coroutines.permissions}"
+    implementation "com.afollestad.assent:core:${deps.coroutines.permissions}"
 
     implementation "io.github.iamthevoid.extensions:android:${deps.utils}"
 

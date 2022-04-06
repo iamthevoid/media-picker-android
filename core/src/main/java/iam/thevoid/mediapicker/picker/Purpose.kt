@@ -3,7 +3,6 @@ package iam.thevoid.mediapicker.picker
 import android.Manifest
 import android.content.Context
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
 import iam.thevoid.mediapicker.builder.ImageIntentBuilder
 import iam.thevoid.mediapicker.builder.PhotoIntentBuilder
@@ -32,10 +31,10 @@ sealed class Purpose {
 
     private fun permissions(): List<String> {
         val permissions = mutableListOf<String>()
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            permissions.add(Manifest.permission.READ_EXTERNAL_STORAGE)
-        }
-        permissions.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+//            permissions.add(Manifest.permission.READ_EXTERNAL_STORAGE)
+//        }
+//        permissions.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
         permissions.addAll(additionalPermissions)
         return permissions
     }

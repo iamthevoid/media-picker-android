@@ -38,6 +38,10 @@ dependencies {
 
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
+    implementation "io.github.iamthevoid.extensions:util:${deps.utils}"
+    implementation "io.github.iamthevoid.extensions:android:${deps.utils}"
+    implementation "io.github.iamthevoid.extensions:pure:${deps.utils}"
+
     implementation "androidx.appcompat:appcompat:${deps.libs.appcompat}"
     implementation "com.google.android.material:material:${deps.libs.material}"
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:${deps.libs.lifecycle}"

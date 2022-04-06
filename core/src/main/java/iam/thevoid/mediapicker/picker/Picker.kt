@@ -21,9 +21,10 @@ import iam.thevoid.mediapicker.picker.fragment.HiddenPickerFragment
 import iam.thevoid.mediapicker.picker.fragment.HiddenPickerFragment.Companion.getFragment
 import iam.thevoid.mediapicker.picker.options.ImageOptions
 import iam.thevoid.mediapicker.picker.options.VideoOptions
+import iam.thevoid.mediapicker.picker.permission.PermissionResult
+import iam.thevoid.mediapicker.picker.permission.PermissionsHandler
 import iam.thevoid.mediapicker.util.FileUtil
 import iam.thevoid.mediapicker.util.IntentUtils
-import java.util.*
 import kotlin.time.ExperimentalTime
 
 abstract class Picker<T> protected constructor() {
@@ -53,15 +54,17 @@ abstract class Picker<T> protected constructor() {
 
     private var videoOptions: VideoOptions? = null
 
+    private var permHandler: PermissionsHandler? = null
+
     @OptIn(ExperimentalTime::class)
     private val bundle: Bundle
         get() = Bundle().apply {
             videoOptions?.apply {
                 maxDuration.inSeconds.toLong().takeIf { it > 0 }
-                        ?.also { putLong(EXTRA_VIDEO_MAX_DURATION, it) }
+                    ?.also { putLong(EXTRA_VIDEO_MAX_DURATION, it) }
 
                 maxSize.takeIf { it.bytes > 0 }
-                        ?.also { putLong(EXTRA_VIDEO_MAX_SIZE, it.bytes) }
+                    ?.also { putLong(EXTRA_VIDEO_MAX_SIZE, it.bytes) }
 
                 putInt(EXTRA_VIDEO_QUALITY, quality.code)
             }
@@ -71,28 +74,28 @@ abstract class Picker<T> protected constructor() {
     protected abstract fun initStream(applyOptions: (Uri) -> Uri): T
 
     protected abstract fun requestPermissions(
-            context: Context,
-            permissions: List<String>,
-            result: OnRequestPermissionsResult
+        context: Context,
+        permissions: List<String>,
+        handler: PermissionsHandler
     )
 
     protected abstract fun onResult(uri: Uri)
 
     protected abstract fun onEmptyResult()
 
-
     fun request(context: Context): T = initStream {
         FileUtil.applyOptions(context, it, imageOptions, videoOptions)
     }.also {
+        MediaPickerBus.attachMediaPicker(this)
         SelectAppBus.attachMediaPicker(this)
         when {
             isOnlyOneAppCanHandleRequest(context) ->
                 purposes.first()
-                        .also { handleIntent(context, it.getIntentData(context, bundle)) }
+                    .also { handleIntent(context, it.getIntentData(context, bundle)) }
             else -> {
                 chooserTitle.safe(context.string(chooserTitleResource)).also { title ->
                     PickerSelectAppDialog
-                            .showForResult(context, purposes.map { it.getIntentData(context, bundle) }, title)
+                        .showForResult(context, purposes.map { it.getIntentData(context, bundle) }, title)
                 }
             }
         }
@@ -116,21 +119,26 @@ abstract class Picker<T> protected constructor() {
 
 
     private fun handleIntent(context: Context, intentData: IntentData) {
-        requestPermissions(context, intentData.permissions, object : OnRequestPermissionsResult {
-            override fun onRequestPermissionsResult(granted: Boolean) {
-                if (granted) {
+        requestPermissions(context, intentData.permissions, object : PermissionsHandler {
+            override fun onRequestPermissionsResult(result: PermissionResult) {
+                permHandler?.onRequestPermissionsResult(result)
+                if (intentData.permissions.all { result.granted.contains(it) }) {
                     startImagePick(context, intentData.intent, intentData.requestCode)
+                } else {
+                    onEmptyResult()
                 }
             }
 
             override fun onRequestPermissionsFailed(throwable: Throwable) {
+                permHandler?.onRequestPermissionsFailed(throwable)
+                onEmptyResult()
                 Log.d(TAG, "onRequestPermissionsFailed", throwable)
             }
+
         })
     }
 
     private fun startImagePick(context: Context, intent: Intent, requestCode: Int) {
-        MediaPickerBus.attachMediaPicker(this)
         context.asFragmentActivity().supportFragmentManager
                 .beginTransaction()
                 .add(getFragment(intent, requestCode), HiddenPickerFragment::class.java.canonicalName)
@@ -165,8 +173,13 @@ abstract class Picker<T> protected constructor() {
         private var takePhotoAppChooserTitle: String? = null
         private var takeVideoAppChooserTitleResource = R.string.take_video
         private var takeVideoAppChooserTitle: String? = null
+        private var permissionHandler: PermissionsHandler? = null
 
         protected abstract fun create(): Picker
+
+        fun setPermissionResultHandler(handler: PermissionsHandler) = apply {
+            this.permissionHandler = handler
+        }
 
         fun setTakeVideoOptions(options: VideoOptions) = apply {
             this.videoOptions = options
@@ -239,6 +252,7 @@ abstract class Picker<T> protected constructor() {
                     imageOptions = this@Builder.imageOptions
                     videoOptions = this@Builder.videoOptions
                     chooserTitle = appChooserTitle
+                    permHandler = permissionHandler
                     chooserTitleResource = appChooserTitleResource
                     takePhotoChooserTitle = takePhotoAppChooserTitle
                     takePhotoChooserTitleResource = takePhotoAppChooserTitleResource
